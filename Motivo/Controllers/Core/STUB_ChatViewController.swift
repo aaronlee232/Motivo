@@ -13,7 +13,7 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        view.backgroundColor = .systemBlue
+        view.backgroundColor = .systemBackground
     }
     
 

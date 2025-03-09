@@ -13,7 +13,7 @@ class TaskViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        view.backgroundColor = .systemGreen
+        view.backgroundColor = .systemBackground
     }
     
 
