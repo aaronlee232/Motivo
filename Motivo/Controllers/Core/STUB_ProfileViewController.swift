@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ProfileViewController: UIViewController {
 
@@ -14,8 +15,29 @@ class ProfileViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
+        
+        let logoutButton = UIButton(type: .system)
+        logoutButton.setTitle("Logout", for: .normal)
+        logoutButton.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+        
+        view.addSubview(logoutButton)
+        
+        logoutButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoutButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
     }
     
+    @objc func handleLogout() {
+        do {
+            try Auth.auth().signOut()
+            self.dismiss(animated: true)
+        } catch {
+            print("Sign out error")
+        }
+        dismiss(animated: true)
+    }
 
     /*
     // MARK: - Navigation
