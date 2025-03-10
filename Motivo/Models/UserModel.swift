@@ -5,12 +5,7 @@
 //  Created by Aaron Lee on 3/9/25.
 //
 
-class UserModel {
+struct UserModel: Codable {
     var username: String
     var email: String
-    
-    init(username: String, email: String) {
-        self.username = username
-        self.email = email
-    }
 }

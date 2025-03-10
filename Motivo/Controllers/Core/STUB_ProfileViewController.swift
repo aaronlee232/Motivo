@@ -32,11 +32,9 @@ class ProfileViewController: UIViewController {
     @objc func handleLogout() {
         do {
             try Auth.auth().signOut()
-            self.dismiss(animated: true)
         } catch {
             print("Sign out error")
         }
-        dismiss(animated: true)
     }
 
     /*

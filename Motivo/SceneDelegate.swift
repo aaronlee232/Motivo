@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    private var authListenerHandle: AuthStateDidChangeListenerHandle?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -18,10 +19,40 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-        window?.windowScene = windowScene
-        window?.rootViewController = AuthenticationViewController(screenType: .login)
+        window = UIWindow(windowScene: windowScene)
+        
+        // Check if user is logged in. Redirect to main page if logged in, login if otherwise.
+        if Auth.auth().currentUser != nil {
+            window?.rootViewController = MainTabBarViewController()
+        } else {
+            window?.rootViewController = AuthenticationViewController(screenType: .login)
+        }
+        
         window?.makeKeyAndVisible()
+        
+        observeAuthState()
+    }
+    
+    func observeAuthState() {
+        authListenerHandle = Auth.auth().addStateDidChangeListener() {
+            [weak self]  (auth,user) in
+            guard let self = self else { return } // Avoid memory leaks
+            
+            let newRootVC: UIViewController
+            if user != nil {
+                newRootVC = MainTabBarViewController()
+            } else {
+                newRootVC = AuthenticationViewController(screenType: .login)
+            }
+            
+            self.switchRootViewController(newRootViewController: newRootVC)
+        }
+    }
+    
+    func switchRootViewController(newRootViewController: UIViewController) {
+        guard let window = self.window else { return }
+        window.rootViewController = newRootViewController
+        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {})
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -29,6 +60,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This occurs shortly after the scene enters the background, or when its session is discarded.
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+        if let handle = authListenerHandle {
+            Auth.auth().removeStateDidChangeListener(handle)  // Remove listener when scene disconnects
+        }
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
