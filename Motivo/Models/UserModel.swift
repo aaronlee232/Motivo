@@ -8,4 +8,7 @@
 struct UserModel: Codable {
     var username: String
     var email: String
+    var unverifiedPhotos: Int = 0
+    var favoritesUsers: [String] = []
+    var hiddenUsers: [String] = []
 }
