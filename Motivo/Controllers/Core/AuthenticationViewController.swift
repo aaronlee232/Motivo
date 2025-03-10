@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 enum AuthScreenType {
     case login
@@ -15,7 +16,7 @@ enum AuthScreenType {
 }
 
 class AuthenticationViewController: UIViewController {
-
+    
     var screenType: AuthScreenType
     
     // Shared UI Elements
@@ -183,6 +184,11 @@ class AuthenticationViewController: UIViewController {
 
         case .register:
             // TODO: Add field validation (verify matching passwords, username/password criteria, check email format)
+            // TODO: Move into validation function and combine error messages to include messages from multiple faulty fields
+            // Empty Field Validation
+            guard let emailText = emailTextField.text else { return }
+            guard let usernameText = usernameTextField.text else { return }
+            guard let passwordText = emailTextField.text else { return }
             
             // Password Match Validation
             guard passwordTextField.text == verifyPasswordTextField.text else {
@@ -190,18 +196,26 @@ class AuthenticationViewController: UIViewController {
                 return
             }
             
-            Auth.auth().createUser(withEmail: emailTextField.text!,
-                                   password: passwordTextField.text!) {
-                (authResult,error) in
-                if let error = error as NSError? {
+            Task {
+                do {
+                    let authResult = try await createUserAsync(email: emailText, password: passwordText)
+                    print("User created: \(authResult.user.uid)")
+                } catch {
+                    // Handle Registration Errors
                     let errorText = "\(error.localizedDescription)"
                     self.handleAuthErrorAlerts(alertTitle: "Registration Failed", errorText: errorText)
-                } else {
-                    // Create User Object
                     
+                    return
                 }
+                
+                // TODO: Address edgecase where user registers successfully, but user collection is not created. Rollback registration and prevent auto-log in
+                
+                // Create user model and insert into user collections in db
+                let newUser = UserModel(username: usernameText, email: emailText)
+                await insertUserDataAsync(user: newUser)
             }
-
+            
+            
         case .forgotPassword:
             // TODO: Add email recovery
             break
@@ -257,5 +271,38 @@ class AuthenticationViewController: UIViewController {
         let dismissAction = UIAlertAction(title: "OK", style: .default)
         errorAlert.addAction(dismissAction)
         self.present(errorAlert, animated: true)
+    }
+    
+    // Register User in Firebase Authentication. Returns AuthDataResult or throws error if unsuccessful.
+    private func createUserAsync(email:String, password:String) async throws -> AuthDataResult {
+        return try await withCheckedThrowingContinuation {continuation in
+            Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) {
+                (authResult,error) in
+                if let error = error as NSError? {
+                    continuation.resume(throwing: error) // TODO: How do we make this make sense
+                } else if let authResult = authResult {
+                    continuation.resume(returning: authResult)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred."])) // TODO: How do we make this make sense
+                }
+            }
+        }
+    }
+    
+    private func insertUserDataAsync(user: UserModel) async {
+        let db = Firestore.firestore()
+        
+        do {
+            try await db.collection("user").document().setData([
+                "email": user.email,
+                "username": user.username,
+            ])
+            print("Document successfully written!")
+        } catch {
+            // TODO: Remove successful user registration if document insertion fails
+            let errorText = "\(error.localizedDescription)"
+            self.handleAuthErrorAlerts(alertTitle: "User Document Insertion Error", errorText: errorText)
+            print("Error writing document: \(error)")
+        }
     }
 }
