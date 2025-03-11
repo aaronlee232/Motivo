@@ -78,7 +78,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
                 }
                 
                 let connections: [UserModel] = try await connectionsManager.fetchConnections(for: user.uid)
-                self.sections = organizeUsers(connections, favorites: user.favoriteUsers)
+                self.sections = organizeUsers(connections, favoriteUids: user.favoriteUsers)
                 self.tableView.reloadData()
             } catch {
                 print("Error loading connections: \(error.localizedDescription)")
@@ -87,13 +87,13 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         
     }
     
-    private func organizeUsers(_ users: [UserModel], favorites: [String]) -> [UserSection] {
-        let favoritesSet: Set<String> = Set(favorites)
+    private func organizeUsers(_ users: [UserModel], favoriteUids: [String]) -> [UserSection] {
+        let favoritesSet: Set<String> = Set(favoriteUids)
         var groupedUsers: [String: [UserModel]] = [:]
         var favoritesSectionList: [UserModel] = []
 
         for user in users {
-            if favoritesSet.contains(user.username) {
+            if favoritesSet.contains(user.uid) {
                 favoritesSectionList.append(user)
             } else {
                 let firstLetter = String(user.username.prefix(1)).uppercased()
@@ -114,6 +114,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
 
         return sections
     }
+
     
     // MARK: - Actions
     @objc func counterTapped(_ sender: UIButton) {
