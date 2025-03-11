@@ -93,7 +93,7 @@ class AuthenticationViewController: UIViewController {
     }
     
     // Handles action for Login, Create Account, and Forget Password button
-    @objc func handleActionButton() {
+    @objc private func handleActionButton() {
         switch screenType {
         case .login:
             // TODO: Complete input validation
@@ -130,7 +130,7 @@ class AuthenticationViewController: UIViewController {
                     let authResult = try await AuthManager.shared.registerAsync(email: emailText, password: passwordText)
                     
                     // Create user model and insert into user collections in db
-                    let newUser = UserModel(username: usernameText, email: emailText)
+                    let newUser = UserModel(uid: authResult.user.uid, username: usernameText, email: emailText)
                     try AuthManager.shared.insertUserDataAsync(user: newUser)
                     
                     print("User created:", authResult.user.uid)
@@ -160,7 +160,7 @@ class AuthenticationViewController: UIViewController {
     }
     
     // Handles switching between authentication screens
-    @objc func handleSwitchScreen() {
+    @objc private func handleSwitchScreen() {
         guard let window = UIApplication.shared.windows.first else { return }
     
         let newScreenType: AuthScreenType
@@ -180,7 +180,7 @@ class AuthenticationViewController: UIViewController {
     }
     
     // Handles forget password switch
-    @objc func handleForgetPasswordSwitchScreen() {
+    @objc private func handleForgetPasswordSwitchScreen() {
         guard let window = UIApplication.shared.windows.first else { return }
         
         let authVC = AuthenticationViewController(screenType: .forgotPassword)
