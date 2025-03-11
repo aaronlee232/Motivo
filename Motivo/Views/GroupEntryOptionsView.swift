@@ -39,16 +39,19 @@ class GroupEntryOptionsView: UIView {
         subtitleLabel.text = "Join groups with these interests"
         
         createNewGroupButton.layer.borderColor = UIColor.black.cgColor
+        createNewGroupButton.layer.borderWidth = 2
         createNewGroupButton.layer.cornerRadius = 8.0
         createNewGroupButton.setTitleColor(.systemBlue, for: .normal)
         createNewGroupButton.setTitle("Create New", for: .normal)
         
         joinRandomGroupButton.layer.borderColor = UIColor.black.cgColor
+        joinRandomGroupButton.layer.borderWidth = 2
         joinRandomGroupButton.layer.cornerRadius = 8.0
         joinRandomGroupButton.setTitleColor(.systemBlue, for: .normal)
         joinRandomGroupButton.setTitle("Join Random", for: .normal)
         
         joinExistingGroupButton.layer.borderColor = UIColor.black.cgColor
+        joinExistingGroupButton.layer.borderWidth = 2
         joinExistingGroupButton.layer.cornerRadius = 8.0
         joinExistingGroupButton.setTitleColor(.systemBlue, for: .normal)
         joinExistingGroupButton.setTitle("Join Group", for: .normal)
@@ -65,7 +68,8 @@ class GroupEntryOptionsView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate(
             [stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            // stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 50), // 50 pixels from top safe area
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40)
         ])

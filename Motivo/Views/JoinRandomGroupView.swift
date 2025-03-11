@@ -29,6 +29,10 @@ class JoinRandomGroupView: UIView {
         subtitleLabel.textAlignment = .center
         subtitleLabel.text = "Join groups with these interests"
         
+        confirmButton.layer.borderColor = UIColor.blue.cgColor
+        confirmButton.layer.borderWidth = 2
+        confirmButton.layer.cornerRadius = 8.0
+        confirmButton.setTitleColor(.systemBlue, for: .normal)
         confirmButton.setTitle("CONFIRM", for: .normal)
         
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel, confirmButton])
