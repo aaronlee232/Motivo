@@ -38,7 +38,7 @@ class HeaderView: UIView {
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        menuButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        menuButton.setImage(UIImage(systemName: "slider.horizontal.3"), for: .normal)
         menuButton.translatesAutoresizingMaskIntoConstraints = false
         menuButton.addTarget(self, action: #selector(headerMenuButtonTapped), for: .touchUpInside)
         

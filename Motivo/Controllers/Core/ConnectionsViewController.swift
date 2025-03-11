@@ -28,6 +28,11 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         setupConstraints()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
     // MARK: - UI Setup
     private func configureScreen() {
         // Set up Table View
@@ -46,7 +51,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     private func setupConstraints() {
         headerView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             // Header Constraints
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -158,6 +162,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         switch button {
         case .menu:
             // TODO: Add dropdown menu for "Hide People", "View Hidden"
+            print("Menu Tapped")
             break
         default:
             print("Missing handler for pressed Header Button. Add case implementation in didTapHeaderButton")
