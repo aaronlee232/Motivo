@@ -35,7 +35,6 @@ class ConnectionsManager {
 
         // Step 3: Fetch user details
         let users = try await fetchUsersByUids(userUids)
-        print(users)
         return users
     }
     
