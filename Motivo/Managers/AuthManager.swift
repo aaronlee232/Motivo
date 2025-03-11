@@ -58,7 +58,7 @@ class AuthManager {
     // Inserts instance of UserModel into the 'user' collection in Firestore
     func insertUserDataAsync(user: UserModel) throws {
         let db = Firestore.firestore()
-        let userDocument = db.collection("user").document()
+        let userDocument = db.collection("user").document(user.uid)
         
         do {
             try userDocument.setData(from: user)
@@ -70,5 +70,10 @@ class AuthManager {
 //            self.handleAuthAlerts(title: "User Document Insertion Error", message: errorText)
 //            print("Error writing document: \(error)")
         }
+    }
+    
+    func getCurrentUserAuthInstance () -> FirebaseAuth.User? {
+        guard let user = Auth.auth().currentUser else { return nil }
+        return user
     }
 }

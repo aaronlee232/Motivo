@@ -130,7 +130,7 @@ class AuthenticationViewController: UIViewController {
                     let authResult = try await AuthManager.shared.registerAsync(email: emailText, password: passwordText)
                     
                     // Create user model and insert into user collections in db
-                    let newUser = UserModel(username: usernameText, email: emailText)
+                    let newUser = UserModel(uid: authResult.user.uid, username: usernameText, email: emailText)
                     try AuthManager.shared.insertUserDataAsync(user: newUser)
                     
                     print("User created:", authResult.user.uid)

@@ -19,7 +19,7 @@ class MainTabBarViewController: UITabBarController {
         let taskVC = UINavigationController(rootViewController: TaskViewController())
         let chatVC = UINavigationController(rootViewController: ChatViewController())
         let homeVC = UINavigationController(rootViewController: HomeViewController())
-        let peopleVC = UINavigationController(rootViewController: PeopleViewController())
+        let peopleVC = UINavigationController(rootViewController: ConnectionsViewController())
         let profileVC = UINavigationController(rootViewController: ProfileViewController())
         
         // Set icons for navigation items (using SF Symbols)
