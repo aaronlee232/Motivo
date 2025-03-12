@@ -4,7 +4,7 @@
 //
 //  Created by Cooper Wilk on 3/11/25.
 //
-
+import UIKit
 
 // MARK: - Custom Habit Cell
 class HabitCell: UITableViewCell {
@@ -31,31 +31,49 @@ class HabitCell: UITableViewCell {
     }
     
     private func setupUI() {
+        // Configure fonts
         nameLabel.font = .boldSystemFont(ofSize: 16)
         streakLabel.font = .systemFont(ofSize: 14)
         progressLabel.font = .systemFont(ofSize: 14)
         categoryLabel.font = .italicSystemFont(ofSize: 14)
         groupIconLabel.font = .systemFont(ofSize: 16)
         
+        // Allow text wrapping for progress label to prevent cutoff
+        progressLabel.numberOfLines = 1
+        progressLabel.adjustsFontSizeToFitWidth = true
+        progressLabel.minimumScaleFactor = 0.8
+        
+        // Configure plus button
         plusButton.setTitle("+", for: .normal)
         plusButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
         plusButton.tintColor = .blue
         plusButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
         
-        statsPlaceholder.backgroundColor = .lightGray  // Placeholder section
+        // Configure stats placeholder (hidden by default)
+        statsPlaceholder.backgroundColor = .lightGray
         statsPlaceholder.layer.cornerRadius = 10
         statsPlaceholder.isHidden = true
         
+        // Create a horizontal stack for name, group icon, and streak
         let nameStack = UIStackView(arrangedSubviews: [nameLabel, groupIconLabel, streakLabel])
         nameStack.axis = .horizontal
         nameStack.spacing = 8
         nameStack.alignment = .leading
+        nameStack.distribution = .fillProportionally
         
-        let mainStack = UIStackView(arrangedSubviews: [nameStack, progressLabel, categoryLabel, statsPlaceholder])
+        // Main stack for compact view (no category)
+        let mainStack = UIStackView(arrangedSubviews: [nameStack, progressLabel])
         mainStack.axis = .vertical
         mainStack.spacing = 4
+        mainStack.alignment = .leading
         
-        let containerStack = UIStackView(arrangedSubviews: [mainStack, plusButton])
+        // Expanded stack (includes category & stats)
+        let expandedStack = UIStackView(arrangedSubviews: [mainStack, categoryLabel, statsPlaceholder])
+        expandedStack.axis = .vertical
+        expandedStack.spacing = 4
+        
+        // Final layout: content + plus button
+        let containerStack = UIStackView(arrangedSubviews: [expandedStack, plusButton])
         containerStack.axis = .horizontal
         containerStack.spacing = 8
         containerStack.alignment = .center
@@ -82,7 +100,12 @@ class HabitCell: UITableViewCell {
         progressLabel.text = "\(habit.completed) / \(habit.goal) \(habit.unit) \(habit.frequency)"
         categoryLabel.text = "Category: \(habit.category)"
         
-        statsPlaceholder.isHidden = !isExpanded  // Show stats section only in expanded mode
+        // Show category and stats only in expanded view
+        categoryLabel.isHidden = !isExpanded
+        statsPlaceholder.isHidden = !isExpanded
+        
+        // Gray out fully completed habits
+        contentView.alpha = habit.isCompleted ? 0.5 : 1.0
     }
     
     @objc private func plusButtonTapped() {
