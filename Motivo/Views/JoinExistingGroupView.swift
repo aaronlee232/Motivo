@@ -79,7 +79,6 @@ class JoinExistingGroupView: UIView {
             inviteCodeTextField.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
             
             // Confirm Button Constraints
-            // confirmButton.topAnchor.constraint(equalTo: inviteCodeTextField.bottomAnchor, constant: 50),
             confirmButton.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
             confirmButton.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
             confirmButton.bottomAnchor.constraint(equalTo: viewContainer.safeAreaLayoutGuide.bottomAnchor, constant: -50),
