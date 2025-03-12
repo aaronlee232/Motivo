@@ -6,24 +6,8 @@
 //
 import UIKit
 
-// MARK: - Habit Model
-struct Habit {
-    let name: String
-    let isGroupHabit: Bool
-    let category: String
-    var streak: Int
-    var completed: Int
-    let goal: Int
-    let unit: String
-    let frequency: String
-    
-    // Computed property to check if a habit is fully completed
-    var isCompleted: Bool {
-        return completed >= goal
-    }
-}
 
-// MARK: - Sample Data
+// TODO: Remove and connect to Firebase
 class HabitData {
     static var habits: [Habit] = [
         Habit(name: "Exercise", isGroupHabit: true, category: "Exercise", streak: 5, completed: 1, goal: 3, unit: "Times", frequency: "Today"),
@@ -36,52 +20,11 @@ class HabitData {
     ]
 }
 
-// MARK: - ViewModel
-class HabitsViewModel {
-    private(set) var habits: [Habit] = []
-    
-    init() {
-        loadHabits()
-    }
-    
-    func loadHabits() {
-        let selectedCategories = UserDefaults.standard.array(forKey: "selectedCategories") as? [String] ?? ["Exercise", "Nutrition", "Productivity", "Social", "Finance"]
-        
-        habits = HabitData.habits
-            .filter { selectedCategories.contains($0.category) }
-            .sorted { !$0.isCompleted && $1.isCompleted }
-    }
-    
-    func updateHabit(at index: Int) {
-        guard index < habits.count else { return }
-        
-        // If task reaches goal on this press, increment streak
-        if habits[index].completed == habits[index].goal - 1 {
-            habits[index].streak += 1
-        }
-        
-        habits[index].completed += 1
-        sortHabits()
-    }
-    
-    func sortHabits() {
-        habits.sort { !$0.isCompleted && $1.isCompleted }
-    }
-    
-    func numberOfHabits() -> Int {
-        return habits.count
-    }
-    
-    func habit(at index: Int) -> Habit {
-        return habits[index]
-    }
-}
-
 
 class TaskViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private let tableView = UITableView()
-    private var viewModel = HabitsViewModel()
+    private var viewModel = HabitsView()
     private var isExpandedView = false // Toggle for expanded/compact views
     
     override func viewDidLoad() {
