@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsViewController: UIViewController {
+class TaskSettingsViewController: UIViewController {
     
     // UI Elements
     private let notificationsToggle = UISwitch()

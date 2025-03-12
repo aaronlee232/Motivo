@@ -71,7 +71,7 @@ class TaskViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // MARK: - Button Actions
     @objc private func changeViewTapped() {
-        let settingsVC = SettingsViewController()
+        let settingsVC = TaskSettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: true)
     }
 

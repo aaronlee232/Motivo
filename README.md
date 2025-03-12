@@ -2,7 +2,14 @@
 ### Updated on: 2025/03/12
 ### Names: Aaron Lee, Cooper Wilk, Arisyia Wong, John Bukoski
 
-#### Disclaimer:
+#### Disclaimer:  
+For testing purposes, use the following email and password to show a populated connections list  
+Email: test@gmail.com  
+Password: 123456  
+
+Creating account and forget password works, but the populated connections list only works for test user (test@gmail.com) since the social functionality is not fully implemented yet.
+
+Group Invite Code: It works if user provides the group ID from Firebase. However, we still need to implement retrieving the group code inside the app.
 
 - - -
 **Contributions**  
@@ -24,6 +31,7 @@ Aaron Lee & Arisyia Wong (60%)
 Aaron Lee (10%)
 - Connection screens
     - Created list of contacts, using Firebase data
+    - Created generic header view
  
 Cooper Wilk (30%)
 - Habit screens
@@ -37,7 +45,7 @@ John Bukoski (0%)
 
 
 - - -
-**Deviations**:
+**Deviations**  
 Join Random Group Implementation:
 - The protocol / delegate is set up, but the user cannot join a random group yet. Aaron and Arisyia will implement this in the beta deliverable
 
