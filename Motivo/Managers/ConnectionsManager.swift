@@ -29,10 +29,12 @@ class ConnectionsManager {
         // Step 1: Get group IDs where the user is a member
         let groupIds = try await fetchUserGroupIds(uid: uid)
         guard !groupIds.isEmpty else { return [] } // No groups found
+        print("test user groups: \(groupIds)")
 
         // Step 2: Get user UIDs from those groups
         let userUids = try await fetchUsersFromGroups(groupIds: groupIds, excluding: uid)
         guard !userUids.isEmpty else { return [] } // No connected users
+        print("other user ids in groups: \(userUids)")
 
         // Step 3: Fetch user details
         let users = try await fetchUsersByUids(userUids)

@@ -23,13 +23,14 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        loadConnections()
+        
         configureScreen()
         setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        loadConnections()
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
