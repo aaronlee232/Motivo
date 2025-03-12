@@ -23,7 +23,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        loadConnections()
+        
         configureScreen()
         setupConstraints()
     }
@@ -31,6 +31,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        loadConnections()
     }
     
     // MARK: - UI Setup
@@ -71,31 +72,37 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     func loadConnections() {
         Task {
             do {
+                // Retrieve logged in user's auth instance
                 guard let userAuthInstance = AuthManager.shared.getCurrentUserAuthInstance() else {
                     print("Error: No authenticated user.")
                     return
                 }
                 
+                // Use logged in user's uid to find their UserModel in FireStore
                 guard let user: UserModel = try await connectionsManager.fetchUser(uid: userAuthInstance.uid) else {
                     print("Error: Failed to fetch user.")
                     return
                 }
                 
+                // Fetch the list of connected UserModels that are connected to the user through a group
                 let connections: [UserModel] = try await connectionsManager.fetchConnections(for: user.uid)
                 self.sections = organizeUsers(connections, favoriteUids: user.favoriteUsers)
                 self.tableView.reloadData()
             } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "We couldn't retrieve your connections.")
                 print("Error loading connections: \(error.localizedDescription)")
             }
         }
         
     }
     
+    // Organize a list of users into sections alphabetically and separate "favorite" users into their own section.
     private func organizeUsers(_ users: [UserModel], favoriteUids: [String]) -> [UserSection] {
         let favoritesSet: Set<String> = Set(favoriteUids)
         var groupedUsers: [String: [UserModel]] = [:]
         var favoritesSectionList: [UserModel] = []
 
+        // Divide users into "favorites" and "grouped users"
         for user in users {
             if favoritesSet.contains(user.uid) {
                 favoritesSectionList.append(user)
@@ -104,14 +111,16 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
                 groupedUsers[firstLetter, default: []].append(user)
             }
         }
-
+        // Sort grouped sections alphabetically based on username
         let sortedSections = groupedUsers.keys.sorted()
+        
+        // Instatiate sections to be empty
         var sections: [UserSection] = []
-
+        
+        // Populate sections with Favorites and alphabetically sorted user groups
         if !favoritesSectionList.isEmpty {
             sections.append(UserSection(sectionTitle: "Favorites", users: favoritesSectionList))
         }
-
         for key in sortedSections {
             sections.append(UserSection(sectionTitle: key, users: groupedUsers[key]!))
         }
@@ -131,6 +140,8 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         // TODO: Add segue to camera for photo proof of completion
     }
     
+    // TODO: Add an action to the UserCell so that tapping on it will bring the current user to a profile screen of the tapped user
+    
     // MARK: - UITableViewDelegate & UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
@@ -145,7 +156,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //TODO: Implement
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath) as! UserCell
         let user = sections[indexPath.section].users[indexPath.row]
 

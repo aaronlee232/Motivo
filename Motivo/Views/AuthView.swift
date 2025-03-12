@@ -72,7 +72,7 @@ class AuthView: UIView {
         switchScreenLabel.font = UIFont.systemFont(ofSize: 14)
         switchScreenLabel.setContentHuggingPriority(.required, for: .horizontal)
         switchScreenLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-//        switchScreenLabel.backgroundColor = .red
+        switchScreenLabel.backgroundColor = .red
         
         // Switch Screen Button
         switchScreenButton.translatesAutoresizingMaskIntoConstraints = false
@@ -80,18 +80,20 @@ class AuthView: UIView {
         switchScreenButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         switchScreenButton.setContentHuggingPriority(.required, for: .horizontal)
         switchScreenButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-//        switchScreenButton.backgroundColor = .green
+        switchScreenButton.backgroundColor = .green
         
         // Combine Switch Screen Button and Label into one prompt stack
         let switchScreenContainer = UIView()
         switchScreenContainer.translatesAutoresizingMaskIntoConstraints = false
-//        switchScreenContainer.backgroundColor = .systemBlue
+        switchScreenContainer.backgroundColor = .systemBlue
         switchScreenContainer.addSubview(switchScreenLabel)
         switchScreenContainer.addSubview(switchScreenButton)
         NSLayoutConstraint.activate([
             switchScreenLabel.centerYAnchor.constraint(equalTo: switchScreenContainer.centerYAnchor),
             switchScreenButton.centerYAnchor.constraint(equalTo: switchScreenContainer.centerYAnchor),
-            switchScreenButton.leadingAnchor.constraint(equalTo: switchScreenLabel.trailingAnchor)
+            switchScreenLabel.leadingAnchor.constraint(equalTo: switchScreenContainer.leadingAnchor),
+            switchScreenButton.leadingAnchor.constraint(equalTo: switchScreenLabel.trailingAnchor),
+            switchScreenButton.trailingAnchor.constraint(equalTo: switchScreenContainer.trailingAnchor)
         ])
         
         // Add Subviews
