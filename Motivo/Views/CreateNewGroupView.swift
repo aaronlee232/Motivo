@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol GroupEntrySelectionViewDelegate:GroupEntrySelectionViewController {
+protocol CreateNewGroupViewDelegate:GroupEntrySelectionViewController {
     func didTouchCreateNewGroupConfirmButton()
 }
 
@@ -29,7 +29,7 @@ class CreateNewGroupView: UIView {
     let confirmButton = UIButton()
     var selectedGroupCategories:[String] = []
     var selectedSegValue:String
-    var delegate:GroupEntrySelectionViewDelegate?
+    var delegate:CreateNewGroupViewDelegate?
     
     override init(frame: CGRect) {
         self.visibilitySegCtrl = UISegmentedControl(items: items)

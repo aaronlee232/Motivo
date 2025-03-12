@@ -14,7 +14,7 @@ enum GroupEntrySelectionType {
 }
 
 // This handles the screens for create new, join existing, and join random groups
-class GroupEntrySelectionViewController: UIViewController, GroupEntrySelectionViewDelegate {
+class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDelegate, JoinExistingGroupViewDelegate, JoinRandomGroupViewDelegate {
     
     private let createNewGroupView = CreateNewGroupView()
     private let joinExistingGroupView = JoinExistingGroupView()
@@ -40,7 +40,8 @@ class GroupEntrySelectionViewController: UIViewController, GroupEntrySelectionVi
         setupConstraints()
         configureScreen()
         createNewGroupView.delegate = self
-        // TODO: other delegates
+        joinExistingGroupView.delegate = self
+        joinRandomGroupView.delegate = self
     }
     
     private func setupConstraints() {
@@ -103,7 +104,6 @@ class GroupEntrySelectionViewController: UIViewController, GroupEntrySelectionVi
                 
                 // adds to firestore for both group and group membership async
                 let groupID = try await groupMatchingManager.insertGroupDataAsync(group: group)
-                print("groupID: \(groupID)")
                 let groupMembership = GroupMembershipModel(groupId: groupID, userUid: userAuthInstance.uid)
                 try await groupMatchingManager.insertGroupMembership(membership: groupMembership)
                 AlertUtils.shared.showAlert(self, title: "Debug: Group \(groupName) Created", message: "This is a debug message")
@@ -111,5 +111,39 @@ class GroupEntrySelectionViewController: UIViewController, GroupEntrySelectionVi
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to create a new group.")
             }
         }
+    }
+    
+    func didTouchJoinExistingGroupConfirmButton() {
+        // group invite code = groupID
+        Task {
+            guard let groupId = joinExistingGroupView.inviteCodeTextField.text, !joinExistingGroupView.inviteCodeTextField.text!.isEmpty else {
+                AlertUtils.shared.showAlert(self, title: "Empty group invite code", message: "Please enter a valid group invite code")
+                return
+            }
+            do {
+                guard let userAuthInstance = AuthManager.shared.getCurrentUserAuthInstance() else {
+                    AlertUtils.shared.showAlert(self, title: "User not valid", message: "User not logged in")
+                    return
+                }
+                guard let verifiedGroup = try await groupMatchingManager.fetchGroup(groupId: groupId) else {
+                    AlertUtils.shared.showAlert(self, title: "Invalid group invite code", message: "Please enter a valid group invite code")
+                    return
+                }
+                guard try await !groupMatchingManager.isMemberOfGroup(with: verifiedGroup.id!, uid: userAuthInstance.uid) else {
+                    AlertUtils.shared.showAlert(self, title: "Already in group", message: "Please enter a different group invite code")
+                    return
+                }
+                let groupMembership = GroupMembershipModel(groupId: verifiedGroup.id!, userUid: userAuthInstance.uid)
+                try await groupMatchingManager.insertGroupMembership(membership: groupMembership)
+                AlertUtils.shared.showAlert(self, title: "Debug: Group Membership created", message: "This is a debug message")
+                joinExistingGroupView.inviteCodeTextField.text = nil
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to join group specified")
+            }
+        }
+    }
+    
+    func didTouchJoinRandomGroupConfirmButton() {
+        return
     }
 }

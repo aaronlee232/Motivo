@@ -7,11 +7,16 @@
 
 import UIKit
 
+protocol JoinRandomGroupViewDelegate:GroupEntrySelectionViewController {
+    func didTouchJoinRandomGroupConfirmButton()
+}
+
 class JoinRandomGroupView: UIView {
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     // TODO: list of buttons of group categories
     let confirmButton = UIButton()
+    var delegate:JoinRandomGroupViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,6 +39,7 @@ class JoinRandomGroupView: UIView {
         confirmButton.layer.cornerRadius = 8.0
         confirmButton.setTitleColor(.systemBlue, for: .normal)
         confirmButton.setTitle("CONFIRM", for: .normal)
+        confirmButton.addTarget(self, action: #selector(handleConfirmButton), for: .touchUpInside)
         
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel, confirmButton])
         stackView.axis = .vertical
@@ -47,5 +53,9 @@ class JoinRandomGroupView: UIView {
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40)
         ])
+    }
+    
+    @objc func handleConfirmButton() {
+        delegate?.didTouchJoinRandomGroupConfirmButton()
     }
 }
