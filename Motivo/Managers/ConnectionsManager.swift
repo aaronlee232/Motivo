@@ -26,17 +26,17 @@ class ConnectionsManager {
     
     // Uses a User's UID to fetch other related UserModels that are in shared group(s) with the user in FireStore.
     func fetchConnections(for uid: String) async throws -> [UserModel] {
-        // Step 1: Get group IDs where the user is a member
+        // Get group IDs where the user is a member
         let groupIds = try await fetchUserGroupIds(uid: uid)
         guard !groupIds.isEmpty else { return [] } // No groups found
         print("test user groups: \(groupIds)")
 
-        // Step 2: Get user UIDs from those groups
+        // Get user UIDs from those groups
         let userUids = try await fetchUsersFromGroups(groupIds: groupIds, excluding: uid)
         guard !userUids.isEmpty else { return [] } // No connected users
         print("other user ids in groups: \(userUids)")
 
-        // Step 3: Fetch user details
+        // Fetch user details
         let users = try await fetchUsersByUids(userUids)
         return users
     }
@@ -47,7 +47,7 @@ class ConnectionsManager {
             .whereField("userUid", isEqualTo: uid)
             .getDocuments()
 
-        let groupIds = snapshot.documents.compactMap { $0["groupId"] as? String }
+        let groupIds = snapshot.documents.compactMap { document in document["groupId"] as? String }
         return groupIds
     }
     

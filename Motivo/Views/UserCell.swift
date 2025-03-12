@@ -10,7 +10,7 @@ import UIKit
 class UserCell: UITableViewCell {
     
     let nameLabel = UILabel()
-    let counterButton = UIButton(type: .system)
+    let counterButton = UIButton(type: .system)  // Tracks number of photos waiting verification
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
