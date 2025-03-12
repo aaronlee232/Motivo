@@ -20,9 +20,11 @@ Aaron Lee & Arisyia Wong (60%)
     - Implemented functionality for Create New Group and Join Existing Group
     - Implemented GroupModel and GroupMembershipModel
     - Created the Utilities folder with AlertUtils.swift for handling user error and debugging alerts
+
 Aaron Lee (10%)
 - Connection screens
     - Created list of contacts, using Firebase data
+ 
 Cooper Wilk (30%)
 - Habit screens
     - Created Habit Model, Habits View Model, Habits Controller,
@@ -30,8 +32,9 @@ Cooper Wilk (30%)
     - Created Settings View Controller to change view settings, display only selected categories
     - Created Add Task Controller, add new task to Stub Data (name, units, frequency, publicity, category), dynamically display new task on the task page
     - Implement Alternate View detailed view of the task page with placeholders for heatmap and data visualization
+  
 John Bukoski (0%)
-- 
+
 
 - - -
 **Deviations**:
