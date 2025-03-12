@@ -4,9 +4,9 @@
 //
 //  Created by Cooper Wilk on 3/12/25.
 //
+import UIKit
 
-
-class HabitsViewModel {
+class HabitsView {
     private(set) var habits: [Habit] = []
     
     init() {
