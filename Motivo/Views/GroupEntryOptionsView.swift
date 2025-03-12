@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol GroupEntryOptionsViewDelegate:AnyObject {
+protocol GroupEntryOptionsViewDelegate:GroupEntryOptionsViewController {
     func didTouchJoinExistingGroupButton()
     func didTouchJoinRandomGroupButton()
     func didTouchCreateGroupButton()

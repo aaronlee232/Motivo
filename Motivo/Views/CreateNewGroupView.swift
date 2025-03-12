@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol GroupEntrySelectionViewDelegate:GroupEntrySelectionViewController {
+    func didTouchCreateNewGroupConfirmButton()
+}
+
 class CreateNewGroupView: UIView {
     
     let titleLabel = UILabel()
@@ -25,6 +29,7 @@ class CreateNewGroupView: UIView {
     let confirmButton = UIButton()
     var selectedGroupCategories:[String] = []
     var selectedSegValue:String
+    var delegate:GroupEntrySelectionViewDelegate?
     
     override init(frame: CGRect) {
         self.visibilitySegCtrl = UISegmentedControl(items: items)
@@ -216,9 +221,7 @@ class CreateNewGroupView: UIView {
     }
     
     @objc func handleConfirmButton() {
-        print("Selected Group Categories: \(selectedGroupCategories.joined(separator: " "))")
-        print("Selected Segment: \(selectedSegValue)")
-        print("Group Name Text Field: \(groupNameTextField.text ?? "No text in there")")
+        delegate?.didTouchCreateNewGroupConfirmButton()
     }
     
     @objc func segmentChanged(sender: UISegmentedControl) {

@@ -7,6 +7,7 @@
 
 import UIKit
 
+// This handles options screen for group matching (create new, join existing, join random)
 class GroupEntryOptionsViewController: UIViewController, GroupEntryOptionsViewDelegate {
 
     private let groupView = GroupEntryOptionsView()

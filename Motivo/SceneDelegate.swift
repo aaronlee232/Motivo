@@ -33,6 +33,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         observeAuthState()
     }
     
+    // Handles directing user to login page or main content view pages
     func observeAuthState() {
         authListenerHandle = Auth.auth().addStateDidChangeListener() {
             [weak self]  (auth,user) in

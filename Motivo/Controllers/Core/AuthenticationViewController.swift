@@ -105,7 +105,7 @@ class AuthenticationViewController: UIViewController {
                     let authData = try await AuthManager.shared.signInAsync(email: emailText, password: passwordText)
                 } catch {
                     let errorText = "\(error.localizedDescription)"
-                    self.showAlert(title: "Login Failed", message: errorText)
+                    AlertUtils.shared.showAlert(self, title: "Login Failed", message: errorText)
                 }
             }
             
@@ -120,7 +120,7 @@ class AuthenticationViewController: UIViewController {
             
             // Password Match Validation
             guard passwordText == verifyPasswordText else {
-                self.showAlert(title: "Registration Failed", message: "Passwords do not match.")
+                AlertUtils.shared.showAlert(self, title: "Registration Failed", message: "Passwords do not match.")
                 return
             }
             
@@ -136,24 +136,24 @@ class AuthenticationViewController: UIViewController {
                     print("User created:", authResult.user.uid)
                 } catch {
                     let errorText = "\(error.localizedDescription)"
-                    self.showAlert(title: "Registration Failed", message: errorText)
+                    AlertUtils.shared.showAlert(self, title: "Registration Failed", message: errorText)
                 }
             }
             
             
         case .forgotPassword:
             guard let emailText = authView.emailTextField.text else {
-                self.showAlert(title: "Registration Failed", message: "Passwords do not match.")
+                AlertUtils.shared.showAlert(self, title: "Registration Failed", message: "Passwords do not match.")
                 return
             }
             
             Task {
                 do {
                     try await AuthManager.shared.resetPassword(email: emailText)
-                    self.showAlert(title: "Password Reset", message: "A password recovery email has been sent with instructions to reset your password.")
+                    AlertUtils.shared.showAlert(self, title: "Password Reset", message: "A password recovery email has been sent with instructions to reset your password.")
                 } catch {
                     let errorText = "\(error.localizedDescription)"
-                    self.showAlert(title: "Password Reset Failed", message: errorText)
+                    AlertUtils.shared.showAlert(self, title: "Password Reset Failed", message: errorText)
                 }
             }
         }
@@ -190,13 +190,4 @@ class AuthenticationViewController: UIViewController {
         window.rootViewController = authVC
         window.makeKeyAndVisible()
     }
-    
-    // Creates alert based on title and message
-    private func showAlert(title:String, message:String) {
-        let errorAlert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "OK", style: .default)
-        errorAlert.addAction(dismissAction)
-        self.present(errorAlert, animated: true)
-    }
-    
 }

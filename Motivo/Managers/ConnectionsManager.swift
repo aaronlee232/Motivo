@@ -5,6 +5,7 @@
 //  Created by Aaron Lee on 3/11/25.
 //
 
+// TODO: one screen for hiding / showing contacts, having local data and updating in firebase
 import FirebaseFirestore
 
 class ConnectionsManager {
