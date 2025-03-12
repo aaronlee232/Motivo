@@ -1,10 +1,17 @@
+//
+//  AddTaskViewController.swift
+//  Motivo
+//
+//  Created by Cooper Wilk on 3/10/25.
+//
+
 import UIKit
 
 class AddTaskViewController: UIViewController {
     
     // UI Elements
     private let visibilityLabel = UILabel()
-    private let visibilitySlider = UISlider()
+    private let visibilitySegmentedControl = UISegmentedControl(items: ["Public", "Private"])
     
     private let nameTextField = UITextField()
     private let unitTextField = UITextField()
@@ -29,11 +36,9 @@ class AddTaskViewController: UIViewController {
     }
     
     private func setupUI() {
-        // Visibility Slider
-        visibilityLabel.text = "Visibility: Public"
-        visibilitySlider.minimumValue = 0
-        visibilitySlider.maximumValue = 1
-        visibilitySlider.addTarget(self, action: #selector(visibilityChanged), for: .valueChanged)
+        // Visibility Selector
+        visibilityLabel.text = "Visibility"
+        visibilitySegmentedControl.selectedSegmentIndex = 0
         
         // Text Fields
         nameTextField.placeholder = "Enter habit name"
@@ -58,7 +63,7 @@ class AddTaskViewController: UIViewController {
         
         // Layout
         let stackView = UIStackView(arrangedSubviews: [
-            visibilityLabel, visibilitySlider,
+            visibilityLabel, visibilitySegmentedControl,
             nameTextField, unitTextField,
             goalTextField, frequencySegmentedControl,
             categoryLabel, categoryStackView,
@@ -78,10 +83,6 @@ class AddTaskViewController: UIViewController {
     }
     
     // MARK: - Actions
-    @objc private func visibilityChanged() {
-        visibilityLabel.text = visibilitySlider.value < 0.5 ? "Visibility: Public" : "Visibility: Private"
-    }
-    
     @objc private func categoryTapped(_ sender: UIButton) {
         guard let category = sender.titleLabel?.text else { return }
         if selectedCategories.contains(category) {
@@ -101,10 +102,11 @@ class AddTaskViewController: UIViewController {
         }
         
         let frequency = frequencySegmentedControl.titleForSegment(at: frequencySegmentedControl.selectedSegmentIndex) ?? "Daily"
+        let isGroupHabit = visibilitySegmentedControl.selectedSegmentIndex == 0 // Public = Group Habit
         
         let newHabit = Habit(
             name: name,
-            isGroupHabit: false,
+            isGroupHabit: isGroupHabit,
             category: selectedCategories.joined(separator: ", "),
             streak: 0,
             completed: 0,
@@ -113,6 +115,8 @@ class AddTaskViewController: UIViewController {
             frequency: frequency
         )
         
+        // Add new task to HabitData so it's persistent
+        HabitData.habits.append(newHabit)
         HabitManager.shared.addHabit(newHabit)
         
         navigationController?.popViewController(animated: true)

@@ -1,3 +1,11 @@
+//
+//  HabitManager.swift
+//  Motivo
+//
+//  Created by Cooper Wilk on 3/10/25.
+//
+
+
 import Foundation
 
 class HabitManager {
