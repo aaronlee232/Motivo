@@ -47,7 +47,7 @@ John Bukoski (0%)
 - - -
 **Deviations**  
 Join Random Group Implementation:
-- The protocol / delegate is set up, but the user cannot join a random group yet. Aaron and Arisyia will implement this in the beta deliverable
+- The confirm buttons for join random screen is set up, but the user cannot join a random group yet. Aaron and Arisyia will implement this in the beta deliverable
 
 Habit View Data:
 - Habit data is still gathered from STUB data right now, it needs to be hooked up to the firebase in Beta.
