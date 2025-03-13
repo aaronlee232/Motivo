@@ -85,7 +85,8 @@ class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDel
     }
     
     func didTouchCreateNewGroupConfirmButton() {
-        guard let groupName = createNewGroupView.groupNameTextField.text else {
+        guard let groupName = createNewGroupView.groupNameTextField.text,
+              !createNewGroupView.groupNameTextField.text!.isEmpty else {
             AlertUtils.shared.showAlert(self, title: "No group name", message: "Enter a group name in the text field above")
             return
         }
