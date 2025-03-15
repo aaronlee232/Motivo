@@ -174,8 +174,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
             // TODO: Add dropdown menu for "Hide People", "View Hidden"
             print("Menu Tapped")
             break
-        default:
-            print("Missing handler for pressed Header Button. Add case implementation in didTapHeaderButton")
         }
     }
 

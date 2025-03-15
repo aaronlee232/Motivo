@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if Auth.auth().currentUser != nil {
             window?.rootViewController = MainTabBarViewController()
         } else {
-            window?.rootViewController = AuthenticationViewController(screenType: .login)
+            window?.rootViewController = AuthFlowViewController()
         }
         
         window?.makeKeyAndVisible()
@@ -43,7 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             if user != nil {
                 newRootVC = MainTabBarViewController()
             } else {
-                newRootVC = AuthenticationViewController(screenType: .login)
+                newRootVC = AuthFlowViewController()
             }
             
             self.switchRootViewController(newRootViewController: newRootVC)

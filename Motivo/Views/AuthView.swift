@@ -8,7 +8,7 @@
 import UIKit
 
 class AuthView: UIView {
-    // TODO: Add logo element
+    let logoImageView = UIImageView()
     let titleLabel = UILabel() // Register, Login, Forget Password
     let subtitleLabel = UILabel()
     let usernameTextField = UITextField()
@@ -32,90 +32,102 @@ class AuthView: UIView {
     
     // Sets common and unchanging attributes for subViews
     private func setupUI() {
+        // Logo Image
+        logoImageView.image = UIImage(systemName: "person.circle.fill") // SF Symbol as a placeholder
+        logoImageView.tintColor = .gray
+        logoImageView.contentMode = .scaleAspectFill
+        logoImageView.clipsToBounds = true
+        logoImageView.layer.cornerRadius = 75 // 150px / 2 to make it circular
+        addSubview(logoImageView)
+        
         // Title
         titleLabel.textAlignment = .center
-        // titleLabel.font
+        addSubview(titleLabel)
         
         // Subtitle
         subtitleLabel.textAlignment = .center
+        addSubview(subtitleLabel)
         
-        // Username Text Field
+        // Input Fields
         usernameTextField.placeholder = "Username"
-        // usernameTextField.borderStyle
-        
-        // Email Text Field
         emailTextField.placeholder = "Email"
-        // emailTextField.borderStyle
-        
-        // Password Text Field
         passwordTextField.placeholder = "Password"
         passwordTextField.isSecureTextEntry = true
-        // passwordTextField.borderStyle
-        
-        // Verify Password Text Field
         verifyPasswordTextField.placeholder = "Verify Password"
         verifyPasswordTextField.isSecureTextEntry = true
-        // verifyPasswordTextField.borderStyle
+        
+        let inputFieldStackView = UIStackView(arrangedSubviews: [usernameTextField, emailTextField, passwordTextField, verifyPasswordTextField])
+        inputFieldStackView.axis = .vertical
+        inputFieldStackView.distribution = .fillEqually
+        inputFieldStackView.spacing = 12
+        addSubview(inputFieldStackView)
         
         // Action Button
         actionButton.backgroundColor = .systemRed
         actionButton.setTitleColor(.white, for: .normal)
         actionButton.layer.cornerRadius = 8
+        addSubview(actionButton)
         
         // Forget Password Button
         forgetPasswordButton.setTitleColor(.systemRed, for: .normal)
         forgetPasswordButton.setTitle("Forget Password?", for: .normal)
+        forgetPasswordButton.titleLabel?.textAlignment = .center
+        addSubview(forgetPasswordButton)
         
-        
-        // SwitchScreen Label
-        switchScreenLabel.translatesAutoresizingMaskIntoConstraints = false
+        // SwitchScreen Prompt
         switchScreenLabel.font = UIFont.systemFont(ofSize: 14)
         switchScreenLabel.setContentHuggingPriority(.required, for: .horizontal)
         switchScreenLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        switchScreenLabel.backgroundColor = .red
         
-        // Switch Screen Button
-        switchScreenButton.translatesAutoresizingMaskIntoConstraints = false
         switchScreenButton.setTitleColor(.systemRed, for: .normal)
         switchScreenButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         switchScreenButton.setContentHuggingPriority(.required, for: .horizontal)
         switchScreenButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-        switchScreenButton.backgroundColor = .green
         
-        // Combine Switch Screen Button and Label into one prompt stack
-        let switchScreenContainer = UIView()
-        switchScreenContainer.translatesAutoresizingMaskIntoConstraints = false
-        switchScreenContainer.backgroundColor = .systemBlue
-        switchScreenContainer.addSubview(switchScreenLabel)
-        switchScreenContainer.addSubview(switchScreenButton)
-        NSLayoutConstraint.activate([
-            switchScreenLabel.centerYAnchor.constraint(equalTo: switchScreenContainer.centerYAnchor),
-            switchScreenButton.centerYAnchor.constraint(equalTo: switchScreenContainer.centerYAnchor),
-            switchScreenLabel.leadingAnchor.constraint(equalTo: switchScreenContainer.leadingAnchor),
-            switchScreenButton.leadingAnchor.constraint(equalTo: switchScreenLabel.trailingAnchor),
-            switchScreenButton.trailingAnchor.constraint(equalTo: switchScreenContainer.trailingAnchor)
-        ])
+        let switchScreenContainer = UIStackView(arrangedSubviews: [switchScreenLabel, switchScreenButton])
+        switchScreenContainer.axis = .horizontal
+        switchScreenContainer.alignment = .center
+        switchScreenContainer.distribution = .fillProportionally
         
-        // Add Subviews
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel, usernameTextField, emailTextField, passwordTextField, verifyPasswordTextField, actionButton, forgetPasswordButton, switchScreenContainer])
-        stackView.axis = .vertical
-        stackView.spacing = 15  // TODO: look into if this conflicts with constraints
-        addSubview(stackView)
+        let switchScreenContainerOuter = UIStackView(arrangedSubviews: [switchScreenContainer])
+        addSubview(switchScreenContainerOuter)
 
-        // Auto Layout
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        // Enable Auto Layout
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        inputFieldStackView.translatesAutoresizingMaskIntoConstraints = false
+        actionButton.translatesAutoresizingMaskIntoConstraints = false
+        forgetPasswordButton.translatesAutoresizingMaskIntoConstraints = false
+        switchScreenContainerOuter.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Define Constraints
         NSLayoutConstraint.activate([
-            // This ensures the container takes the height of the tallest subview
-            switchScreenContainer.topAnchor.constraint(equalTo: switchScreenLabel.topAnchor),
-            switchScreenContainer.bottomAnchor.constraint(equalTo: switchScreenLabel.bottomAnchor),
-            switchScreenContainer.leadingAnchor.constraint(equalTo: switchScreenLabel.leadingAnchor),
-            switchScreenContainer.trailingAnchor.constraint(equalTo: switchScreenButton.trailingAnchor),
-            switchScreenContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
+            logoImageView.widthAnchor.constraint(equalToConstant: 150),
+            logoImageView.heightAnchor.constraint(equalToConstant: 150),
+            logoImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            logoImageView.topAnchor.constraint(equalTo: topAnchor, constant: 60),
             
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40)
+            titleLabel.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 40),
+            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            subtitleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            
+            inputFieldStackView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 60),
+            inputFieldStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            inputFieldStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            actionButton.topAnchor.constraint(equalTo: inputFieldStackView.bottomAnchor, constant: 24),
+            actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            actionButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            forgetPasswordButton.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: 24),
+            forgetPasswordButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            forgetPasswordButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            switchScreenContainerOuter.centerXAnchor.constraint(equalTo: centerXAnchor),
+            switchScreenContainerOuter.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
         ])
     }
 }

@@ -41,10 +41,10 @@ class AuthenticationViewController: UIViewController {
     private func setupConstraints() {
         authView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            authView.topAnchor.constraint(equalTo: view.topAnchor),
-            authView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            authView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            authView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            authView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            authView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            authView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            authView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -102,7 +102,7 @@ class AuthenticationViewController: UIViewController {
             
             Task {
                 do {
-                    let authData = try await AuthManager.shared.signInAsync(email: emailText, password: passwordText)
+                    _ = try await AuthManager.shared.signInAsync(email: emailText, password: passwordText)
                 } catch {
                     let errorText = "\(error.localizedDescription)"
                     AlertUtils.shared.showAlert(self, title: "Login Failed", message: errorText)
@@ -161,7 +161,7 @@ class AuthenticationViewController: UIViewController {
     
     // Handles switching between authentication screens
     @objc private func handleSwitchScreen() {
-        guard let window = UIApplication.shared.windows.first else { return }
+        guard let parentVC = self.parent as? AuthFlowViewController else { return }
     
         let newScreenType: AuthScreenType
         switch self.screenType {
@@ -171,23 +171,12 @@ class AuthenticationViewController: UIViewController {
             newScreenType = .login
         }
 
-        let authVC = AuthenticationViewController(screenType: newScreenType)
-        authVC.modalPresentationStyle = .fullScreen
-        
-        // Swap the root view controller (instant switch, no modal stacking)
-        window.rootViewController = authVC
-        window.makeKeyAndVisible()
+        parentVC.switchTo(screenType: newScreenType)
     }
     
     // Handles forget password switch
     @objc private func handleForgetPasswordSwitchScreen() {
-        guard let window = UIApplication.shared.windows.first else { return }
-        
-        let authVC = AuthenticationViewController(screenType: .forgotPassword)
-        authVC.modalPresentationStyle = .fullScreen
-        
-        // Swap the root view controller (instant switch, no modal stacking)
-        window.rootViewController = authVC
-        window.makeKeyAndVisible()
+        guard let parentVC = self.parent as? AuthFlowViewController else { return }
+        parentVC.switchTo(screenType: .forgotPassword)
     }
 }
