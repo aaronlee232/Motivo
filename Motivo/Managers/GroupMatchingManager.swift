@@ -13,20 +13,20 @@ class GroupMatchingManager {
     
     // Inserts an instance of Group Model into the 'group' collection in Firestore
     func insertGroupDataAsync(group: GroupModel) async throws -> String {
-        let groupCollectionRef = db.collection("group")
+        let groupCollectionRef = db.collection(FirestoreCollection.group)
         // let groupDocument = groupDocRef.document()
         let groupDocRef = try groupCollectionRef.addDocument(from: group).documentID
         return groupDocRef
     }
     
-    // Inserts an instance of Group Membership Model into the 'group_membership' collection in Firestore
+    // Inserts an instance of Group Membership Model into the group membership collection in Firestore
     func insertGroupMembership(membership: GroupMembershipModel) async throws {
-        let groupMembershipDocument = db.collection("group_membership").document()
+        let groupMembershipDocument = db.collection(FirestoreCollection.groupMembership).document()
         try groupMembershipDocument.setData(from: membership)
     }
     
     func fetchGroup(groupId: String) async throws -> GroupModel? {
-        let document = try await db.collection("group").document(groupId).getDocument()
+        let document = try await db.collection(FirestoreCollection.group).document(groupId).getDocument()
         
         guard document.exists else {
             print("Group document does not exist in Firestore")
@@ -37,7 +37,7 @@ class GroupMatchingManager {
     }
     
     func isMemberOfGroup(with groupId: String, uid: String) async throws -> Bool {
-        let snapshot = try await db.collection("group_membership")
+        let snapshot = try await db.collection(FirestoreCollection.groupMembership)
             .whereField("groupId", isEqualTo: groupId)
             .whereField("userUid", isEqualTo: uid)
             .getDocuments()

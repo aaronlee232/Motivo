@@ -14,7 +14,7 @@ class ConnectionsManager {
     
     // Uses a User's UID to fetch their UserModel in FireStore
     func fetchUser(uid: String) async throws -> UserModel? {
-        let document = try await db.collection("user").document(uid).getDocument()
+        let document = try await db.collection(FirestoreCollection.user).document(uid).getDocument()
         
         guard document.exists else {
             print("User document does not exist in Firestore")
@@ -41,7 +41,7 @@ class ConnectionsManager {
     
     // Uses a User's UID to fetch the groupIds for the groups that they are a member of in FireStore.
     private func fetchUserGroupIds(uid: String) async throws -> [String] {
-        let snapshot = try await db.collection("group_membership")
+        let snapshot = try await db.collection(FirestoreCollection.groupMembership)
             .whereField("userUid", isEqualTo: uid)
             .getDocuments()
 
@@ -53,7 +53,7 @@ class ConnectionsManager {
     private func fetchUsersFromGroups(groupIds: [String], excluding currentUid: String) async throws -> Set<String> {
         guard !groupIds.isEmpty else { return [] } // Prevents Firestore from failing on empty queries
 
-        let snapshot = try await db.collection("group_membership")
+        let snapshot = try await db.collection(FirestoreCollection.groupMembership)
             .whereField("groupId", in: groupIds)
             .getDocuments()
 
@@ -72,7 +72,7 @@ class ConnectionsManager {
     private func fetchUsersByUids(_ userUids: Set<String>) async throws -> [UserModel] {
         guard !userUids.isEmpty else { return [] } // Prevents Firestore from failing on empty queries
 
-        let userSnapshot = try await db.collection("user")
+        let userSnapshot = try await db.collection(FirestoreCollection.user)
             .whereField(FieldPath.documentID(), in: Array(userUids))
             .getDocuments()
 

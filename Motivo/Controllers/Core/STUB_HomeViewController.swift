@@ -47,9 +47,9 @@ class HomeViewController: UIViewController {
     @objc func populateConnections() {
         print("populate")
         let db = Firestore.firestore()
-        let userCollection = db.collection("user")
-        let groupCollection = db.collection("group")
-        let groupMembershipCollection = db.collection("group_membership")
+        let userCollection = db.collection(FirestoreCollection.user)
+        let groupCollection = db.collection(FirestoreCollection.group)
+        let groupMembershipCollection = db.collection(FirestoreCollection.groupMembership)
 
         let testUserUID = "ufOFgf490zcv7nOZlIMHQZsYxAE3"
 
