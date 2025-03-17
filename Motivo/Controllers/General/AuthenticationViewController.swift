@@ -12,11 +12,12 @@ import FirebaseFirestore
 enum AuthScreenType {
     case login
     case register
-    case forgotPassword
+    case forgetPassword
 }
 
-class AuthenticationViewController: UIViewController {
+class AuthenticationViewController: UIViewController, AuthViewDelegate {
     
+    // MARK: - Properties
     private let authView = AuthView()
     var screenType: AuthScreenType
     
@@ -28,14 +29,23 @@ class AuthenticationViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+        
+    // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        authView.delegate = self
+        setupUI()
+    }
+}
+
+
+// MARK: - UI Setup
+extension AuthenticationViewController {
+    private func setupUI () {
         view.backgroundColor = .systemBackground
         view.addSubview(authView)
         setupConstraints()
         configureScreen()
-        setupActions()
     }
     
     private func setupConstraints() {
@@ -48,67 +58,71 @@ class AuthenticationViewController: UIViewController {
         ])
     }
     
-    // Changes visible elements based on Authentication screens
     private func configureScreen() {
         switch screenType {
         case .login:
-            authView.titleLabel.text = "Welcome to Motivo!"
-            authView.subtitleLabel.text = "Build your habits"
-            authView.actionButton.setTitle("Login", for: .normal)
-            authView.switchScreenLabel.text = "Don’t have an account? "
-            authView.switchScreenButton.setTitle("Register!", for: .normal)
-            authView.usernameTextField.isHidden = true
-            authView.emailTextField.isHidden = false
-            authView.verifyPasswordTextField.isHidden = true
-            authView.forgetPasswordButton.isHidden = false
+            updateAuthView(
+                title: "Welcome to Motivo!",
+                subtitle: "Build your habits",
+                actionTitle: "Login",
+                switchLabel: "Don’t have an account? ",
+                switchButtonTitle: "Register!",
+                hiddenViews: [authView.usernameTextField, authView.verifyPasswordTextField]
+            )
             
         case .register:
-            authView.titleLabel.text = "Register"
-            authView.subtitleLabel.text = "Get started here"
-            authView.actionButton.setTitle("Create Account", for: .normal)
-            authView.switchScreenLabel.text = "Already have an account? "
-            authView.switchScreenButton.setTitle("Log in", for: .normal)
-            authView.emailTextField.isHidden = false
-            authView.verifyPasswordTextField.isHidden = false
-            authView.forgetPasswordButton.isHidden = true
+            updateAuthView(
+                title: "Register",
+                subtitle: "Get started here",
+                actionTitle: "Create Account",
+                switchLabel: "Already have an account? ",
+                switchButtonTitle: "Log in",
+                hiddenViews: [authView.forgetPasswordButton]
+            )
 
-        case .forgotPassword:
-            authView.titleLabel.text = "Forget Password"
-            authView.subtitleLabel.text = "Recover your account"
-            authView.actionButton.setTitle("Reset Password", for: .normal)
-            authView.switchScreenLabel.text = "Back to "
-            authView.switchScreenButton.setTitle("Login!", for: .normal)
-            authView.emailTextField.isHidden = false
-            authView.usernameTextField.isHidden = true
-            authView.passwordTextField.isHidden = true
-            authView.verifyPasswordTextField.isHidden = true
-            authView.forgetPasswordButton.isHidden = true
+        case .forgetPassword:
+            updateAuthView(
+                title: "Forget Password",
+                subtitle: "Recover your account",
+                actionTitle: "Reset Password",
+                switchLabel: "Back to ",
+                switchButtonTitle: "Login!",
+                hiddenViews: [authView.usernameTextField, authView.passwordTextField, authView.verifyPasswordTextField, authView.forgetPasswordButton]
+            )
         }
     }
     
-    private func setupActions() {
-        authView.actionButton.addTarget(self, action: #selector(handleActionButton), for: .touchUpInside)
-        authView.forgetPasswordButton.addTarget(self, action: #selector(handleForgetPasswordSwitchScreen), for: .touchUpInside)
-        authView.switchScreenButton.addTarget(self, action: #selector(handleSwitchScreen), for: .touchUpInside)
+    private func updateAuthView(title:String, subtitle:String, actionTitle:String, switchLabel: String, switchButtonTitle: String, hiddenViews: [UIView]) {
+        authView.titleLabel.text = title
+        authView.subtitleLabel.text = subtitle
+        authView.actionButton.setTitle(actionTitle, for: .normal)
+        authView.switchScreenLabel.text = switchLabel
+        authView.switchScreenButton.setTitle(switchButtonTitle, for: .normal)
+        
+        // Show all views first
+        [
+            authView.usernameTextField,
+            authView.emailTextField,
+            authView.passwordTextField,
+            authView.verifyPasswordTextField,
+            authView.forgetPasswordButton
+        ].forEach { view in view.isHidden = false}
+        
+        // Hide specified views
+        hiddenViews.forEach {view in view.isHidden = true}
     }
-    
+}
+
+// MARK: - AuthView Delegate Actions
+extension AuthenticationViewController {
     // Handles action for Login, Create Account, and Forget Password button
-    @objc private func handleActionButton() {
+    func actionButtonTapped() {
         switch screenType {
         case .login:
             // TODO: Complete input validation
             guard let emailText = authView.emailTextField.text else { return }
             guard let passwordText = authView.passwordTextField.text else { return }
-            
-            Task {
-                do {
-                    _ = try await AuthManager.shared.signInAsync(email: emailText, password: passwordText)
-                } catch {
-                    let errorText = "\(error.localizedDescription)"
-                    AlertUtils.shared.showAlert(self, title: "Login Failed", message: errorText)
-                }
-            }
-            
+            handleLogin(email: emailText, password: passwordText)
             
         case .register:
             // TODO: Add field validation (verify matching passwords, username/password criteria, check email format)
@@ -124,50 +138,27 @@ class AuthenticationViewController: UIViewController {
                 return
             }
             
-            // TODO: Address edgecase where user registers successfully, but user collection is not created. Rollback registration and prevent auto-log in
-            Task {
-                do {
-                    let authResult = try await AuthManager.shared.registerAsync(email: emailText, password: passwordText)
-                    
-                    // Create user model and insert into user collections in db
-                    let newUser = UserModel(uid: authResult.user.uid, username: usernameText, email: emailText)
-                    try AuthManager.shared.insertUserDataAsync(user: newUser)
-                    
-                    print("User created:", authResult.user.uid)
-                } catch {
-                    let errorText = "\(error.localizedDescription)"
-                    AlertUtils.shared.showAlert(self, title: "Registration Failed", message: errorText)
-                }
-            }
+            handleRegister(email: emailText, username: usernameText,password: passwordText)
             
-            
-        case .forgotPassword:
+        case .forgetPassword:
             guard let emailText = authView.emailTextField.text else {
                 AlertUtils.shared.showAlert(self, title: "Registration Failed", message: "Passwords do not match.")
                 return
             }
             
-            Task {
-                do {
-                    try await AuthManager.shared.resetPassword(email: emailText)
-                    AlertUtils.shared.showAlert(self, title: "Password Reset", message: "A password recovery email has been sent with instructions to reset your password.")
-                } catch {
-                    let errorText = "\(error.localizedDescription)"
-                    AlertUtils.shared.showAlert(self, title: "Password Reset Failed", message: errorText)
-                }
-            }
+            handleForgetPassword(email: emailText)
         }
     }
     
     // Handles switching between authentication screens
-    @objc private func handleSwitchScreen() {
+    func switchScreenPromptTapped() {
         guard let parentVC = self.parent as? AuthFlowViewController else { return }
     
         let newScreenType: AuthScreenType
         switch self.screenType {
         case .login:
             newScreenType = .register
-        case .register, .forgotPassword:
+        case .register, .forgetPassword:
             newScreenType = .login
         }
 
@@ -175,8 +166,56 @@ class AuthenticationViewController: UIViewController {
     }
     
     // Handles forget password switch
-    @objc private func handleForgetPasswordSwitchScreen() {
+    func forgetPasswordTapped() {
         guard let parentVC = self.parent as? AuthFlowViewController else { return }
-        parentVC.switchTo(screenType: .forgotPassword)
+        parentVC.switchTo(screenType: .forgetPassword)
+    }
+}
+
+// MARK: - Authentication Handlers
+extension AuthenticationViewController {
+    // Performs a FireBaseAuth login using provided credentials
+    private func handleLogin(email: String, password: String) {
+        Task {
+            do {
+                _ = try await AuthManager.shared.signInAsync(email: email, password: password)
+            } catch {
+                let errorText = "\(error.localizedDescription)"
+                AlertUtils.shared.showAlert(self, title: "Login Failed", message: errorText)
+            }
+        }
+    }
+    
+    // Performs a FireBaseAuth register using provided credentials
+    private func handleRegister(email:String, username:String, password:String) {
+        Task {
+            do {
+                let authResult = try await AuthManager.shared.registerAsync(email: email, password: password)
+                
+                // Create user model and insert into user collections in db
+                let newUser = UserModel(uid: authResult.user.uid, username: username, email: email)
+                try AuthManager.shared.insertUserDataAsync(user: newUser)
+                
+                print("User created:", authResult.user.uid)
+            } catch {
+                let errorText = "\(error.localizedDescription)"
+                AlertUtils.shared.showAlert(self, title: "Registration Failed", message: errorText)
+            }
+        }
+        
+        // TODO: Address edgecase where user registers successfully, but user collection is not created. Rollback registration and prevent auto-log in
+    }
+    
+    // Performs a FireBaseAuth password reset using provided email
+    private func handleForgetPassword(email:String) {
+        Task {
+            do {
+                try await AuthManager.shared.resetPassword(email: email)
+                AlertUtils.shared.showAlert(self, title: "Password Reset", message: "A password recovery email has been sent with instructions to reset your password.")
+            } catch {
+                let errorText = "\(error.localizedDescription)"
+                AlertUtils.shared.showAlert(self, title: "Password Reset Failed", message: errorText)
+            }
+        }
     }
 }

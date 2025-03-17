@@ -7,7 +7,15 @@
 
 import UIKit
 
+protocol AuthViewDelegate {
+    func actionButtonTapped()
+    func switchScreenPromptTapped()
+    func forgetPasswordTapped()
+}
+
 class AuthView: UIView {
+    var delegate: AuthViewDelegate?
+    
     let logoImageView = UIImageView()
     let titleLabel = UILabel() // Register, Login, Forget Password
     let subtitleLabel = UILabel()
@@ -67,12 +75,14 @@ class AuthView: UIView {
         actionButton.backgroundColor = .systemRed
         actionButton.setTitleColor(.white, for: .normal)
         actionButton.layer.cornerRadius = 8
+        actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
         addSubview(actionButton)
         
         // Forget Password Button
         forgetPasswordButton.setTitleColor(.systemRed, for: .normal)
         forgetPasswordButton.setTitle("Forget Password?", for: .normal)
         forgetPasswordButton.titleLabel?.textAlignment = .center
+        forgetPasswordButton.addTarget(self, action: #selector(forgetPasswordTapped), for: .touchUpInside)
         addSubview(forgetPasswordButton)
         
         // SwitchScreen Prompt
@@ -84,6 +94,7 @@ class AuthView: UIView {
         switchScreenButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         switchScreenButton.setContentHuggingPriority(.required, for: .horizontal)
         switchScreenButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        switchScreenButton.addTarget(self, action: #selector(switchScreenPromptTapped), for: .touchUpInside)
         
         let switchScreenContainer = UIStackView(arrangedSubviews: [switchScreenLabel, switchScreenButton])
         switchScreenContainer.axis = .horizontal
@@ -130,5 +141,15 @@ class AuthView: UIView {
             switchScreenContainerOuter.centerXAnchor.constraint(equalTo: centerXAnchor),
             switchScreenContainerOuter.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
         ])
+    }
+    
+    @objc func forgetPasswordTapped() {
+        delegate?.forgetPasswordTapped()
+    }
+    @objc func switchScreenPromptTapped() {
+        delegate?.switchScreenPromptTapped()
+    }
+    @objc func actionButtonTapped() {
+        delegate?.actionButtonTapped()
     }
 }
