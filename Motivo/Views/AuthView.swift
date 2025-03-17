@@ -48,7 +48,7 @@ class AuthView: UIView {
         subtitleLabel.textAlignment = .center
         addSubview(subtitleLabel)
         
-        // Input Fields
+        // Individual Input Fields
         usernameTextField.placeholder = "Username"
         emailTextField.placeholder = "Email"
         passwordTextField.placeholder = "Password"
@@ -56,6 +56,7 @@ class AuthView: UIView {
         verifyPasswordTextField.placeholder = "Verify Password"
         verifyPasswordTextField.isSecureTextEntry = true
         
+        // Input Field Stack
         let inputFieldStackView = UIStackView(arrangedSubviews: [usernameTextField, emailTextField, passwordTextField, verifyPasswordTextField])
         inputFieldStackView.axis = .vertical
         inputFieldStackView.distribution = .fillEqually

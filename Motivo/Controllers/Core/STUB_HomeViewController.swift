@@ -38,7 +38,7 @@ class HomeViewController: UIViewController {
     }
     
     @objc func openGroups() {
-        let groupRootVC = GroupEntryOptionsViewController()
+        let groupRootVC = GroupEntryViewController()
         navigationController?.pushViewController(groupRootVC, animated: true) // push show segue
     }
 

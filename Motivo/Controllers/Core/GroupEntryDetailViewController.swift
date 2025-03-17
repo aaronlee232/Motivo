@@ -1,5 +1,5 @@
 //
-//  GroupEntrySelectionViewController.swift
+//  GroupEntryDetailViewController.swift
 //  Motivo
 //
 //  Created by Arisyia Wong on 3/10/25.
@@ -7,22 +7,22 @@
 
 import UIKit
 
-enum GroupEntrySelectionType {
+enum GroupEntryDetailScreenType {
     case createNewGroup
-    case joinExistingGroup
+    case joinInviteGroup
     case joinRandomGroup
 }
 
-// This handles the screens for create new, join existing, and join random groups
-class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDelegate, JoinExistingGroupViewDelegate, JoinRandomGroupViewDelegate {
+// This handles the screens for create new, join invite, and join random groups
+class GroupEntryDetailViewController: UIViewController, CreateNewGroupViewDelegate, JoinInviteGroupViewDelegate, JoinRandomGroupViewDelegate {
     
     private let createNewGroupView = CreateNewGroupView()
-    private let joinExistingGroupView = JoinExistingGroupView()
+    private let joinInviteGroupView = JoinInviteGroupView()
     private let joinRandomGroupView = JoinRandomGroupView()
     let groupMatchingManager = GroupMatchingManager()
-    var screenType: GroupEntrySelectionType
+    var screenType: GroupEntryDetailScreenType
     
-    init(screenType: GroupEntrySelectionType) {
+    init(screenType: GroupEntryDetailScreenType) {
         self.screenType = screenType
         super.init(nibName: nil, bundle: nil)
     }
@@ -35,18 +35,18 @@ class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDel
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         view.addSubview(createNewGroupView)
-        view.addSubview(joinExistingGroupView)
+        view.addSubview(joinInviteGroupView)
         view.addSubview(joinRandomGroupView)
         setupConstraints()
         configureScreen()
         createNewGroupView.delegate = self
-        joinExistingGroupView.delegate = self
+        joinInviteGroupView.delegate = self
         joinRandomGroupView.delegate = self
     }
     
     private func setupConstraints() {
         createNewGroupView.translatesAutoresizingMaskIntoConstraints = false
-        joinExistingGroupView.translatesAutoresizingMaskIntoConstraints = false
+        joinInviteGroupView.translatesAutoresizingMaskIntoConstraints = false
         joinRandomGroupView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             createNewGroupView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -54,10 +54,10 @@ class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDel
             createNewGroupView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             createNewGroupView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            joinExistingGroupView.topAnchor.constraint(equalTo: view.topAnchor),
-            joinExistingGroupView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            joinExistingGroupView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            joinExistingGroupView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            joinInviteGroupView.topAnchor.constraint(equalTo: view.topAnchor),
+            joinInviteGroupView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            joinInviteGroupView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            joinInviteGroupView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             joinRandomGroupView.topAnchor.constraint(equalTo: view.topAnchor),
             joinRandomGroupView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -71,15 +71,15 @@ class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDel
         switch screenType {
         case .createNewGroup:
             createNewGroupView.isHidden = false
-            joinExistingGroupView.isHidden = true
+            joinInviteGroupView.isHidden = true
             joinRandomGroupView.isHidden = true
-        case .joinExistingGroup:
+        case .joinInviteGroup:
             createNewGroupView.isHidden = true
-            joinExistingGroupView.isHidden = false
+            joinInviteGroupView.isHidden = false
             joinRandomGroupView.isHidden = true
         case .joinRandomGroup:
             createNewGroupView.isHidden = true
-            joinExistingGroupView.isHidden = true
+            joinInviteGroupView.isHidden = true
             joinRandomGroupView.isHidden = false
         }
     }
@@ -114,10 +114,10 @@ class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDel
         }
     }
     
-    func didTouchJoinExistingGroupConfirmButton() {
+    func didTouchJoinInviteGroupConfirmButton() {
         // group invite code = groupID
         Task {
-            guard let groupId = joinExistingGroupView.inviteCodeTextField.text, !joinExistingGroupView.inviteCodeTextField.text!.isEmpty else {
+            guard let groupId = joinInviteGroupView.inviteCodeTextField.text, !joinInviteGroupView.inviteCodeTextField.text!.isEmpty else {
                 AlertUtils.shared.showAlert(self, title: "Empty group invite code", message: "Please enter a valid group invite code")
                 return
             }
@@ -137,7 +137,7 @@ class GroupEntrySelectionViewController: UIViewController, CreateNewGroupViewDel
                 let groupMembership = GroupMembershipModel(groupId: verifiedGroup.id!, userUid: userAuthInstance.uid)
                 try await groupMatchingManager.insertGroupMembership(membership: groupMembership)
                 AlertUtils.shared.showAlert(self, title: "Debug: Group Membership created", message: "This is a debug message")
-                joinExistingGroupView.inviteCodeTextField.text = nil
+                joinInviteGroupView.inviteCodeTextField.text = nil
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to join group specified")
             }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol CreateNewGroupViewDelegate:GroupEntrySelectionViewController {
+protocol CreateNewGroupViewDelegate:GroupEntryDetailViewController {
     func didTouchCreateNewGroupConfirmButton()
 }
 

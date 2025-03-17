@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol JoinRandomGroupViewDelegate:GroupEntrySelectionViewController {
+protocol JoinRandomGroupViewDelegate:GroupEntryDetailViewController {
     func didTouchJoinRandomGroupConfirmButton()
 }
 
