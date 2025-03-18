@@ -9,7 +9,7 @@
 import UIKit
 
 class TaskSettingsViewController: UIViewController {
-    
+    // TODO: Move these UIView initializations into a TaskSettingsView.swift file to conform with MVC
     // UI Elements
     private let notificationsToggle = UISwitch()
     private let notificationsLabel = UILabel()
@@ -33,6 +33,7 @@ class TaskSettingsViewController: UIViewController {
         setupUI()
     }
     
+    // TODO: Move into TaskSettingsView.swift to conform with MVC. Create another View for category checkboxes if needed.
     private func setupUI() {
         // Notifications Toggle
         notificationsLabel.text = "Enable Push Notifications"
