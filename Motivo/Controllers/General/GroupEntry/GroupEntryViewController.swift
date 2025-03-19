@@ -31,17 +31,17 @@ class GroupEntryViewController: UIViewController, GroupEntryViewDelegate {
     }
     
     func didTouchJoinInviteGroupButton() {
-        let groupEntryDetailVC = GroupEntryDetailViewController(screenType: .joinInviteGroup)
-        navigationController?.pushViewController(groupEntryDetailVC, animated: true)
+        let joinInviteGroupVC = JoinInviteGroupViewController()
+        navigationController?.pushViewController(joinInviteGroupVC, animated: true)
     }
     
     func didTouchJoinRandomGroupButton() {
-        let groupEntryDetailVC = GroupEntryDetailViewController(screenType: .joinRandomGroup)
-        navigationController?.pushViewController(groupEntryDetailVC, animated: true)
+        let joinRandomGroupVC = JoinRandomGroupViewController()
+        navigationController?.pushViewController(joinRandomGroupVC, animated: true)
     }
     
     func didTouchCreateGroupButton() {
-        let groupEntryDetailVC = GroupEntryDetailViewController(screenType: .createNewGroup)
-        navigationController?.pushViewController(groupEntryDetailVC, animated: true)
+        let createNewGroupVC = CreateNewGroupViewController()
+        navigationController?.pushViewController(createNewGroupVC, animated: true)
     }
 }

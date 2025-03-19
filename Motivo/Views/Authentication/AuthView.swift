@@ -64,6 +64,11 @@ class AuthView: UIView {
         verifyPasswordTextField.placeholder = "Verify Password"
         verifyPasswordTextField.isSecureTextEntry = true
         
+        usernameTextField.autocapitalizationType = .none
+        emailTextField.autocapitalizationType = .none
+        passwordTextField.autocapitalizationType = .none
+        verifyPasswordTextField.autocapitalizationType = .none
+        
         // Input Field Stack
         let inputFieldStackView = UIStackView(arrangedSubviews: [usernameTextField, emailTextField, passwordTextField, verifyPasswordTextField])
         inputFieldStackView.axis = .vertical

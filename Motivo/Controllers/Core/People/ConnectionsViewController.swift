@@ -85,8 +85,8 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
                 }
                 
                 // Fetch the list of connected UserModels that are connected to the user through a group
-                let connections: [UserModel] = try await connectionsManager.fetchConnections(for: user.uid)
-                self.sections = organizeUsers(connections, favoriteUids: user.favoriteUsers)
+                let connections: [UserModel] = try await connectionsManager.fetchConnections(for: user.id)
+                self.sections = organizeUsers(connections, favoriteUIDs: user.favoriteUsers)
                 self.tableView.reloadData()
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "We couldn't retrieve your connections.")
@@ -97,14 +97,14 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     // Organize a list of users into sections alphabetically and separate "favorite" users into their own section.
-    private func organizeUsers(_ users: [UserModel], favoriteUids: [String]) -> [UserSection] {
-        let favoritesSet: Set<String> = Set(favoriteUids)
+    private func organizeUsers(_ users: [UserModel], favoriteUIDs: [String]) -> [UserSection] {
+        let favoritesSet: Set<String> = Set(favoriteUIDs)
         var groupedUsers: [String: [UserModel]] = [:]
         var favoritesSectionList: [UserModel] = []
 
         // Divide users into "favorites" and "grouped users"
         for user in users {
-            if favoritesSet.contains(user.uid) {
+            if favoritesSet.contains(user.id) {
                 favoritesSectionList.append(user)
             } else {
                 let firstLetter = String(user.username.prefix(1)).uppercased()

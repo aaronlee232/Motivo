@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A43258B32D8B7D1100A4A2B8 /* ProjectFileStructureGuide.md in Resources */ = {isa = PBXBuildFile; fileRef = A43258B22D8B7D1100A4A2B8 /* ProjectFileStructureGuide.md */; };
 		A45EF0E22D7D596200497186 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = A45EF0E12D7D596200497186 /* .gitignore */; };
 		A4B6CD582D7E454500BAC91C /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A4B6CD572D7E454500BAC91C /* FirebaseAnalytics */; };
 		A4B6CD5A2D7E454500BAC91C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A4B6CD592D7E454500BAC91C /* FirebaseAuth */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A43258B22D8B7D1100A4A2B8 /* ProjectFileStructureGuide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ProjectFileStructureGuide.md; sourceTree = "<group>"; };
 		A45EF0582D768ED000497186 /* Motivo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Motivo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A45EF0E12D7D596200497186 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -71,6 +73,7 @@
 				A45EF05A2D768ED000497186 /* Motivo */,
 				A45EF0592D768ED000497186 /* Products */,
 				A45EF0E12D7D596200497186 /* .gitignore */,
+				A43258B22D8B7D1100A4A2B8 /* ProjectFileStructureGuide.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -158,6 +161,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A43258B32D8B7D1100A4A2B8 /* ProjectFileStructureGuide.md in Resources */,
 				A45EF0E22D7D596200497186 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

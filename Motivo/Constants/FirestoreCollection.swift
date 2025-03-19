@@ -6,7 +6,8 @@
 //
 
 struct FirestoreCollection {
-    static let user = "user"
-    static let group = "group"
-    static let groupMembership = "group_membership"
+    static let user = "beta_user"
+    static let group = "beta_group"
+    static let groupMembership = "beta_group_membership"
+    static let category = "beta_category"
 }

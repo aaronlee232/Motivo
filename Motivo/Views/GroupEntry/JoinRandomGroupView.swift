@@ -1,5 +1,5 @@
 //
-//  JoinInviteGroupView.swift
+//  JoinRandomGroupView.swift
 //  Motivo
 //
 //  Created by Arisyia Wong on 3/10/25.
@@ -7,16 +7,16 @@
 
 import UIKit
 
-protocol JoinInviteGroupViewDelegate:GroupEntryDetailViewController {
-    func didTouchJoinInviteGroupConfirmButton()
+protocol JoinRandomGroupViewDelegate:JoinRandomGroupViewController {
+    func didTouchJoinRandomGroupConfirmButton()
 }
 
-class JoinInviteGroupView: UIView {
+class JoinRandomGroupView: UIView {
     let titleLabel = UILabel()
-    let inviteCodeLabel = UILabel()
-    let inviteCodeTextField = UITextField()
+    let subtitleLabel = UILabel()
+    // TODO: list of buttons of group categories
     let confirmButton = UIButton()
-    var delegate:JoinInviteGroupViewDelegate?
+    var delegate:JoinRandomGroupViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,15 +29,12 @@ class JoinInviteGroupView: UIView {
     
     private func setupUI() {
         titleLabel.textAlignment = .center
-        titleLabel.text = "Join a Group"
+        titleLabel.text = "Match with a Group"
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        inviteCodeLabel.textAlignment = .left
-        inviteCodeLabel.text = "Enter Group Invite Code"
-        inviteCodeLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        inviteCodeTextField.placeholder = "Enter group invite code here"
-        inviteCodeTextField.translatesAutoresizingMaskIntoConstraints = false
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.text = "Join groups with these interests"
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         confirmButton.layer.borderColor = UIColor.blue.cgColor
         confirmButton.layer.borderWidth = 2
@@ -49,8 +46,7 @@ class JoinInviteGroupView: UIView {
         
         let viewContainer = UIView()
         viewContainer.addSubview(titleLabel)
-        viewContainer.addSubview(inviteCodeLabel)
-        viewContainer.addSubview(inviteCodeTextField)
+        viewContainer.addSubview(subtitleLabel)
         viewContainer.addSubview(confirmButton)
         addSubview(viewContainer)
         
@@ -69,14 +65,9 @@ class JoinInviteGroupView: UIView {
             titleLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
             
             // Invite Code Label Constraints
-            inviteCodeLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            inviteCodeLabel.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
-            inviteCodeLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
-            
-            // Invite Code Text Field Constraints
-            inviteCodeTextField.topAnchor.constraint(equalTo: inviteCodeLabel.bottomAnchor, constant: 20),
-            inviteCodeTextField.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
-            inviteCodeTextField.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
+            subtitleLabel.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
+            subtitleLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
             
             // Confirm Button Constraints
             confirmButton.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
@@ -87,6 +78,6 @@ class JoinInviteGroupView: UIView {
     }
     
     @objc func handleConfirmButton() {
-        delegate?.didTouchJoinInviteGroupConfirmButton()
+        delegate?.didTouchJoinRandomGroupConfirmButton()
     }
 }
