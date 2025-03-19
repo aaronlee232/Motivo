@@ -25,8 +25,8 @@ class GroupMatchingManager {
         try groupMembershipDocument.setData(from: membership)
     }
     
-    func fetchGroup(groupId: String) async throws -> GroupModel? {
-        let document = try await db.collection(FirestoreCollection.group).document(groupId).getDocument()
+    func fetchGroup(groupID: String) async throws -> GroupModel? {
+        let document = try await db.collection(FirestoreCollection.group).document(groupID).getDocument()
         
         guard document.exists else {
             print("Group document does not exist in Firestore")
@@ -36,10 +36,10 @@ class GroupMatchingManager {
         return try document.data(as: GroupModel.self)
     }
     
-    func isMemberOfGroup(with groupId: String, uid: String) async throws -> Bool {
+    func isMemberOfGroup(with groupID: String, uid: String) async throws -> Bool {
         let snapshot = try await db.collection(FirestoreCollection.groupMembership)
-            .whereField("groupId", isEqualTo: groupId)
-            .whereField("userUid", isEqualTo: uid)
+            .whereField("groupID", isEqualTo: groupID)
+            .whereField("userUID", isEqualTo: uid)
             .getDocuments()
         print("snapshot.documents: \(snapshot.documents)")
         return !snapshot.documents.isEmpty

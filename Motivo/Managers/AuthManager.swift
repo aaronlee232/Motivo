@@ -58,7 +58,7 @@ class AuthManager {
     // Inserts instance of UserModel into the 'user' collection in Firestore
     func insertUserDataAsync(user: UserModel) throws {
         let db = Firestore.firestore()
-        let userDocument = db.collection(FirestoreCollection.user).document(user.uid)
+        let userDocument = db.collection(FirestoreCollection.user).document(user.id)
         
         do {
             try userDocument.setData(from: user)

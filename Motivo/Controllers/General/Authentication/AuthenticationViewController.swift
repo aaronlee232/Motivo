@@ -193,7 +193,7 @@ extension AuthenticationViewController {
                 let authResult = try await AuthManager.shared.registerAsync(email: email, password: password)
                 
                 // Create user model and insert into user collections in db
-                let newUser = UserModel(uid: authResult.user.uid, username: username, email: email)
+                let newUser = UserModel(id: authResult.user.uid, username: username, email: email)
                 try AuthManager.shared.insertUserDataAsync(user: newUser)
                 
                 print("User created:", authResult.user.uid)

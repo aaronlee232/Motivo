@@ -7,8 +7,7 @@
 import FirebaseFirestore
 
 struct UserModel: Codable {
-    @DocumentID var id: String?
-    var uid: String  // Firebase Authentication UID
+    @DocumentID var id: String!  // Firebase Authentication UID
     var username: String
     var email: String
     var unverifiedPhotos: Int = 0

@@ -10,7 +10,7 @@ struct GroupModel: Codable {
     @DocumentID var id: String?
     var groupName: String
     var groupCode: String? // TODO: use groupID, later can generate code that expires
-    var groupCategories: [String]
-    var creator: String // UID of user who created the group
+    var groupCategoryIDs: [String]
+    var creatorUID: String // UID of user who created the group
     // creationTime
 }
