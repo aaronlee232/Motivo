@@ -14,16 +14,7 @@ class ConnectionsManager {
     
     // Uses a User's UID to fetch their UserModel in FireStore
     func fetchUser(uid: String) async throws -> UserModel? {
-        let document = try await db.collection(FirestoreCollection.user).document(uid).getDocument()
-        
-        guard document.exists else {
-            print("User document does not exist in Firestore")
-            return nil
-        }
-        
-        print("retrieved user")
-        
-        return try document.data(as: UserModel.self)
+        return try await FirestoreService.shared.fetchUser(uid: uid)
     }
     
     // Uses a User's UID to fetch other related UserModels that are in shared group(s) with the user in FireStore.

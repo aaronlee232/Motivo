@@ -7,10 +7,25 @@
 
 import UIKit
 
+enum AuthScreenType {
+    case login
+    case register
+    case forgetPassword
+}
+
 class AuthFlowViewController: UIViewController {
     
     private var currentScreen: AuthenticationViewController?
 
+    init(screenType:AuthScreenType = .login) {
+        self.currentScreen = AuthenticationViewController(screenType: screenType)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         switchTo(screenType: .login)

@@ -40,13 +40,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             guard let self = self else { return } // Avoid memory leaks
             
             let newRootVC: UIViewController
-            if user != nil {
-                newRootVC = MainTabBarViewController()
+            if let user = user {
+                // Login or Register Logic
+                Task {
+                    // Wait here if registration is still in progress
+                    var retries = 3
+                    while AuthManager.shared.isRegisteringUser && retries > 0 {
+                        print("Waiting for registration to finish...")
+                        try? await Task.sleep(nanoseconds: 500_000_000)
+                        retries -= 1
+                    }
+                    
+                    // Check Firestore for userModel before redirecting to main screens
+                    if let _ = try? await FirestoreService.shared.fetchUser(uid: user.uid) {
+                        DispatchQueue.main.async {
+                            self.switchRootViewController(newRootViewController: MainTabBarViewController())
+                        }
+                        return
+                    }
+                }
             } else {
-                newRootVC = AuthFlowViewController()
+                // User is logged out. Show Auth Flow
+                self.switchRootViewController(newRootViewController: AuthFlowViewController())
             }
-            
-            self.switchRootViewController(newRootViewController: newRootVC)
         }
     }
     

@@ -77,7 +77,7 @@ extension CreateNewGroupViewController {
     
     private func validateSelectedCategories() -> Bool {
         guard !selectedCategories.isEmpty else {
-            showAlert(title: "No group categories selected", message: "Select at least 1 group category")
+            AlertUtils.shared.showAlert(self, title: "No group categories selected", message: "Select at least 1 group category")
             return false
         }
         return true
@@ -92,9 +92,9 @@ extension CreateNewGroupViewController {
             let groupID = try await groupMatchingManager.insertGroupDataAsync(group: group)
             let groupMembership = GroupMembershipModel(groupID: groupID, userUID: userUID)
             try await groupMatchingManager.insertGroupMembership(membership: groupMembership)
-            showAlert(title: "Debug: Group \(groupName) Created", message: "This is a debug message")
+            AlertUtils.shared.showAlert(self, title: "Debug: Group \(groupName) Created", message: "This is a debug message")
         } catch {
-            showAlert(title: "Something went wrong", message: "Unable to create a new group.")
+            AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to create a new group.")
         }
     }
 }

@@ -7,16 +7,18 @@
 import UIKit
 
 class AlertUtils {
-    // Singleton
     static let shared = AlertUtils()
-    
+
     private init() {}
-    
-    // Creates alert based on title and message
-    func showAlert(_ target:UIViewController, title:String, message:String) {
-        let errorAlert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "OK", style: .default)
-        errorAlert.addAction(dismissAction)
-        target.present(errorAlert, animated: true)
+
+    func showAlert(_ target:UIViewController, title: String, message: String, onDismiss: (() -> Void)? = nil) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let dismissAction = UIAlertAction(title: "OK", style: .default) { _ in
+                onDismiss?()  // Blocks until user taps OK
+            }
+            alert.addAction(dismissAction)
+            target.present(alert, animated: true)
+        }
     }
 }

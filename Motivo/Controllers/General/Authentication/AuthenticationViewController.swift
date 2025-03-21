@@ -9,12 +9,6 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 
-enum AuthScreenType {
-    case login
-    case register
-    case forgetPassword
-}
-
 class AuthenticationViewController: UIViewController, AuthViewDelegate {
     
     // MARK: - Properties
@@ -188,22 +182,28 @@ extension AuthenticationViewController {
     
     // Performs a FireBaseAuth register using provided credentials
     private func handleRegister(email:String, username:String, password:String) {
+        AuthManager.shared.isRegisteringUser = true  // Registration Flag Start
+        
         Task {
             do {
                 let authResult = try await AuthManager.shared.registerAsync(email: email, password: password)
                 
                 // Create user model and insert into user collections in db
                 let newUser = UserModel(id: authResult.user.uid, username: username, email: email)
-                try AuthManager.shared.insertUserDataAsync(user: newUser)
-                
-                print("User created:", authResult.user.uid)
+                try AuthManager.shared.insertUserData(user: newUser)
             } catch {
                 let errorText = "\(error.localizedDescription)"
-                AlertUtils.shared.showAlert(self, title: "Registration Failed", message: errorText)
+                AlertUtils.shared.showAlert(self, title: "Registration Failed", message: errorText) {
+                    Task {
+                        // Remove newly created FirebaseAuth user to prevent ghost user
+                        try? await Auth.auth().currentUser?.delete()
+                        try? Auth.auth().signOut()
+                    }
+                }
             }
+            
+            AuthManager.shared.isRegisteringUser = false  // Registration Flag End
         }
-        
-        // TODO: Address edgecase where user registers successfully, but user collection is not created. Rollback registration and prevent auto-log in
     }
     
     // Performs a FireBaseAuth password reset using provided email

@@ -11,6 +11,9 @@ class AuthManager {
     // Singleton AuthManager
     static let shared = AuthManager()
     
+    // Registration Flag to handle race condition between registration and FirebaseAuth state change listener
+    var isRegisteringUser: Bool = false
+    
     private init() {}
     
     func signInAsync(email:String, password:String) async throws -> AuthDataResult {
@@ -56,20 +59,8 @@ class AuthManager {
     }
     
     // Inserts instance of UserModel into the 'user' collection in Firestore
-    func insertUserDataAsync(user: UserModel) throws {
-        let db = Firestore.firestore()
-        let userDocument = db.collection(FirestoreCollection.user).document(user.id)
-        
-        do {
-            try userDocument.setData(from: user)
-//            print("Document successfully written!")
-        } catch {
-            throw error
-            // TODO: Remove successful user registration if document insertion fails
-//            let errorText = "\(error.localizedDescription)"
-//            self.handleAuthAlerts(title: "User Document Insertion Error", message: errorText)
-//            print("Error writing document: \(error)")
-        }
+    func insertUserData(user: UserModel) throws {
+        try FirestoreService.shared.insertUserData(user: user)
     }
     
     func getCurrentUserAuthInstance () -> FirebaseAuth.User? {
