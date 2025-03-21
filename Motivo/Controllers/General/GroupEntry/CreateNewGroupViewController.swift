@@ -89,9 +89,9 @@ extension CreateNewGroupViewController {
             let group = GroupModel(groupName: groupName, groupCategoryIDs: selectedCategoryIDs, creatorUID: userUID)
             
             // adds to firestore for both group and group membership async
-            let groupID = try await groupMatchingManager.insertGroupDataAsync(group: group)
+            let groupID = try groupMatchingManager.insertGroup(group: group)
             let groupMembership = GroupMembershipModel(groupID: groupID, userUID: userUID)
-            try await groupMatchingManager.insertGroupMembership(membership: groupMembership)
+            try groupMatchingManager.insertGroupMembership(membership: groupMembership)
             AlertUtils.shared.showAlert(self, title: "Debug: Group \(groupName) Created", message: "This is a debug message")
         } catch {
             AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to create a new group.")

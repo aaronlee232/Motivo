@@ -39,7 +39,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             [weak self]  (auth,user) in
             guard let self = self else { return } // Avoid memory leaks
             
-            let newRootVC: UIViewController
             if let user = user {
                 // Login or Register Logic
                 Task {
@@ -52,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     }
                     
                     // Check Firestore for userModel before redirecting to main screens
-                    if let _ = try? await FirestoreService.shared.fetchUser(uid: user.uid) {
+                    if let _ = try? await FirestoreService.shared.fetchUser(forUserUID: user.uid) {
                         DispatchQueue.main.async {
                             self.switchRootViewController(newRootViewController: MainTabBarViewController())
                         }

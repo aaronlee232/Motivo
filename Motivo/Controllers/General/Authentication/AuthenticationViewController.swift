@@ -172,7 +172,7 @@ extension AuthenticationViewController {
     private func handleLogin(email: String, password: String) {
         Task {
             do {
-                _ = try await AuthManager.shared.signInAsync(email: email, password: password)
+                _ = try await AuthManager.shared.signIn(email: email, password: password)
             } catch {
                 let errorText = "\(error.localizedDescription)"
                 AlertUtils.shared.showAlert(self, title: "Login Failed", message: errorText)
@@ -186,7 +186,7 @@ extension AuthenticationViewController {
         
         Task {
             do {
-                let authResult = try await AuthManager.shared.registerAsync(email: email, password: password)
+                let authResult = try await AuthManager.shared.register(email: email, password: password)
                 
                 // Create user model and insert into user collections in db
                 let newUser = UserModel(id: authResult.user.uid, username: username, email: email)

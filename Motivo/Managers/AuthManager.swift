@@ -16,7 +16,7 @@ class AuthManager {
     
     private init() {}
     
-    func signInAsync(email:String, password:String) async throws -> AuthDataResult {
+    func signIn(email:String, password:String) async throws -> AuthDataResult {
         return try await withCheckedThrowingContinuation { continuation in
             Auth.auth().signIn( withEmail: email, password: password) {
                 (authResult,error) in
@@ -31,7 +31,7 @@ class AuthManager {
         }
     }
     
-    func registerAsync(email:String, password:String) async throws -> AuthDataResult {
+    func register(email:String, password:String) async throws -> AuthDataResult {
         return try await withCheckedThrowingContinuation { continuation in
             Auth.auth().createUser(withEmail: email, password: password) {
                 (authResult,error) in
@@ -60,9 +60,10 @@ class AuthManager {
     
     // Inserts instance of UserModel into the 'user' collection in Firestore
     func insertUserData(user: UserModel) throws {
-        try FirestoreService.shared.insertUserData(user: user)
+        try FirestoreService.shared.addUser(user: user)
     }
     
+    // Returns the current FirebaseAuth user instance that is logged in
     func getCurrentUserAuthInstance () -> FirebaseAuth.User? {
         guard let user = Auth.auth().currentUser else { return nil }
         return user

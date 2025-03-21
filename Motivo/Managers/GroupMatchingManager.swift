@@ -12,36 +12,23 @@ class GroupMatchingManager {
     let db = Firestore.firestore()
     
     // Inserts an instance of Group Model into the 'group' collection in Firestore
-    func insertGroupDataAsync(group: GroupModel) async throws -> String {
-        let groupCollectionRef = db.collection(FirestoreCollection.group)
-        // let groupDocument = groupDocRef.document()
-        let groupDocRef = try groupCollectionRef.addDocument(from: group).documentID
-        return groupDocRef
+    func insertGroup(group: GroupModel) throws -> String {
+        return try FirestoreService.shared.addGroup(group: group)
     }
     
     // Inserts an instance of Group Membership Model into the group membership collection in Firestore
-    func insertGroupMembership(membership: GroupMembershipModel) async throws {
-        let groupMembershipDocument = db.collection(FirestoreCollection.groupMembership).document()
-        try groupMembershipDocument.setData(from: membership)
+    func insertGroupMembership(membership: GroupMembershipModel) throws {
+        try FirestoreService.shared.addGroupMembership(membership: membership)
     }
     
+    // Fetch group based on groupID
     func fetchGroup(groupID: String) async throws -> GroupModel? {
-        let document = try await db.collection(FirestoreCollection.group).document(groupID).getDocument()
-        
-        guard document.exists else {
-            print("Group document does not exist in Firestore")
-            return nil
-        }
-        
-        return try document.data(as: GroupModel.self)
+        return try await FirestoreService.shared.fetchGroup(forGroupID: groupID)
     }
     
-    func isMemberOfGroup(with groupID: String, uid: String) async throws -> Bool {
-        let snapshot = try await db.collection(FirestoreCollection.groupMembership)
-            .whereField("groupID", isEqualTo: groupID)
-            .whereField("userUID", isEqualTo: uid)
-            .getDocuments()
-        print("snapshot.documents: \(snapshot.documents)")
-        return !snapshot.documents.isEmpty
+    // Check if there a user is a member of a group
+    func isUserMemberOfGroup(with groupID: String, uid: String) async throws -> Bool {
+        let membership = try await FirestoreService.shared.fetchGroupMembership(forGroupID: groupID, userUID: uid)
+        return membership != nil
     }
 }
