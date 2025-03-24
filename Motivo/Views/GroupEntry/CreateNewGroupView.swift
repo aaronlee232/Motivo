@@ -116,9 +116,9 @@ class CreateNewGroupView: UIView {
             categorySelectionView.topAnchor.constraint(equalTo: selectCategoriesLabel.bottomAnchor, constant: 20),
             categorySelectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             categorySelectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            categorySelectionView.heightAnchor.constraint(equalToConstant: 250),
 
             // Confirm Button Constraints
-            confirmButton.topAnchor.constraint(equalTo: categorySelectionView.bottomAnchor, constant: 10),
             confirmButton.leadingAnchor.constraint(equalTo: leadingAnchor),
             confirmButton.trailingAnchor.constraint(equalTo: trailingAnchor),
             confirmButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -50),

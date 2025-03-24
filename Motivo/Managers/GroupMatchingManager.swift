@@ -31,4 +31,12 @@ class GroupMatchingManager {
         let membership = try await FirestoreService.shared.fetchGroupMembership(forGroupID: groupID, userUID: uid)
         return membership != nil
     }
+    
+    // Put a user into a random group based on selected categories
+    func joinRandomGroup(with categories:[CategoryModel], as userUID:String) {
+        // TODO: Implement join randomGroup
+        // Fetch list of all groups that contain the categories
+        // Pick random from list of groups
+        // Create groupMembership doc
+    }
 }
