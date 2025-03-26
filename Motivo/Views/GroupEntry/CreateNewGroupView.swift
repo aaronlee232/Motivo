@@ -21,7 +21,7 @@ class CreateNewGroupView: UIView {
     let groupNameTextField = UITextField()
     let selectCategoriesLabel = UILabel()
     let categorySelectionView = CategorySelectionView()
-    let confirmButton = UIButton()
+    let confirmButton = UIConfirmButton()
     
     var selectedSegValue:String
     var delegate:CreateNewGroupViewDelegate?
@@ -62,11 +62,11 @@ class CreateNewGroupView: UIView {
         
         categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
 
-        confirmButton.layer.borderColor = UIColor.blue.cgColor
-        confirmButton.layer.borderWidth = 2
-        confirmButton.layer.cornerRadius = 8.0
-        confirmButton.setTitleColor(.systemBlue, for: .normal)
-        confirmButton.setTitle("CONFIRM", for: .normal)
+//        confirmButton.layer.borderColor = UIColor.blue.cgColor
+//        confirmButton.layer.borderWidth = 2
+//        confirmButton.layer.cornerRadius = 8.0
+//        confirmButton.setTitleColor(.systemBlue, for: .normal)
+//        confirmButton.setTitle("CONFIRM", for: .normal)
         confirmButton.addTarget(self, action: #selector(handleConfirmButton), for: .touchUpInside)
         confirmButton.translatesAutoresizingMaskIntoConstraints = false
         
