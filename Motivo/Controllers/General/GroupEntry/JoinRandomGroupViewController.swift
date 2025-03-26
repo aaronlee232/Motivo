@@ -39,20 +39,34 @@ class JoinRandomGroupViewController: UIViewController, JoinRandomGroupViewDelega
     }
     
     private func loadCategoryOptions() {
-        // TODO: Replace with Firestore fetch
-        joinRandomGroupView.categorySelectionView.categories = categories
+        Task {
+            do {
+                let categories = try await FirestoreService.shared.fetchCategories()
+                joinRandomGroupView.categorySelectionView.categories = categories
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch categories")
+            }
+        }
     }
 }
 
 // MARK: - CreateNewGroupViewDelegate
 extension JoinRandomGroupViewController {
     func didTouchJoinRandomGroupConfirmButton() {
-        guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
-            AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
-            return
+        Task {
+            guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
+                return
+            }
+            
+            do {
+                try await groupMatchingManager.joinRandomGroup(with: Array(selectedCategories), as: user.uid)
+                // TODO: Replace alert with segue to group screen
+                AlertUtils.shared.showAlert(self, title: "Debug: Success", message: "Joined random group")
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to join group")
+            }
         }
-        
-        groupMatchingManager.joinRandomGroup(with: Array(selectedCategories), as: user.uid)
     }
 }
 

@@ -15,11 +15,13 @@ class FirestoreService {
     let userCollectionRef:CollectionReference
     let groupCollectionRef:CollectionReference
     let groupMembershipCollectionRef:CollectionReference
+    let categoryCollectionRef:CollectionReference
     
     init() {
         userCollectionRef = db.collection(FirestoreCollection.user)
         groupCollectionRef = db.collection(FirestoreCollection.group)
         groupMembershipCollectionRef = db.collection(FirestoreCollection.groupMembership)
+        categoryCollectionRef = db.collection(FirestoreCollection.category)
     }
     
     enum FirestoreError: Error {
@@ -66,6 +68,30 @@ extension FirestoreService {
             .getDocuments()
 
         return try snapshot.documents.map { document in
+            try document.data(as: GroupModel.self)
+        }
+    }
+    
+    // Retrieves a list of groups with a list of categories
+    func fetchGroups(withCategoryIDs categoryIDs: [String]) async throws -> [GroupModel] {
+        // Preliminary "containsAny" filter. Used because firestore does not support "arrayContainsAll"
+        let snapshot = try await groupCollectionRef
+            .whereField("groupCategoryIDs", arrayContainsAny: categoryIDs)
+            .getDocuments()
+        
+        print("preliminary groups (containsAny Categories): \(snapshot.documents)")
+        
+        // Final "containsAll" filter
+        let categoryIDSet = Set(categoryIDs)
+        let filteredDocuments = snapshot.documents.filter { document in
+            if let categories = document.data()["groupCategoryIDs"] as? [String] {
+                return Set(categories) == categoryIDSet
+            }
+            return false
+        }
+        print("final groups (containsAll Categories): \(filteredDocuments)")
+        
+        return try filteredDocuments.map { document in
             try document.data(as: GroupModel.self)
         }
     }
@@ -133,6 +159,20 @@ extension FirestoreService {
     func addGroupMembership(membership: GroupMembershipModel) throws {
         let groupMembershipDocument = groupMembershipCollectionRef.document()
         try groupMembershipDocument.setData(from: membership)
+    }
+}
+
+
+// MARK: - Category collection
+extension FirestoreService {
+    // Retrieves the list of all categories
+    func fetchCategories() async throws -> [CategoryModel] {
+        let snapshot = try await categoryCollectionRef
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: CategoryModel.self)
+        }
     }
 }
 
