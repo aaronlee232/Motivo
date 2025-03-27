@@ -17,15 +17,15 @@ class AuthView: UIView {
     var delegate: AuthViewDelegate?
     
     let logoImageView = UIImageView()
-    let titleLabel = UILabel() // Register, Login, Forget Password
-    let subtitleLabel = UILabel()
-    let usernameTextField = UITextField()
-    let emailTextField = UITextField()
-    let passwordTextField = UITextField()
-    let verifyPasswordTextField = UITextField()
+    let titleLabel = UIBoldTitleLabel() // Register, Login, Forget Password
+    let subtitleLabel = UISubtitleLabel()
+    let usernameTextField = UIGreyTextField(placeholderText: "Username")
+    let emailTextField = UIGreyTextField(placeholderText: "Email")
+    let passwordTextField = UISecureGreyTextField(placeholderText: "Password")
+    let verifyPasswordTextField = UISecureGreyTextField(placeholderText: "Verify Password")
     // TODO: Change this to no type and add custom style/properties (look into setting up color/style file. maybe a plist)
-    let actionButton = UIButton()
-    let forgetPasswordButton = UIButton()
+    let actionButton = UIActionButton()
+    let forgetPasswordButton = UILinkButton()
     let switchScreenLabel = UILabel()
     let switchScreenButton = UIButton()
     
@@ -49,25 +49,25 @@ class AuthView: UIView {
         addSubview(logoImageView)
         
         // Title
-        titleLabel.textAlignment = .center
+//        titleLabel.textAlignment = .center
         addSubview(titleLabel)
         
         // Subtitle
-        subtitleLabel.textAlignment = .center
+//        subtitleLabel.textAlignment = .center
         addSubview(subtitleLabel)
         
         // Individual Input Fields
-        usernameTextField.placeholder = "Username"
-        emailTextField.placeholder = "Email"
-        passwordTextField.placeholder = "Password"
-        passwordTextField.isSecureTextEntry = true
-        verifyPasswordTextField.placeholder = "Verify Password"
-        verifyPasswordTextField.isSecureTextEntry = true
+//        usernameTextField.placeholder = "Username"
+//        emailTextField.placeholder = "Email"
+//        passwordTextField.placeholder = "Password"
+//        passwordTextField.isSecureTextEntry = true
+//        verifyPasswordTextField.placeholder = "Verify Password"
+//        verifyPasswordTextField.isSecureTextEntry = true
         
-        usernameTextField.autocapitalizationType = .none
-        emailTextField.autocapitalizationType = .none
-        passwordTextField.autocapitalizationType = .none
-        verifyPasswordTextField.autocapitalizationType = .none
+//        usernameTextField.autocapitalizationType = .none
+//        emailTextField.autocapitalizationType = .none
+//        passwordTextField.autocapitalizationType = .none
+//        verifyPasswordTextField.autocapitalizationType = .none
         
         // Input Field Stack
         let inputFieldStackView = UIStackView(arrangedSubviews: [usernameTextField, emailTextField, passwordTextField, verifyPasswordTextField])
@@ -77,16 +77,16 @@ class AuthView: UIView {
         addSubview(inputFieldStackView)
         
         // Action Button
-        actionButton.backgroundColor = .systemRed
-        actionButton.setTitleColor(.white, for: .normal)
-        actionButton.layer.cornerRadius = 8
+//        actionButton.backgroundColor = .systemRed
+//        actionButton.setTitleColor(.white, for: .normal)
+//        actionButton.layer.cornerRadius = 8
         actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
         addSubview(actionButton)
         
         // Forget Password Button
-        forgetPasswordButton.setTitleColor(.systemRed, for: .normal)
+//        forgetPasswordButton.setTitleColor(.systemRed, for: .normal)
         forgetPasswordButton.setTitle("Forget Password?", for: .normal)
-        forgetPasswordButton.titleLabel?.textAlignment = .center
+//        forgetPasswordButton.titleLabel?.textAlignment = .center
         forgetPasswordButton.addTarget(self, action: #selector(forgetPasswordTapped), for: .touchUpInside)
         addSubview(forgetPasswordButton)
         

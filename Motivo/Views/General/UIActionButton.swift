@@ -1,5 +1,5 @@
 //
-//  ConfirmButton.swift
+//  UIActionButton.swift
 //  Motivo
 //
 //  Created by Arisyia Wong on 3/26/25.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-class UIConfirmButton: UIButton {
+class UIActionButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupConfirmButtonUI()
+        setupActionButtonUI()
     }
     
     required init?(coder: NSCoder) {
@@ -25,10 +25,9 @@ class UIConfirmButton: UIButton {
         self.layer.masksToBounds = true // corner radius applies to contents inside the button
     }
     
-    private func setupConfirmButtonUI() {
+    private func setupActionButtonUI() {
         backgroundColor = colorMainPrimary
         setTitleColor(colorMainBackground, for: .normal)
         // titleLabel?.font
-        setTitle("CONFIRM", for: .normal)
     }
 }

@@ -17,3 +17,5 @@ let colorExtraTeal = UIColor(red: 51 / 255.0, green: 137 / 255.0, blue: 138 / 25
 let colorExtraClassicBlue = UIColor(red: 58 / 255.0, green: 84 / 255.0, blue: 214 / 255.0, alpha: 1.0)
 let colorExtraBrightRed = UIColor(red: 214 / 255.0, green: 58 / 255.0, blue: 77 / 255.0, alpha: 1.0)
 let colorExtraDarkYellow = UIColor(red: 214 / 255.0, green: 149 / 255.0, blue: 58 / 255.0, alpha: 1.0)
+
+let colorExtraPlaceholderText = UIColor(red: 142 / 255.0, green: 142 / 255.0, blue: 147 / 255.0, alpha: 1.0)
