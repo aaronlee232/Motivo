@@ -13,13 +13,13 @@ protocol CreateNewGroupViewDelegate:CreateNewGroupViewController {
 
 class CreateNewGroupView: UIView {
     
-    let titleLabel = UIBoldTitleLabel(textLabel: "New Group")
+    let titleLabel = BoldTitleLabel(textLabel: "New Group")
     let items = ["Public", "Private"]
-    let visibilityLabel = UINormalLabel(textLabel: "Visibility")
+    let visibilityLabel = NormalLabel(textLabel: "Visibility")
     var visibilitySegCtrl:UISegmentedControl
-    let groupNameLabel = UINormalLabel(textLabel: "Group Name")
-    let groupNameTextField = UIGreyTextField(placeholderText: "Enter group name here", isSecure: false)
-    let selectCategoriesLabel = UINormalLabel(textLabel: "Select Group Categories")
+    let groupNameLabel = NormalLabel(textLabel: "Group Name")
+    let groupNameTextField = GreyTextField(placeholderText: "Enter group name here", isSecure: false)
+    let selectCategoriesLabel = NormalLabel(textLabel: "Select Group Categories")
     let categorySelectionView = CategorySelectionView()
     let confirmButton = ActionButton(title: "CONFIRM")
     

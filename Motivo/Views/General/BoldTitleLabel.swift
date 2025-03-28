@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UIBoldTitleLabel: UILabel {
+class BoldTitleLabel: UILabel {
     var fontSize:CGFloat = 32
     
     override init(frame: CGRect) {

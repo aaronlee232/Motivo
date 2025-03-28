@@ -17,15 +17,15 @@ class AuthView: UIView {
     var delegate: AuthViewDelegate?
     
     let logoImageView = UIImageView()
-    let titleLabel = UIBoldTitleLabel() // Register, Login, Forget Password
-    let subtitleLabel = UISubtitleLabel()
-    let usernameTextField = UIGreyTextField(placeholderText: "Username", isSecure: false)
-    let emailTextField = UIGreyTextField(placeholderText: "Email", isSecure: false)
-    let passwordTextField = UIGreyTextField(placeholderText: "Password", isSecure: true)
-    let verifyPasswordTextField = UIGreyTextField(placeholderText: "Verify Password", isSecure: true)
+    let titleLabel = BoldTitleLabel() // Register, Login, Forget Password
+    let subtitleLabel = SubtitleLabel()
+    let usernameTextField = GreyTextField(placeholderText: "Username", isSecure: false)
+    let emailTextField = GreyTextField(placeholderText: "Email", isSecure: false)
+    let passwordTextField = GreyTextField(placeholderText: "Password", isSecure: true)
+    let verifyPasswordTextField = GreyTextField(placeholderText: "Verify Password", isSecure: true)
     // TODO: Change this to no type and add custom style/properties (look into setting up color/style file. maybe a plist)
     let actionButton = ActionButton()
-    let forgetPasswordButton = UILinkButton()
+    let forgetPasswordButton = LinkButton()
     let switchScreenLabel = UILabel()
     let switchScreenButton = UIButton()
     

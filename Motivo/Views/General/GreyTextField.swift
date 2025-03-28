@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UIGreyTextField: UITextField {
+class GreyTextField: UITextField {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupGreyTextFieldButtonUI()

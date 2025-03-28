@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UILinkButton: UIButton {
+class LinkButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLinkButtonUI()

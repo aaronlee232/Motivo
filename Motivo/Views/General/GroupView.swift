@@ -7,18 +7,18 @@
 
 import UIKit
 
-class UIGroupView: UIView {
+class GroupView: UIView {
     // Group View size constants
     private let width:CGFloat = 380
     private let height:CGFloat = 80
     
     private let imageView: UIImageView
-    private let groupName: UIBoldTitleLabel
+    private let groupName: BoldTitleLabel
     // need to include the label for category types
-    private let memberLabel: UISubtitleLabel
-    private let memberCountLabel: UINormalLabel
-    private let habitsLabel: UISubtitleLabel
-    private let habitsCountLabel: UINormalLabel
+    private let memberLabel: SubtitleLabel
+    private let memberCountLabel: NormalLabel
+    private let habitsLabel: SubtitleLabel
+    private let habitsCountLabel: NormalLabel
     
     private var memberHabitsCountStackView: UIStackView!
     private var memberHabitsLabelsStackView: UIStackView!
@@ -28,14 +28,14 @@ class UIGroupView: UIView {
     
     init(image: UIImage, groupName: String, memberCount: Int, habitsCount: Int) {
         imageView = UIImageView(image: image)
-        self.groupName = UIBoldTitleLabel(textLabel: groupName)
+        self.groupName = BoldTitleLabel(textLabel: groupName)
         self.groupName.changeFontSize(fontSize: 22)
-        memberLabel = UISubtitleLabel(textLabel: "Members")
+        memberLabel = SubtitleLabel(textLabel: "Members")
         memberLabel.changeFontSize(fontSize: 16)
-        memberCountLabel = UINormalLabel(textLabel: String(memberCount))
-        habitsLabel = UISubtitleLabel(textLabel: "Habits")
+        memberCountLabel = NormalLabel(textLabel: String(memberCount))
+        habitsLabel = SubtitleLabel(textLabel: "Habits")
         habitsLabel.changeFontSize(fontSize: 16)
-        habitsCountLabel = UINormalLabel(textLabel: String(habitsCount))
+        habitsCountLabel = NormalLabel(textLabel: String(habitsCount))
         
         super.init(frame: .zero)
         
