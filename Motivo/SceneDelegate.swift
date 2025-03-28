@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if Auth.auth().currentUser != nil {
             window?.rootViewController = MainTabBarViewController()
         } else {
-            window?.rootViewController = AuthenticationViewController(screenType: .login)
+            window?.rootViewController = AuthFlowViewController()
         }
         
         window?.makeKeyAndVisible()
@@ -39,14 +39,35 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             [weak self]  (auth,user) in
             guard let self = self else { return } // Avoid memory leaks
             
-            let newRootVC: UIViewController
-            if user != nil {
-                newRootVC = MainTabBarViewController()
+            if let user = user {
+                // Login or Register Logic
+                Task {
+                    // Wait here if registration is still in progress
+                    var retries = 3
+                    while AuthManager.shared.isRegisteringUser && retries > 0 {
+                        print("Waiting for registration to finish...")
+                        try? await Task.sleep(nanoseconds: 500_000_000)
+                        retries -= 1
+                    }
+                    
+                    // Check Firestore for userModel before redirecting to main screens
+                    if let _ = try? await FirestoreService.shared.fetchUser(forUserUID: user.uid) {
+                        DispatchQueue.main.async {
+                            self.switchRootViewController(newRootViewController: MainTabBarViewController())
+                        }
+                        return
+                    }
+                    
+                    // If no user is found, current authUser is a "Ghost User" without any associated UserModel document inside Firestore
+                    // NOTE: This should only happen during project grading periods while we switch from "alpha" -> "beta" -> "final" collections
+                    // Some authUsers will be "real" users of the past version while being "ghost" users of the current version 
+                    print("Login failed due to Ghost User Error. Authentication was successful in FirebaseAuth, but no associated UserModel was found inside the '\(FirestoreCollection.user)' collection.")
+                    try Auth.auth().signOut()
+                }
             } else {
-                newRootVC = AuthenticationViewController(screenType: .login)
+                // User is logged out. Show Auth Flow
+                self.switchRootViewController(newRootViewController: AuthFlowViewController())
             }
-            
-            self.switchRootViewController(newRootViewController: newRootVC)
         }
     }
     

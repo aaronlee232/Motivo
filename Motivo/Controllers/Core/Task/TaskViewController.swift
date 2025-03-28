@@ -24,7 +24,7 @@ class HabitData {
 class TaskViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private let tableView = UITableView()
-    private var viewModel = HabitsView()
+    private var viewModel = HabitsView()  // TODO: HabbitsView is not a model. It is also technically not a view either currently. Refactor HabitsView to conform to MVC and change variable name to be more self-descriptive (taskViewModel, taskView, etc)
     private var isExpandedView = false // Toggle for expanded/compact views
     
     override func viewDidLoad() {
@@ -42,6 +42,12 @@ class TaskViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     // MARK: - Navigation Bar Setup
+    //TODO: Refactor this button logic into a proper MVC format
+    /**
+        Initialize button inside view
+        Implement action handler function logic here using a delegate to the view
+        Use AuthView and AuthenticationViewController as a reference
+     */
     private func setupNavigationBar() {
         let changeViewButton = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"), style: .plain, target: self, action: #selector(changeViewTapped))
         let gridViewButton = UIBarButtonItem(image: UIImage(systemName: "square.grid.2x2"), style: .plain, target: self, action: #selector(gridViewTapped))

@@ -8,6 +8,6 @@ import FirebaseFirestore
 
 struct GroupMembershipModel: Codable {
     @DocumentID var id: String?
-    var groupId: String
-    var userUid: String
+    var groupID: String
+    var userUID: String
 }

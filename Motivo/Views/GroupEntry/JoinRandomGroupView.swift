@@ -7,15 +7,16 @@
 
 import UIKit
 
-protocol JoinRandomGroupViewDelegate:GroupEntrySelectionViewController {
+protocol JoinRandomGroupViewDelegate:JoinRandomGroupViewController {
     func didTouchJoinRandomGroupConfirmButton()
 }
 
 class JoinRandomGroupView: UIView {
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
-    // TODO: list of buttons of group categories
     let confirmButton = UIButton()
+    let categorySelectionView = CategorySelectionView()
+    
     var delegate:JoinRandomGroupViewDelegate?
     
     override init(frame: CGRect) {
@@ -36,6 +37,8 @@ class JoinRandomGroupView: UIView {
         subtitleLabel.text = "Join groups with these interests"
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         
+        categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
+        
         confirmButton.layer.borderColor = UIColor.blue.cgColor
         confirmButton.layer.borderWidth = 2
         confirmButton.layer.cornerRadius = 8.0
@@ -44,35 +47,33 @@ class JoinRandomGroupView: UIView {
         confirmButton.addTarget(self, action: #selector(handleConfirmButton), for: .touchUpInside)
         confirmButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let viewContainer = UIView()
-        viewContainer.addSubview(titleLabel)
-        viewContainer.addSubview(subtitleLabel)
-        viewContainer.addSubview(confirmButton)
-        addSubview(viewContainer)
-        
-        viewContainer.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(titleLabel)
+        addSubview(subtitleLabel)
+        addSubview(categorySelectionView)
+        addSubview(confirmButton)
         
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            viewContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            viewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-            viewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            viewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40),
-            
+
             // Title Label Constraints
-            titleLabel.topAnchor.constraint(equalTo: viewContainer.safeAreaLayoutGuide.topAnchor, constant: 50),
-            titleLabel.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
+            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 50),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            // Invite Code Label Constraints
+            // Subtitle Code Label Constraints
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            subtitleLabel.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
-            subtitleLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
+            subtitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            subtitleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            // Category Selection Constraints
+            categorySelectionView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
+            categorySelectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            categorySelectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            categorySelectionView.heightAnchor.constraint(equalToConstant: 300),
             
             // Confirm Button Constraints
-            confirmButton.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
-            confirmButton.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
-            confirmButton.bottomAnchor.constraint(equalTo: viewContainer.safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            confirmButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            confirmButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            confirmButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -50),
             confirmButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }

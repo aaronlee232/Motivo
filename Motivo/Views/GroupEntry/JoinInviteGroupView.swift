@@ -1,5 +1,5 @@
 //
-//  JoinExistingGroupView.swift
+//  JoinInviteGroupView.swift
 //  Motivo
 //
 //  Created by Arisyia Wong on 3/10/25.
@@ -7,16 +7,16 @@
 
 import UIKit
 
-protocol JoinExistingGroupViewDelegate:GroupEntrySelectionViewController {
-    func didTouchJoinExistingGroupConfirmButton()
+protocol JoinInviteGroupViewDelegate:JoinInviteGroupViewController {
+    func didTouchJoinInviteGroupConfirmButton()
 }
 
-class JoinExistingGroupView: UIView {
+class JoinInviteGroupView: UIView {
     let titleLabel = UILabel()
     let inviteCodeLabel = UILabel()
     let inviteCodeTextField = UITextField()
     let confirmButton = UIButton()
-    var delegate:JoinExistingGroupViewDelegate?
+    var delegate:JoinInviteGroupViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -87,6 +87,6 @@ class JoinExistingGroupView: UIView {
     }
     
     @objc func handleConfirmButton() {
-        delegate?.didTouchJoinExistingGroupConfirmButton()
+        delegate?.didTouchJoinInviteGroupConfirmButton()
     }
 }

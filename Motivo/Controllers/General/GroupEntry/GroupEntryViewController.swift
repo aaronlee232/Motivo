@@ -7,10 +7,10 @@
 
 import UIKit
 
-// This handles options screen for group matching (create new, join existing, join random)
-class GroupEntryOptionsViewController: UIViewController, GroupEntryOptionsViewDelegate {
+// This handles options screen for group matching (create new, join invite, join random)
+class GroupEntryViewController: UIViewController, GroupEntryViewDelegate {
 
-    private let groupView = GroupEntryOptionsView()
+    private let groupView = GroupEntryView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,18 +30,18 @@ class GroupEntryOptionsViewController: UIViewController, GroupEntryOptionsViewDe
         ])
     }
     
-    func didTouchJoinExistingGroupButton() {
-        let groupEntrySelectionVC = GroupEntrySelectionViewController(screenType: .joinExistingGroup)
-        navigationController?.pushViewController(groupEntrySelectionVC, animated: true)
+    func didTouchJoinInviteGroupButton() {
+        let joinInviteGroupVC = JoinInviteGroupViewController()
+        navigationController?.pushViewController(joinInviteGroupVC, animated: true)
     }
     
     func didTouchJoinRandomGroupButton() {
-        let groupEntrySelectionVC = GroupEntrySelectionViewController(screenType: .joinRandomGroup)
-        navigationController?.pushViewController(groupEntrySelectionVC, animated: true)
+        let joinRandomGroupVC = JoinRandomGroupViewController()
+        navigationController?.pushViewController(joinRandomGroupVC, animated: true)
     }
     
     func didTouchCreateGroupButton() {
-        let groupEntrySelectionVC = GroupEntrySelectionViewController(screenType: .createNewGroup)
-        navigationController?.pushViewController(groupEntrySelectionVC, animated: true)
+        let createNewGroupVC = CreateNewGroupViewController()
+        navigationController?.pushViewController(createNewGroupVC, animated: true)
     }
 }

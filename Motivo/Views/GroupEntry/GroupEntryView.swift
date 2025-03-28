@@ -7,20 +7,20 @@
 
 import UIKit
 
-protocol GroupEntryOptionsViewDelegate:GroupEntryOptionsViewController {
-    func didTouchJoinExistingGroupButton()
+protocol GroupEntryViewDelegate:GroupEntryViewController {
+    func didTouchJoinInviteGroupButton()
     func didTouchJoinRandomGroupButton()
     func didTouchCreateGroupButton()
 }
 
-class GroupEntryOptionsView: UIView {
+class GroupEntryView: UIView {
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     let createNewGroupButton = UIButton()
     let joinRandomGroupButton = UIButton()
-    let joinExistingGroupButton = UIButton()
+    let joinInviteGroupButton = UIButton()
     
-    var delegate:GroupEntryOptionsViewDelegate?
+    var delegate:GroupEntryViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,17 +50,17 @@ class GroupEntryOptionsView: UIView {
         joinRandomGroupButton.setTitleColor(.systemBlue, for: .normal)
         joinRandomGroupButton.setTitle("Join Random", for: .normal)
         
-        joinExistingGroupButton.layer.borderColor = UIColor.black.cgColor
-        joinExistingGroupButton.layer.borderWidth = 2
-        joinExistingGroupButton.layer.cornerRadius = 8.0
-        joinExistingGroupButton.setTitleColor(.systemBlue, for: .normal)
-        joinExistingGroupButton.setTitle("Join Group", for: .normal)
+        joinInviteGroupButton.layer.borderColor = UIColor.black.cgColor
+        joinInviteGroupButton.layer.borderWidth = 2
+        joinInviteGroupButton.layer.cornerRadius = 8.0
+        joinInviteGroupButton.setTitleColor(.systemBlue, for: .normal)
+        joinInviteGroupButton.setTitle("Join Group", for: .normal)
         
         createNewGroupButton.addTarget(self, action: #selector(touchedCreateGroupButton), for: .touchUpInside)
         joinRandomGroupButton.addTarget(self, action: #selector(touchedJoinRandomGroupButton), for: .touchUpInside)
-        joinExistingGroupButton.addTarget(self, action: #selector(touchedJoinExistingGroupButton), for: .touchUpInside)
+        joinInviteGroupButton.addTarget(self, action: #selector(touchedJoinInviteGroupButton), for: .touchUpInside)
         
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel, createNewGroupButton, joinRandomGroupButton, joinExistingGroupButton])
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel, createNewGroupButton, joinRandomGroupButton, joinInviteGroupButton])
         stackView.axis = .vertical
         stackView.spacing = 15
         addSubview(stackView)
@@ -83,7 +83,7 @@ class GroupEntryOptionsView: UIView {
         delegate?.didTouchJoinRandomGroupButton()
     }
     
-    @objc func touchedJoinExistingGroupButton() {
-        delegate?.didTouchJoinExistingGroupButton()
+    @objc func touchedJoinInviteGroupButton() {
+        delegate?.didTouchJoinInviteGroupButton()
     }
 }

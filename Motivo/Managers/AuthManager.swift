@@ -11,9 +11,12 @@ class AuthManager {
     // Singleton AuthManager
     static let shared = AuthManager()
     
+    // Registration Flag to handle race condition between registration and FirebaseAuth state change listener
+    var isRegisteringUser: Bool = false
+    
     private init() {}
     
-    func signInAsync(email:String, password:String) async throws -> AuthDataResult {
+    func signIn(email:String, password:String) async throws -> AuthDataResult {
         return try await withCheckedThrowingContinuation { continuation in
             Auth.auth().signIn( withEmail: email, password: password) {
                 (authResult,error) in
@@ -28,7 +31,7 @@ class AuthManager {
         }
     }
     
-    func registerAsync(email:String, password:String) async throws -> AuthDataResult {
+    func register(email:String, password:String) async throws -> AuthDataResult {
         return try await withCheckedThrowingContinuation { continuation in
             Auth.auth().createUser(withEmail: email, password: password) {
                 (authResult,error) in
@@ -56,22 +59,11 @@ class AuthManager {
     }
     
     // Inserts instance of UserModel into the 'user' collection in Firestore
-    func insertUserDataAsync(user: UserModel) throws {
-        let db = Firestore.firestore()
-        let userDocument = db.collection("user").document(user.uid)
-        
-        do {
-            try userDocument.setData(from: user)
-//            print("Document successfully written!")
-        } catch {
-            throw error
-            // TODO: Remove successful user registration if document insertion fails
-//            let errorText = "\(error.localizedDescription)"
-//            self.handleAuthAlerts(title: "User Document Insertion Error", message: errorText)
-//            print("Error writing document: \(error)")
-        }
+    func insertUserData(user: UserModel) throws {
+        try FirestoreService.shared.addUser(user: user)
     }
     
+    // Returns the current FirebaseAuth user instance that is logged in
     func getCurrentUserAuthInstance () -> FirebaseAuth.User? {
         guard let user = Auth.auth().currentUser else { return nil }
         return user

@@ -14,71 +14,43 @@ class ConnectionsManager {
     
     // Uses a User's UID to fetch their UserModel in FireStore
     func fetchUser(uid: String) async throws -> UserModel? {
-        let document = try await db.collection("user").document(uid).getDocument()
-        
-        guard document.exists else {
-            print("User document does not exist in Firestore")
-            return nil
-        }
-        
-        return try document.data(as: UserModel.self)
+        return try await FirestoreService.shared.fetchUser(forUserUID: uid)
     }
     
     // Uses a User's UID to fetch other related UserModels that are in shared group(s) with the user in FireStore.
     func fetchConnections(for uid: String) async throws -> [UserModel] {
         // Get group IDs where the user is a member
-        let groupIds = try await fetchUserGroupIds(uid: uid)
-        guard !groupIds.isEmpty else { return [] } // No groups found
+        let groupIDs = try await fetchUserGroupIDs(userUID: uid)
+        guard !groupIDs.isEmpty else { return [] } // No groups found
 
         // Get user UIDs from those groups
-        let userUids = try await fetchUsersFromGroups(groupIds: groupIds, excluding: uid)
-        guard !userUids.isEmpty else { return [] } // No connected users
+        let userUIDs = try await fetchUsersFromGroups(groupIDs: groupIDs, excluding: uid)
+        guard !userUIDs.isEmpty else { return [] } // No connected users
 
         // Fetch user details
-        let users = try await fetchUsersByUids(userUids)
+        let users = try await FirestoreService.shared.fetchUsers(forUserUIDs: Array(userUIDs))
         return users
     }
     
-    // Uses a User's UID to fetch the groupIds for the groups that they are a member of in FireStore.
-    private func fetchUserGroupIds(uid: String) async throws -> [String] {
-        let snapshot = try await db.collection("group_membership")
-            .whereField("userUid", isEqualTo: uid)
-            .getDocuments()
-
-        let groupIds = snapshot.documents.compactMap { document in document["groupId"] as? String }
-        return groupIds
+    // Get the ID's of the groups the given user is a member of.
+    private func fetchUserGroupIDs(userUID: String) async throws -> [String] {
+        let memberships = try await FirestoreService.shared.fetchGroupMemberships(forUserUID: userUID)
+        return memberships.map { membership in membership.groupID }
     }
     
-    // Uses groupIds to retrieve a list of users that are in each of the corresponding groups of those groupIds in FireStore.
-    private func fetchUsersFromGroups(groupIds: [String], excluding currentUid: String) async throws -> Set<String> {
-        guard !groupIds.isEmpty else { return [] } // Prevents Firestore from failing on empty queries
+    // Uses groupIDs to retrieve a list of users that are in each of the corresponding groups of those groupIDs in FireStore.
+    private func fetchUsersFromGroups(groupIDs: [String], excluding currentUID: String) async throws -> Set<String> {
+        guard !groupIDs.isEmpty else { return [] } // Prevents Firestore from failing on empty queries
 
-        let snapshot = try await db.collection("group_membership")
-            .whereField("groupId", in: groupIds)
-            .getDocuments()
+        let memberships = try await FirestoreService.shared.fetchGroupMemberships(forGroupIDs: groupIDs)
 
-        var userUids = Set<String>()
-
-        for document in snapshot.documents {
-            if let userUid = document["userUid"] as? String, userUid != currentUid {
-                userUids.insert(userUid)
+        var userUIDs = Set<String>()
+        for membership in memberships {
+            if membership.userUID != currentUID {
+                userUIDs.insert(membership.userUID)
             }
         }
 
-        return userUids
+        return userUIDs
     }
-
-    // Retrieves the UserModel of the users that match the given userUids in FireStore.
-    private func fetchUsersByUids(_ userUids: Set<String>) async throws -> [UserModel] {
-        guard !userUids.isEmpty else { return [] } // Prevents Firestore from failing on empty queries
-
-        let userSnapshot = try await db.collection("user")
-            .whereField(FieldPath.documentID(), in: Array(userUids))
-            .getDocuments()
-
-        return try userSnapshot.documents.compactMap { document in
-            try document.data(as: UserModel.self)
-        }
-    }
-    
 }
