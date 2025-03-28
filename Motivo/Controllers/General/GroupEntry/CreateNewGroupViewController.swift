@@ -7,16 +7,6 @@
 
 import UIKit
 
-// DUMMY DATA
-var categories: [CategoryModel] = [
-        CategoryModel(id: "1", name: "Work"),
-        CategoryModel(id: "2", name: "Personal"),
-        CategoryModel(id: "3", name: "Fitness"),
-        CategoryModel(id: "4", name: "Shopping"),
-        CategoryModel(id: "5", name: "Health"),
-        CategoryModel(id: "6", name: "Education")
-    ]
-
 class CreateNewGroupViewController: UIViewController, CreateNewGroupViewDelegate, CategorySelectionViewDelegate {
     let groupMatchingManager = GroupMatchingManager()
     private let createNewGroupView = CreateNewGroupView()
@@ -49,8 +39,14 @@ class CreateNewGroupViewController: UIViewController, CreateNewGroupViewDelegate
     }
     
     private func loadCategoryOptions() {
-        // TODO: Replace with Firestore fetch
-        createNewGroupView.categorySelectionView.categories = categories
+        Task {
+            do {
+                let categories = try await FirestoreService.shared.fetchCategories()
+                createNewGroupView.categorySelectionView.categories = categories
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch categories")
+            }
+        }
     }
 }
 

@@ -57,6 +57,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         }
                         return
                     }
+                    
+                    // If no user is found, current authUser is a "Ghost User" without any associated UserModel document inside Firestore
+                    // NOTE: This should only happen during project grading periods while we switch from "alpha" -> "beta" -> "final" collections
+                    // Some authUsers will be "real" users of the past version while being "ghost" users of the current version 
+                    print("Login failed due to Ghost User Error. Authentication was successful in FirebaseAuth, but no associated UserModel was found inside the '\(FirestoreCollection.user)' collection.")
+                    try Auth.auth().signOut()
                 }
             } else {
                 // User is logged out. Show Auth Flow

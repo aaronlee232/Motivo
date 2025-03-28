@@ -9,7 +9,7 @@ import Foundation
 import FirebaseFirestore
 
 struct CategoryModel: Hashable, Codable {
-    @DocumentID var id: String?
+    @DocumentID var id: String!
     var name: String
     
     // Compare based on documentID `id`
