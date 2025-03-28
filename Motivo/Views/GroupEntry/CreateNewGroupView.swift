@@ -13,15 +13,15 @@ protocol CreateNewGroupViewDelegate:CreateNewGroupViewController {
 
 class CreateNewGroupView: UIView {
     
-    let titleLabel = UILabel()
+    let titleLabel = UIBoldTitleLabel(textLabel: "New Group")
     let items = ["Public", "Private"]
-    let visibilityLabel = UILabel()
+    let visibilityLabel = UINormalLabel(textLabel: "Visibility")
     var visibilitySegCtrl:UISegmentedControl
-    let groupNameLabel = UILabel()
-    let groupNameTextField = UITextField()
-    let selectCategoriesLabel = UILabel()
+    let groupNameLabel = UINormalLabel(textLabel: "Group Name")
+    let groupNameTextField = UIGreyTextField(placeholderText: "Enter group name here", isSecure: false)
+    let selectCategoriesLabel = UINormalLabel(textLabel: "Select Group Categories")
     let categorySelectionView = CategorySelectionView()
-    let confirmButton = UIConfirmButton()
+    let confirmButton = ActionButton(title: "CONFIRM")
     
     var selectedSegValue:String
     var delegate:CreateNewGroupViewDelegate?
@@ -39,25 +39,25 @@ class CreateNewGroupView: UIView {
     }
     
     private func setupUI() {
-        titleLabel.textAlignment = .center
-        titleLabel.text = "New Group"
+//        titleLabel.textAlignment = .center
+//        titleLabel.text = "New Group"
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        visibilityLabel.textAlignment = .center
-        visibilityLabel.text = "Visibility"
+//        visibilityLabel.textAlignment = .center
+//        visibilityLabel.text = "Visibility"
         visibilityLabel.translatesAutoresizingMaskIntoConstraints = false
         
         self.visibilitySegCtrl.addTarget(self, action: #selector(segmentChanged(sender:)), for: .valueChanged)
         visibilitySegCtrl.translatesAutoresizingMaskIntoConstraints = false
         
-        groupNameLabel.textAlignment = .center
-        groupNameLabel.text = "Group Name"
+//        groupNameLabel.textAlignment = .center
+//        groupNameLabel.text = "Group Name"
         groupNameLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        groupNameTextField.placeholder = "Enter group name here"
+//        groupNameTextField.placeholder = "Enter group name here"
         groupNameTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        selectCategoriesLabel.text = "Select Group Categories"
+//        selectCategoriesLabel.text = "Select Group Categories"
         selectCategoriesLabel.translatesAutoresizingMaskIntoConstraints = false
         
         categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,7 +83,7 @@ class CreateNewGroupView: UIView {
         NSLayoutConstraint.activate([
             
             // Title Label Constraints
-            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 50),
+            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             

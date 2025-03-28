@@ -7,10 +7,16 @@
 
 import UIKit
 
-class UIActionButton: UIButton {
+class ActionButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupActionButtonUI()
+    }
+    
+    init(title: String) {
+        super.init(frame: .zero)
+        setupActionButtonUI()
+        setTitle(title, for: .normal)
     }
     
     required init?(coder: NSCoder) {

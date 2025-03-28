@@ -1,23 +1,23 @@
 //
-//  UISubtitleLabel.swift
+//  UINormalLabel.swift
 //  Motivo
 //
-//  Created by Arisyia Wong on 3/26/25.
+//  Created by Arisyia Wong on 3/28/25.
 //
 
 import UIKit
 
-class UISubtitleLabel: UILabel {
-    var fontSize:CGFloat = 24
+class UINormalLabel: UILabel {
+    var fontSize:CGFloat = 18
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupSubtitleLabelUI()
+        setupNormalLabelUI()
     }
     
     init(textLabel: String) {
         super.init(frame: .zero)
-        setupSubtitleLabelUI()
+        setupNormalLabelUI()
         text = textLabel
     }
     
@@ -25,11 +25,14 @@ class UISubtitleLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupSubtitleLabelUI() {
+    private func setupNormalLabelUI() {
         textColor = colorMainText
-        font = UIFont.systemFont(ofSize: fontSize)
-        alpha = 0.5 // setting opacity
+        font = UIFont(name: "Avenir-Light", size: fontSize)
         textAlignment = .center
+    }
+    
+    func setBoldText() {
+        font = UIFont(name: "Avenir-Bold", size: fontSize)
     }
     
     func changeFontSize(fontSize: Int) {

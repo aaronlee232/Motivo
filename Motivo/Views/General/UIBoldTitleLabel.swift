@@ -8,9 +8,17 @@
 import UIKit
 
 class UIBoldTitleLabel: UILabel {
+    var fontSize:CGFloat = 32
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupBoldTitleLabelUI()
+    }
+    
+    init(textLabel: String) {
+        super.init(frame: .zero)
+        setupBoldTitleLabelUI()
+        text = textLabel
     }
     
     required init?(coder: NSCoder) {
@@ -19,7 +27,12 @@ class UIBoldTitleLabel: UILabel {
     
     private func setupBoldTitleLabelUI() {
         textColor = colorMainText
-        font = UIFont.boldSystemFont(ofSize: 32)
+        font = UIFont.boldSystemFont(ofSize: fontSize)
         textAlignment = .center
+    }
+    
+    func changeFontSize(fontSize: Int) {
+        self.fontSize = CGFloat(fontSize)
+        font = UIFont.boldSystemFont(ofSize: self.fontSize)
     }
 }

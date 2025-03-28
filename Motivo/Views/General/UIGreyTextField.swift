@@ -13,8 +13,11 @@ class UIGreyTextField: UITextField {
         setupGreyTextFieldButtonUI()
     }
     
-    init(placeholderText: String) {
+    init(placeholderText: String, isSecure: Bool) {
         super.init(frame: .zero)
+        if isSecure {
+            setupSecureText()
+        }
         setupGreyTextFieldButtonUI()
         placeholder = placeholderText
     }
@@ -41,5 +44,10 @@ class UIGreyTextField: UITextField {
             string: placeholder ?? "",
             attributes: [.foregroundColor: colorExtraPlaceholderText])
         autocapitalizationType = .none
+    }
+    
+    private func setupSecureText() {
+        isSecureTextEntry = true
+        text = text // reload to make sure that text is hidden
     }
 }
