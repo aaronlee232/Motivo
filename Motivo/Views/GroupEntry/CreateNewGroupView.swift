@@ -39,35 +39,18 @@ class CreateNewGroupView: UIView {
     }
     
     private func setupUI() {
-//        titleLabel.textAlignment = .center
-//        titleLabel.text = "New Group"
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-//        visibilityLabel.textAlignment = .center
-//        visibilityLabel.text = "Visibility"
-        visibilityLabel.translatesAutoresizingMaskIntoConstraints = false
         
         self.visibilitySegCtrl.addTarget(self, action: #selector(segmentChanged(sender:)), for: .valueChanged)
-        visibilitySegCtrl.translatesAutoresizingMaskIntoConstraints = false
-        
-//        groupNameLabel.textAlignment = .center
-//        groupNameLabel.text = "Group Name"
-        groupNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-//        groupNameTextField.placeholder = "Enter group name here"
-        groupNameTextField.translatesAutoresizingMaskIntoConstraints = false
-        
-//        selectCategoriesLabel.text = "Select Group Categories"
-        selectCategoriesLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
-
-//        confirmButton.layer.borderColor = UIColor.blue.cgColor
-//        confirmButton.layer.borderWidth = 2
-//        confirmButton.layer.cornerRadius = 8.0
-//        confirmButton.setTitleColor(.systemBlue, for: .normal)
-//        confirmButton.setTitle("CONFIRM", for: .normal)
         confirmButton.addTarget(self, action: #selector(handleConfirmButton), for: .touchUpInside)
+        
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        visibilityLabel.translatesAutoresizingMaskIntoConstraints = false
+        visibilitySegCtrl.translatesAutoresizingMaskIntoConstraints = false
+        groupNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        groupNameTextField.translatesAutoresizingMaskIntoConstraints = false
+        selectCategoriesLabel.translatesAutoresizingMaskIntoConstraints = false
+        categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
         confirmButton.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(titleLabel)

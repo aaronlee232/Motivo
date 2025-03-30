@@ -10,8 +10,8 @@ import UIKit
 let buttonLength:CGFloat = 150
 
 class LabelIconButton: UIButton {
-    private var image = UIImage(systemName: "exclamationmark.triangle")
-    private var title = NormalLabel(textLabel: "Not Defined")
+    private var image = UIImage()
+    private var title = NormalLabel()
     private var mainStackView: UIStackView!
     
     override init(frame: CGRect) {
