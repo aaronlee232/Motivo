@@ -15,7 +15,7 @@ protocol GroupEntryViewDelegate:GroupEntryViewController {
 
 class GroupEntryView: UIView {
     let titleLabel = BoldTitleLabel(textLabel: "Match with a Group")
-    let subtitleLabel = SubtitleLabel(textLabel: "Join groups with these interests")
+    let subtitleLabel = SubtitleLabel(textLabel: "Start here with group matching")
     let createNewGroupButton = LabelIconButton(image: UIImage(systemName: "person.2.fill")!, title: "Create New")
     let joinRandomGroupButton = LabelIconButton(image: UIImage(systemName: "shuffle")!, title: "Join Random")
     let joinInviteGroupButton = LabelIconButton(image: UIImage(systemName: "person.fill.badge.plus")!, title: "Join Group")
