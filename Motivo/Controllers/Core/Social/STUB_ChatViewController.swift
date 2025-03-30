@@ -7,8 +7,25 @@
 
 import UIKit
 
+let dummyTaskList1: [DummyTask] = [
+    DummyTask(name: "Wash dishes", taskStatus: .complete),
+    DummyTask(name: "Cook dinner", taskStatus: .complete),
+    DummyTask(name: "Run a mile", taskStatus: .pending),
+    DummyTask(name: "Do homework", taskStatus: .incomplete),
+    DummyTask(name: "Charge phone", taskStatus: .incomplete)
+]
+
+
+let dummyTaskList2: [DummyTask] = [
+    DummyTask(name: "Wash dishes", taskStatus: .complete),
+    DummyTask(name: "Cook dinner", taskStatus: .complete)
+]
+
 class ChatViewController: UIViewController {
 
+    let progressOverviewBob = TaskProgressOverviewView(name: "Bob", profileImage: nil)
+    let progressOverviewJane = TaskProgressOverviewView(name: "Jane", profileImage: nil)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -39,6 +56,23 @@ class ChatViewController: UIViewController {
         groupView1.translatesAutoresizingMaskIntoConstraints = false
         groupView2.translatesAutoresizingMaskIntoConstraints = false
         
+        let stack = UIStackView()
+        stack.axis = .vertical
+        view.addSubview(stack)
+        
+        let spacer = UIView()
+        spacer.setContentHuggingPriority(.defaultLow, for: .vertical)
+        spacer.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        
+        progressOverviewBob.taskList = dummyTaskList1
+        progressOverviewJane.taskList = dummyTaskList2
+        stack.addArrangedSubview(progressOverviewBob)
+        stack.addArrangedSubview(progressOverviewJane)
+        
+        stack.addArrangedSubview(spacer)
+        
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             testLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             testLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
@@ -49,7 +83,11 @@ class ChatViewController: UIViewController {
             groupView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             groupView2.topAnchor.constraint(equalTo: groupView1.bottomAnchor, constant: 20),
             groupView2.widthAnchor.constraint(equalToConstant: groupViewWidth),
-            groupView2.heightAnchor.constraint(equalToConstant: groupViewHeight)
+            groupView2.heightAnchor.constraint(equalToConstant: groupViewHeight),
+            stack.topAnchor.constraint(equalTo: groupView2.bottomAnchor, constant: 10),
+            stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
