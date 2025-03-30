@@ -8,6 +8,8 @@
 import UIKit
 
 class LinkButton: UIButton {
+    var fontSize:CGFloat = 18
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLinkButtonUI()
@@ -20,6 +22,11 @@ class LinkButton: UIButton {
     private func setupLinkButtonUI() {
         setTitleColor(colorMainPrimary, for: .normal)
         titleLabel?.textAlignment = .center
-        titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        titleLabel?.font = UIFont.systemFont(ofSize: fontSize)
+    }
+    
+    func changeFontSize(fontSize: Int) {
+        self.fontSize = CGFloat(fontSize)
+        titleLabel?.font = UIFont.systemFont(ofSize: self.fontSize)
     }
 }

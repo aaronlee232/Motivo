@@ -60,8 +60,8 @@ class GroupView: UIView {
         imageView.layer.borderColor = colorMainText.cgColor
         imageView.layer.borderWidth = 2
         imageView.layer.cornerRadius = (groupViewHeight - (4 * 2)) / 2
-        memberCountLabel.setBoldText()
-        habitsCountLabel.setBoldText()
+        memberCountLabel.setBoldText(status: true)
+        habitsCountLabel.setBoldText(status: true)
         
         memberHabitsCountStackView = UIStackView(arrangedSubviews: [memberCountLabel, habitsCountLabel])
         memberHabitsCountStackView.axis = .vertical

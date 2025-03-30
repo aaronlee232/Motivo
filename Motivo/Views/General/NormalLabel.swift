@@ -9,6 +9,7 @@ import UIKit
 
 class NormalLabel: UILabel {
     var fontSize:CGFloat = 18
+    var currentFont = "Avenir-Light"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,16 +28,17 @@ class NormalLabel: UILabel {
     
     private func setupNormalLabelUI() {
         textColor = colorMainText
-        font = UIFont(name: "Avenir-Light", size: fontSize)
+        font = UIFont(name: currentFont, size: fontSize)
         textAlignment = .center
     }
     
-    func setBoldText() {
-        font = UIFont(name: "Avenir-Bold", size: fontSize)
+    func setBoldText(status: Bool) {
+        currentFont = status ? "Avenir-Bold" : "Avenir-Light"
+        font = UIFont(name: currentFont, size: fontSize)
     }
     
     func changeFontSize(fontSize: Int) {
         self.fontSize = CGFloat(fontSize)
-        font = UIFont.boldSystemFont(ofSize: self.fontSize)
+        font = UIFont(name: currentFont, size: self.fontSize)
     }
 }

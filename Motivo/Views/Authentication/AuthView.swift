@@ -23,11 +23,10 @@ class AuthView: UIView {
     let emailTextField = GreyTextField(placeholderText: "Email", isSecure: false)
     let passwordTextField = GreyTextField(placeholderText: "Password", isSecure: true)
     let verifyPasswordTextField = GreyTextField(placeholderText: "Verify Password", isSecure: true)
-    // TODO: Change this to no type and add custom style/properties (look into setting up color/style file. maybe a plist)
     let actionButton = ActionButton()
     let forgetPasswordButton = LinkButton()
-    let switchScreenLabel = UILabel()
-    let switchScreenButton = UIButton()
+    let switchScreenLabel = NormalLabel()
+    let switchScreenButton = LinkButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -49,25 +48,10 @@ class AuthView: UIView {
         addSubview(logoImageView)
         
         // Title
-//        titleLabel.textAlignment = .center
         addSubview(titleLabel)
         
         // Subtitle
-//        subtitleLabel.textAlignment = .center
         addSubview(subtitleLabel)
-        
-        // Individual Input Fields
-//        usernameTextField.placeholder = "Username"
-//        emailTextField.placeholder = "Email"
-//        passwordTextField.placeholder = "Password"
-//        passwordTextField.isSecureTextEntry = true
-//        verifyPasswordTextField.placeholder = "Verify Password"
-//        verifyPasswordTextField.isSecureTextEntry = true
-        
-//        usernameTextField.autocapitalizationType = .none
-//        emailTextField.autocapitalizationType = .none
-//        passwordTextField.autocapitalizationType = .none
-//        verifyPasswordTextField.autocapitalizationType = .none
         
         // Input Field Stack
         let inputFieldStackView = UIStackView(arrangedSubviews: [usernameTextField, emailTextField, passwordTextField, verifyPasswordTextField])
@@ -77,26 +61,20 @@ class AuthView: UIView {
         addSubview(inputFieldStackView)
         
         // Action Button
-//        actionButton.backgroundColor = .systemRed
-//        actionButton.setTitleColor(.white, for: .normal)
-//        actionButton.layer.cornerRadius = 8
         actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
         addSubview(actionButton)
         
         // Forget Password Button
-//        forgetPasswordButton.setTitleColor(.systemRed, for: .normal)
         forgetPasswordButton.setTitle("Forget Password?", for: .normal)
-//        forgetPasswordButton.titleLabel?.textAlignment = .center
         forgetPasswordButton.addTarget(self, action: #selector(forgetPasswordTapped), for: .touchUpInside)
         addSubview(forgetPasswordButton)
         
         // SwitchScreen Prompt
-        switchScreenLabel.font = UIFont.systemFont(ofSize: 14)
+        switchScreenLabel.changeFontSize(fontSize: 14)
         switchScreenLabel.setContentHuggingPriority(.required, for: .horizontal)
         switchScreenLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
-        switchScreenButton.setTitleColor(.systemRed, for: .normal)
-        switchScreenButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        switchScreenButton.changeFontSize(fontSize: 14)
         switchScreenButton.setContentHuggingPriority(.required, for: .horizontal)
         switchScreenButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         switchScreenButton.addTarget(self, action: #selector(switchScreenPromptTapped), for: .touchUpInside)
