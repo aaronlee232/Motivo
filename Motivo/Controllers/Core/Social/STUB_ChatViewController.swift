@@ -14,6 +14,43 @@ class ChatViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
+        // TODO: for groupView testing
+        let testLabel = BoldTitleLabel(textLabel: "Test Group View Display")
+
+        view.addSubview(testLabel)
+        
+        let groupView1 = GroupView(
+            image: UIImage(systemName: "person.3.fill")!,
+            groupName: "Fitness 101 01",
+            categories: ["Exercise", "Nutrition"],
+            memberCount: 4,
+            habitsCount: 3)
+        view.addSubview(groupView1)
+        
+        let groupView2 = GroupView(
+            image: UIImage(systemName: "person.3.fill")!,
+            groupName: "Outdoorsmen",
+            categories: ["Exercise", "Social", "Productivity", "Hobby", "Finance"],
+            memberCount: 4,
+            habitsCount: 3)
+        view.addSubview(groupView2)
+        
+        testLabel.translatesAutoresizingMaskIntoConstraints = false
+        groupView1.translatesAutoresizingMaskIntoConstraints = false
+        groupView2.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            testLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            testLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            groupView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            groupView1.topAnchor.constraint(equalTo: testLabel.bottomAnchor, constant: 100),
+            groupView1.widthAnchor.constraint(equalToConstant: groupViewWidth),
+            groupView1.heightAnchor.constraint(equalToConstant: groupViewHeight),
+            groupView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            groupView2.topAnchor.constraint(equalTo: groupView1.bottomAnchor, constant: 20),
+            groupView2.widthAnchor.constraint(equalToConstant: groupViewWidth),
+            groupView2.heightAnchor.constraint(equalToConstant: groupViewHeight)
+        ])
     }
     
 
