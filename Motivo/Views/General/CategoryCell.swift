@@ -40,7 +40,7 @@ class CategoryCell: UITableViewCell {
     }
 
     // MARK: - Configure Cell
-    func configure(with category: CategoryModel, isSelected: Bool) {
+    func configureWith(category: CategoryModel, isSelected: Bool) {
         categoryLabel.text = category.name
         accessoryType = isSelected ? .checkmark : .none
     }

@@ -14,7 +14,6 @@ protocol CategorySelectionViewDelegate: AnyObject {
 class CategorySelectionView: UIView, UITableViewDataSource, UITableViewDelegate {
 
     let tableView = UITableView()
-    let categoryCell = "CategoryCell"
     
     var categories: [CategoryModel] = [] {
         didSet {
@@ -61,7 +60,7 @@ class CategorySelectionView: UIView, UITableViewDataSource, UITableViewDelegate 
         }
         let category = categories[indexPath.row]
         
-        cell.configure(with: category, isSelected: false)
+        cell.configureWith(category: category, isSelected: false)
         cell.accessoryType = selectedCategories.contains(category) ? .checkmark : .none
         
         return cell
