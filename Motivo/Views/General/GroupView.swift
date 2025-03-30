@@ -32,13 +32,11 @@ class GroupView: UIView {
     init(image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
         imageView = UIImageView(image: image)
         self.groupName = BoldTitleLabel(textLabel: groupName)
-        self.groupName.changeFontSize(fontSize: 22)
+        
         self.categories = categories
         memberLabel = SubtitleLabel(textLabel: "Members")
-        memberLabel.changeFontSize(fontSize: 16)
         memberCountLabel = NormalLabel(textLabel: String(memberCount))
         habitsLabel = SubtitleLabel(textLabel: "Habits")
-        habitsLabel.changeFontSize(fontSize: 16)
         habitsCountLabel = NormalLabel(textLabel: String(habitsCount))
         
         super.init(frame: .zero)
@@ -60,7 +58,18 @@ class GroupView: UIView {
         imageView.layer.borderColor = colorMainText.cgColor
         imageView.layer.borderWidth = 2
         imageView.layer.cornerRadius = (groupViewHeight - (4 * 2)) / 2
+        
+        groupName.changeFontSize(fontSize: 22)
+        groupName.textAlignment = .left
+        
+        memberLabel.changeFontSize(fontSize: 16)
+        memberLabel.textAlignment = .left
+        
         memberCountLabel.setBoldText(status: true)
+        
+        habitsLabel.changeFontSize(fontSize: 16)
+        habitsLabel.textAlignment = .left
+        
         habitsCountLabel.setBoldText(status: true)
         
         memberHabitsCountStackView = UIStackView(arrangedSubviews: [memberCountLabel, habitsCountLabel])
@@ -75,14 +84,14 @@ class GroupView: UIView {
         
         categoriesStackView1 = UIStackView()
         categoriesStackView1.axis = .horizontal
-        categoriesStackView1.spacing = 10
+        categoriesStackView1.spacing = 8
         categoriesStackView1.alignment = .fill
         categoriesStackView1.distribution = .fillEqually
         
         if categories.count > 3 {
             categoriesStackView2 = UIStackView()
             categoriesStackView2.axis = .horizontal
-            categoriesStackView2.spacing = 10
+            categoriesStackView2.spacing = 8
             categoriesStackView2.alignment = .fill
             categoriesStackView2.distribution = .fillEqually
         }
@@ -103,6 +112,8 @@ class GroupView: UIView {
         groupNameCategoriesStackView.axis = .vertical
         
         mainStackView = UIStackView(arrangedSubviews: [imageView, groupNameCategoriesStackView, memberHabitsOverallStackView])
+        mainStackView.axis = .horizontal
+        mainStackView.spacing = 8
         mainStackView.distribution = .fillProportionally
         mainStackView.alignment = .fill
         mainStackView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4) // padding
@@ -132,8 +143,7 @@ class GroupView: UIView {
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: groupViewHeight - (4 * 2)),
             imageView.heightAnchor.constraint(equalToConstant: groupViewHeight - (4 * 2)),
-//            mainStackView.arrangedSubviews[1].trailingAnchor.constraint(equalTo: mainStackView.arrangedSubviews[2].leadingAnchor),
-            groupNameCategoriesStackView.widthAnchor.constraint(equalToConstant: 0.55 * groupViewWidth),
+            groupNameCategoriesStackView.widthAnchor.constraint(equalToConstant: 0.50 * groupViewWidth),
             mainStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             mainStackView.topAnchor.constraint(equalTo: topAnchor),
             mainStackView.widthAnchor.constraint(equalToConstant: groupViewWidth),
