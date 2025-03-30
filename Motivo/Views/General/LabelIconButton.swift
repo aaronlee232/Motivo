@@ -42,14 +42,7 @@ class LabelIconButton: UIButton {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // function runs after layout is calculated
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//        
-//        self.layer.cornerRadius = 0.1 * groupEntryButtonLength
-//        self.layer.masksToBounds = true
-//    }
+
     
     private func setupLabelIconButtonUI() {
         backgroundColor = .systemBackground

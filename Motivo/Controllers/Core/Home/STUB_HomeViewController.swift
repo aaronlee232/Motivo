@@ -16,6 +16,7 @@ class HomeViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
+        
         let addGroupButton = UIButton(type: .system)
         addGroupButton.setTitle("Add Group", for: .normal)
         addGroupButton.addTarget(self, action: #selector(openGroups), for: .touchUpInside)
@@ -26,15 +27,15 @@ class HomeViewController: UIViewController {
         
 
         view.addSubview(addGroupButton)
-         view.addSubview(populateConnectionsButton)
+        view.addSubview(populateConnectionsButton)
         addGroupButton.translatesAutoresizingMaskIntoConstraints = false
         populateConnectionsButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             addGroupButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
             addGroupButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-             populateConnectionsButton.topAnchor.constraint(equalTo: addGroupButton.bottomAnchor, constant: 30),
-             populateConnectionsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            populateConnectionsButton.topAnchor.constraint(equalTo: addGroupButton.bottomAnchor, constant: 30),
+            populateConnectionsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
     
