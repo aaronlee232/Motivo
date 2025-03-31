@@ -8,11 +8,11 @@
 import UIKit
 
 let dummyTaskList1: [DummyTask] = [
+    DummyTask(name: "Charge phone", taskStatus: .incomplete),
     DummyTask(name: "Wash dishes", taskStatus: .complete),
-    DummyTask(name: "Cook dinner", taskStatus: .complete),
     DummyTask(name: "Run a mile", taskStatus: .pending),
     DummyTask(name: "Do homework", taskStatus: .incomplete),
-    DummyTask(name: "Charge phone", taskStatus: .incomplete)
+    DummyTask(name: "Cook dinner", taskStatus: .complete)
 ]
 
 

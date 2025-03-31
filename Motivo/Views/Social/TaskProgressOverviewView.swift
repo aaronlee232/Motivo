@@ -39,6 +39,7 @@ class TaskProgressOverviewView: UIView {
     private var taskTableHeightConstraint: NSLayoutConstraint?
     var taskList: [DummyTask] = [] {
         didSet {
+            taskList.sort { $0.taskStatus < $1.taskStatus }
             taskPreviewTableView.reloadData()
             updateProgressBar()
         }

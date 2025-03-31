@@ -7,10 +7,14 @@
 
 import UIKit
 
-enum TaskStatus {
-    case incomplete
-    case pending
-    case complete
+enum TaskStatus: Int, Comparable {
+    case complete = 0
+    case pending = 1
+    case incomplete = 2
+    
+    static func < (lhs: TaskStatus, rhs: TaskStatus) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
 }
 
 class TaskPreviewCell: UITableViewCell {
