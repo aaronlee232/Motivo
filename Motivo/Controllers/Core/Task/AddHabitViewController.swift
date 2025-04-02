@@ -129,5 +129,11 @@ class AddHabitViewController: UIViewController {
                 }
             }
         }
+//        do {
+//            try FirestoreService.shared.addHabit(habit: newHabit)
+//            navigationController?.popViewController(animated: true)
+//        } catch {
+//            print("Error adding habit: \(error.localizedDescription)")
+//        }
     }
 }

@@ -11,4 +11,5 @@ struct FirestoreCollection {
     static let groupMembership = "beta_group_membership"
     static let category = "beta_category"
     static let habit = "beta_habits"
+    static let habit_record = "beta_habit_records"
 }

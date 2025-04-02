@@ -38,6 +38,6 @@ class HabitManager {
     }
     
     func sortHabits() {
-        habits.sort { !$0.isCompleted && $1.isCompleted }
+//        habits.sort { !$0.isCompleted && $1.isCompleted }
     }
 }

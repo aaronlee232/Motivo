@@ -186,7 +186,7 @@ extension FirestoreService {
         let snapshot = try await habitCollectionRef
             .whereField("userUID", isEqualTo: userUID)
             .getDocuments()
-
+        
         return try snapshot.documents.map { document in
             try document.data(as: HabitModel.self)
         }
@@ -198,11 +198,33 @@ extension FirestoreService {
     }
     
     func updateHabit(habit: HabitModel) throws {
-        let habitDocument = habitCollectionRef.document(habit.id)
+        let habitDocument = habitCollectionRef.document(habit.id ?? "")
         try habitDocument.setData(from: habit, merge: true)
     }
     
     func deleteHabit(habitID: String) async throws {
         try await habitCollectionRef.document(habitID).delete()
+    }
+}
+
+extension FirestoreService {
+    func fetchHabitRecords(forHabitID habitID: String) async throws -> [HabitRecord] {
+        let snapshot = try await db.collection("habitRecords")
+            .whereField("habitID", isEqualTo: habitID)
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: HabitRecord.self)
+        }
+    }
+    
+    func addHabitRecord(habitRecord: HabitRecord) throws {
+        let recordDocument = db.collection("habitRecords").document()
+        try recordDocument.setData(from: habitRecord)
+    }
+    
+    func updateHabitRecord(habitRecord: HabitRecord) throws {
+        let recordDocument = db.collection("habitRecords").document(habitRecord.id ?? "")
+        try recordDocument.setData(from: habitRecord, merge: true)
     }
 }
