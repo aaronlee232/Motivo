@@ -30,6 +30,12 @@ class HabitViewController: UIViewController, UITableViewDataSource, UITableViewD
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
+    
+    override func viewWillAppear(_ animated: Bool){
+        super.viewWillAppear(animated)
+        habitsView.loadHabits()
+        self.tableView.reloadData()
+    }
 
     @objc private func addHabit() {
         // Navigate to Add Habit page

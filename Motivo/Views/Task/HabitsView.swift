@@ -17,7 +17,7 @@ class HabitsView {
     @objc func loadHabits() {
 //        let selectedCategories = UserDefaults.standard.array(forKey: "selectedCategories") as? [String] ?? ["Exercise", "Nutrition", "Productivity", "Social", "Finance"]
 
-        db.collection("habits").getDocuments { snapshot, error in
+        db.collection(FirestoreCollection.habit).getDocuments { snapshot, error in
                 if let error = error {
                     print("Error fetching habits: \(error.localizedDescription)")
                     return
@@ -29,11 +29,12 @@ class HabitsView {
                         id: doc.documentID,
                         name: data["name"] as? String ?? "",
                         isGroupHabit: data["isGroupHabit"] as? Bool ?? false,
-                        category: (data["category"] as? [String])?.first ?? "Uncategorized",  // <-- FIXED: Take the first category
+                        category: data["category"] as! [String],  // <-- FIXED: Take the first category
                         streak: data["streak"] as? Int ?? 0,
                         goal: data["goal"] as? Int ?? 0,
                         unit: data["unit"] as? String ?? "",
-                        frequency: data["frequency"] as? String ?? "Daily"
+                        frequency: data["frequency"] as? String ?? "Daily",
+                        userID: AuthManager.shared.getCurrentUserAuthInstance()?.uid ?? ""
                     )
                 } ?? []
 

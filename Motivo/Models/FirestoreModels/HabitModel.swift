@@ -12,11 +12,12 @@ struct HabitModel: Codable {
     @DocumentID var id: String!
     let name: String
     let isGroupHabit: Bool
-    let category: String
+    let category: [String]
     var streak: Int
     let goal: Int
     let unit: String
     let frequency: String
+    let userID: String
 }
 
 struct HabitRecord: Codable {
@@ -25,6 +26,7 @@ struct HabitRecord: Codable {
     var completedCount: Int
     var unverifiedPhotosList: [String]
     let timestamp: Timestamp
+    let userID: String
     
     // Computed properties
     var isCompleted: Bool {
