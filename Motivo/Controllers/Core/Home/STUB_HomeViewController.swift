@@ -7,6 +7,12 @@
 
 import UIKit
 
+let dummyGroupMetadataList = [
+    GroupMetadata(groupId: "", image: UIImage(systemName: "person.3.fill")!, groupName: "Fitness 101", categories: ["Exercise", "Nutrition"], memberCount: 4, habitsCount: 3),
+    GroupMetadata(groupId: "", image: UIImage(systemName: "person.3.fill")!, groupName: "Bob's Warehouse", categories: ["Fitness", "Hobby"], memberCount: 10, habitsCount: 4),
+    GroupMetadata(groupId: "", image: UIImage(systemName: "person.3.fill")!, groupName: "Budget Fooding", categories: ["Finance", "Nutrition"], memberCount: 4, habitsCount: 20),
+]
+
 class HomeViewController: UIViewController, DefaultHomeViewDelegate {
 
     let dummyDataUtils = DummyDataUtils()
@@ -54,7 +60,7 @@ class HomeViewController: UIViewController, DefaultHomeViewDelegate {
     private func setupHomepage() {
         // TODO: set up logic for populating the homepage
         // right now, it just goes to the default homepage
-        homeView = DefaultHomeView()
+        homeView = DefaultHomeView(groupList: dummyGroupMetadataList)
         view.addSubview(homeView!) // will have homeView initialized beforehand
         
         if let testView = homeView as? DefaultHomeView {

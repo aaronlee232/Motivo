@@ -36,7 +36,8 @@ class ChatViewController: UIViewController {
 
         view.addSubview(testLabel)
         
-        let groupView1 = GroupView(
+        let groupView1 = GroupCell(
+            groupId: "",
             image: UIImage(systemName: "person.3.fill")!,
             groupName: "Fitness 101 01",
             categories: ["Exercise", "Nutrition"],
@@ -44,7 +45,8 @@ class ChatViewController: UIViewController {
             habitsCount: 3)
         view.addSubview(groupView1)
         
-        let groupView2 = GroupView(
+        let groupView2 = GroupCell(
+            groupId: "",
             image: UIImage(systemName: "person.3.fill")!,
             groupName: "Outdoorsmen",
             categories: ["Exercise", "Social", "Productivity", "Hobby", "Finance"],
@@ -78,12 +80,12 @@ class ChatViewController: UIViewController {
             testLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
             groupView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             groupView1.topAnchor.constraint(equalTo: testLabel.bottomAnchor, constant: 100),
-            groupView1.widthAnchor.constraint(equalToConstant: groupViewWidth),
-            groupView1.heightAnchor.constraint(equalToConstant: groupViewHeight),
+            groupView1.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
+            groupView1.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
             groupView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             groupView2.topAnchor.constraint(equalTo: groupView1.bottomAnchor, constant: 20),
-            groupView2.widthAnchor.constraint(equalToConstant: groupViewWidth),
-            groupView2.heightAnchor.constraint(equalToConstant: groupViewHeight),
+            groupView2.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
+            groupView2.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
             stack.topAnchor.constraint(equalTo: groupView2.bottomAnchor, constant: 10),
             stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),

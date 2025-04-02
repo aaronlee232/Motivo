@@ -5,7 +5,7 @@
 //  Created by Aaron Lee on 3/11/25.
 //
 
-// Used for sections for Collection
+// Used for sections for Connections
 struct UserSection {
     var sectionTitle: String
     var users: [UserModel]
