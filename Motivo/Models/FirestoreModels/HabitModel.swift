@@ -25,7 +25,7 @@ struct HabitRecord: Codable {
     let habitID: String
     var completedCount: Int
     var unverifiedPhotosList: [String]
-    let timestamp: Timestamp
+    let timestamp: String
     let userID: String
     
     // Computed properties

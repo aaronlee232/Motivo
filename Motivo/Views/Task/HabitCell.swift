@@ -8,6 +8,7 @@ import UIKit
 
 class HabitCell: UITableViewCell {
     static let identifier = "HabitCell"
+    var hm : HabitModel = HabitModel(name: "hi", isGroupHabit: false, category: [], streak: 0, goal: 0, unit: "", frequency: "", userID: "")
 
     private let nameLabel = UILabel()
     private let progressLabel = UILabel()
@@ -54,10 +55,28 @@ class HabitCell: UITableViewCell {
 
     func configure(with habit: HabitModel, progressText: String) {
         nameLabel.text = habit.name
+        hm = habit
         progressLabel.text = progressText
     }
 
     @objc private func plusButtonTapped() {
+        
+        // VERIFICATION HAPPENS HERE
+        
+        let newHabitRecrd = HabitRecord(habitID: hm.id,
+                                        completedCount: 1,
+                                        unverifiedPhotosList: [],
+                                        timestamp: Date().formatted(),
+                                        userID: hm.userID)
+        
+        do {
+            try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecrd)
+//            navigationController?.popViewController(animated: true)
+            
+        } catch {
+            print("Error adding habit: \(error.localizedDescription)")
+        }
+        
         onPlusTapped?()
     }
 }
