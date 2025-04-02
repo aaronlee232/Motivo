@@ -29,7 +29,7 @@ class TaskPreviewCell: UITableViewCell {
     let messageLabel = UILabel()
     
     // MARK: - Initializers
-    convenience init(taskStatus: TaskStatus, taskName: String) {
+    init(taskStatus: TaskStatus, taskName: String) {
         self.init(frame: .zero)
         configureWith(taskStatus: taskStatus, taskName: taskName)
     }

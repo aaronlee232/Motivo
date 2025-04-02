@@ -16,7 +16,7 @@ class CreateNewGroupView: UIView {
     let titleLabel = BoldTitleLabel(textLabel: "New Group")
     let items = ["Public", "Private"]
     let visibilityLabel = NormalLabel(textLabel: "Visibility")
-    var visibilitySegCtrl:UISegmentedControl
+    var visibilitySegCtrl:SegCtrl
     let groupNameLabel = NormalLabel(textLabel: "Group Name")
     let groupNameTextField = GreyTextField(placeholderText: "Enter group name here", isSecure: false)
     let selectCategoriesLabel = NormalLabel(textLabel: "Select Group Categories")
@@ -27,7 +27,7 @@ class CreateNewGroupView: UIView {
     var delegate:CreateNewGroupViewDelegate?
     
     override init(frame: CGRect) {
-        self.visibilitySegCtrl = UISegmentedControl(items: items)
+        self.visibilitySegCtrl = SegCtrl(items: items)
         self.visibilitySegCtrl.selectedSegmentIndex = 0
         self.selectedSegValue = self.visibilitySegCtrl.titleForSegment(at: 0)!
         super.init(frame: frame)
