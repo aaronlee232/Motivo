@@ -1,13 +1,14 @@
 //
-//  AddTaskViewController.swift
+//  AddHabitViewController.swift
 //  Motivo
 //
 //  Created by Cooper Wilk on 3/10/25.
 //
 
 import UIKit
+import FirebaseFirestore
 
-class AddTaskViewController: UIViewController {
+class AddHabitViewController: UIViewController {
     
     // UI Elements
     private let visibilityLabel = UILabel()
@@ -27,6 +28,8 @@ class AddTaskViewController: UIViewController {
     // Categories
     private let categories = ["Exercise", "Nutrition", "Productivity", "Social", "Finance"]
     private var selectedCategories = Set<String>()
+    
+    private let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,21 +107,27 @@ class AddTaskViewController: UIViewController {
         let frequency = frequencySegmentedControl.titleForSegment(at: frequencySegmentedControl.selectedSegmentIndex) ?? "Daily"
         let isGroupHabit = visibilitySegmentedControl.selectedSegmentIndex == 0 // Public = Group Habit
         
-        let newHabit = Habit(
-            name: name,
-            isGroupHabit: isGroupHabit,
-            category: selectedCategories.joined(separator: ", "),
-            streak: 0,
-            completed: 0,
-            goal: goal,
-            unit: unit,
-            frequency: frequency
-        )
+        let newHabit: [String: Any] = [
+            "name": name,
+            "isGroupHabit": isGroupHabit,
+            "category": Array(selectedCategories),
+            "streak": 0,
+            "completed": 0,
+            "goal": goal,
+            "unit": unit,
+            "frequency": frequency
+        ]
         
-        // Add new task to HabitData so it's persistent
-        HabitData.habits.append(newHabit)
-        HabitManager.shared.addHabit(newHabit)
-        
-        navigationController?.popViewController(animated: true)
+        // Save to Firebase
+        db.collection("habits").addDocument(data: newHabit) { error in
+            if let error = error {
+                print("Error adding habit: \(error.localizedDescription)")
+            } else {
+                print("Habit successfully added")
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+        }
     }
 }

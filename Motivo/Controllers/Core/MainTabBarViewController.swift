@@ -16,7 +16,7 @@ class MainTabBarViewController: UITabBarController {
         tabBar.tintColor = .label
         
         // Configure Tab Navigation for core view controllers
-        let taskVC = UINavigationController(rootViewController: TaskViewController())
+        let taskVC = UINavigationController(rootViewController: HabitViewController())
         let chatVC = UINavigationController(rootViewController: ChatViewController())
         let homeVC = UINavigationController(rootViewController: HomeViewController())
         let peopleVC = UINavigationController(rootViewController: ConnectionsViewController())

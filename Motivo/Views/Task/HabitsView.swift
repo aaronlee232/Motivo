@@ -27,32 +27,48 @@ import UIKit
  
  It would be nice if the file/class for HabitView was also kept consistent with the controllers. Rename everything to use habit or task so its consistent.
  */
-
+import FirebaseFirestore
 
 class HabitsView {
-    private(set) var habits: [Habit] = []
+    private(set) var habits: [HabitModel] = []
+    let db = Firestore.firestore()
     
     init() {
         loadHabits()
+        observeSettingsChanges()
     }
     
-    // TODO: Implementation needs to be changed for firebase integration
     /**
-        What are we using UserDefaults for?
-        I think these should be moved into a "CategoryModel" and be put into a "category" collection in firebase
+        Observes changes in user settings (e.g., selected categories)
+        and reloads habits accordingly.
      */
-    func loadHabits() {
-        let selectedCategories = UserDefaults.standard.array(forKey: "selectedCategories") as? [String] ?? ["Exercise", "Nutrition", "Productivity", "Social", "Finance"]
-        
-        habits = HabitData.habits
-            .filter { selectedCategories.contains($0.category) }
-            .sorted { !$0.isCompleted && $1.isCompleted }
+    private func observeSettingsChanges() {
+        NotificationCenter.default.addObserver(self, selector: #selector(loadHabits), name: .didUpdateCategories, object: nil)
     }
+    
+    // Loads habits filtered by the selected categories
+    @objc func loadHabits() {
+            let selectedCategories = UserDefaults.standard.array(forKey: "selectedCategories") as? [String] ?? ["Exercise", "Nutrition", "Productivity", "Social", "Finance"]
+
+            db.collection("habits")
+                .whereField("category", in: selectedCategories)
+                .getDocuments { (snapshot, error) in
+                    if let error = error {
+                        print("Error fetching habits: \(error.localizedDescription)")
+                        return
+                    }
+
+                    self.habits = snapshot?.documents.compactMap { doc in
+                        try? doc.data(as: HabitModel.self)
+                    } ?? []
+
+                    self.sortHabits()
+                }
+        }
     
     func updateHabit(at index: Int) {
         guard index < habits.count else { return }
         
-        // If task reaches goal on this press, increment streak
         if habits[index].completed == habits[index].goal - 1 {
             habits[index].streak += 1
         }
@@ -69,7 +85,7 @@ class HabitsView {
         return habits.count
     }
     
-    func habit(at index: Int) -> Habit {
+    func habit(at index: Int) -> HabitModel {
         return habits[index]
     }
 }

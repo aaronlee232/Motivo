@@ -78,7 +78,7 @@ class HomeViewController: UIViewController, DefaultHomeViewDelegate {
     }
     
     func didTouchAddHabitsPlusButton() {
-        let groupRootVC = AddTaskViewController()
+        let groupRootVC = AddHabitViewController()
         navigationController?.pushViewController(groupRootVC, animated: true)
     }
 }

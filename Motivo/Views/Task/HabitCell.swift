@@ -93,7 +93,7 @@ class HabitCell: UITableViewCell {
         ])
     }
     
-    func configure(with habit: Habit, isExpanded: Bool) {
+    func configure(with habit: HabitModel, isExpanded: Bool) {
         nameLabel.text = habit.name
         groupIconLabel.text = habit.isGroupHabit ? "👥" : ""
         streakLabel.text = "🔥 \(habit.streak) days"
