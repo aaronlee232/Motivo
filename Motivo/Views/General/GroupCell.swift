@@ -34,14 +34,13 @@ class GroupCell: UITableViewCell {
     private var mainStackView: UIStackView!
     private var spaceView: UIView!
     
-    init(groupId: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
-        self.init(frame: .zero)
-        configureWith(groupId: groupId, image: image, groupName: groupName, categories: categories, memberCount: memberCount, habitsCount: habitsCount)
-    }
-    
+//    init(groupId: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
+//        self.init(frame: .zero)
+//        configureWith(groupId: groupId, image: image, groupName: groupName, categories: categories, memberCount: memberCount, habitsCount: habitsCount)
+//    }
+//    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        backgroundColor = .systemBlue
         setupGroupView()
     }
     
@@ -56,12 +55,12 @@ class GroupCell: UITableViewCell {
         self.categories = categories
         self.memberCountLabel.text = String(memberCount)
         self.habitsCountLabel.text = String(habitsCount)
-        print("Inside configureWith")
-        print("GroupId: \(self.groupId)")
-        print("GroupName: \(self.groupName)")
-        print("Categories: \(self.categories)")
-        print("Member Count: \(self.memberCountLabel)")
-        print("Habit Count: \(self.habitsCountLabel)")
+//        print("Inside configureWith")
+//        print("GroupId: \(self.groupId)")
+//        print("GroupName: \(self.groupName)")
+//        print("Categories: \(self.categories)")
+//        print("Member Count: \(self.memberCountLabel)")
+//        print("Habit Count: \(self.habitsCountLabel)")
         setupGroupView()
     }
     

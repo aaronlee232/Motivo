@@ -36,27 +36,27 @@ class ChatViewController: UIViewController {
 
         view.addSubview(testLabel)
         
-        let groupView1 = GroupCell(
-            groupId: "",
-            image: UIImage(systemName: "person.3.fill")!,
-            groupName: "Fitness 101 01",
-            categories: ["Exercise", "Nutrition"],
-            memberCount: 4,
-            habitsCount: 3)
-        view.addSubview(groupView1)
-        
-        let groupView2 = GroupCell(
-            groupId: "",
-            image: UIImage(systemName: "person.3.fill")!,
-            groupName: "Outdoorsmen",
-            categories: ["Exercise", "Social", "Productivity", "Hobby", "Finance"],
-            memberCount: 4,
-            habitsCount: 3)
-        view.addSubview(groupView2)
+//        let groupView1 = GroupCell(
+//            groupId: "",
+//            image: UIImage(systemName: "person.3.fill")!,
+//            groupName: "Fitness 101 01",
+//            categories: ["Exercise", "Nutrition"],
+//            memberCount: 4,
+//            habitsCount: 3)
+//        view.addSubview(groupView1)
+//        
+//        let groupView2 = GroupCell(
+//            groupId: "",
+//            image: UIImage(systemName: "person.3.fill")!,
+//            groupName: "Outdoorsmen",
+//            categories: ["Exercise", "Social", "Productivity", "Hobby", "Finance"],
+//            memberCount: 4,
+//            habitsCount: 3)
+//        view.addSubview(groupView2)
         
         testLabel.translatesAutoresizingMaskIntoConstraints = false
-        groupView1.translatesAutoresizingMaskIntoConstraints = false
-        groupView2.translatesAutoresizingMaskIntoConstraints = false
+//        groupView1.translatesAutoresizingMaskIntoConstraints = false
+//        groupView2.translatesAutoresizingMaskIntoConstraints = false
         
         let stack = UIStackView()
         stack.axis = .vertical
@@ -78,15 +78,15 @@ class ChatViewController: UIViewController {
         NSLayoutConstraint.activate([
             testLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             testLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
-            groupView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            groupView1.topAnchor.constraint(equalTo: testLabel.bottomAnchor, constant: 100),
-            groupView1.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
-            groupView1.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
-            groupView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            groupView2.topAnchor.constraint(equalTo: groupView1.bottomAnchor, constant: 20),
-            groupView2.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
-            groupView2.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
-            stack.topAnchor.constraint(equalTo: groupView2.bottomAnchor, constant: 10),
+//            groupView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            groupView1.topAnchor.constraint(equalTo: testLabel.bottomAnchor, constant: 100),
+//            groupView1.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
+//            groupView1.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
+//            groupView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            groupView2.topAnchor.constraint(equalTo: groupView1.bottomAnchor, constant: 20),
+//            groupView2.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
+//            groupView2.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
+            stack.topAnchor.constraint(equalTo: testLabel.bottomAnchor, constant: 10),
             stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)

@@ -7,13 +7,13 @@
 
 import UIKit
 
-protocol DefaultHomeViewDelegate:HomeViewController {
+protocol HomeViewDelegate:HomeViewController {
     func didTouchAddGroupPlusButton()
     func didTouchAddHabitsPlusButton()
 //    func didSelectGroupCell()
 }
 
-class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
+class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     private var groupList:[GroupMetadata]!
     private var tableView = UITableView()
@@ -29,7 +29,7 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     private var groupsStackView: UIStackView!
     private var habitsStackView: UIStackView!
     
-    var delegate:DefaultHomeViewDelegate?
+    var delegate:HomeViewDelegate?
     
     init(groupList:[GroupMetadata]) {
         self.groupList = groupList
@@ -85,37 +85,54 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         habitsStackView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
-//        addSubview(titleLabel)
-//        addSubview(groupsStackView)
-//        addSubview(defaultMessageGroups)
-//        addSubview(habitsStackView)
-//        addSubview(defaultMessageHabits)
+        addSubview(titleLabel)
+        addSubview(groupsStackView)
+        addSubview(defaultMessageGroups)
+        addSubview(habitsStackView)
+        addSubview(defaultMessageHabits)
         addSubview(tableView)
         
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-        
 //        NSLayoutConstraint.activate([
-//            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 60),
-//            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-//            groupsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            groupsStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-//            groupsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-//            groupsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-//            defaultMessageGroups.topAnchor.constraint(equalTo: groupsStackView.bottomAnchor, constant: 10),
-//            defaultMessageGroups.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-//            habitsStackView.topAnchor.constraint(equalTo: defaultMessageGroups.bottomAnchor, constant: 100),
-//            habitsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-//            habitsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-//            defaultMessageHabits.topAnchor.constraint(equalTo: habitsStackView.bottomAnchor, constant: 10),
-//            defaultMessageHabits.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40)
+//            tableView.topAnchor.constraint(equalTo: topAnchor),
+//            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+//            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
 //        ])
+        
+        // TODO: for UI testing purposes only, need to implement checking if user already has groups
+        var hasGroups = true
+        if hasGroups {
+            defaultMessageGroups.isHidden = true
+            defaultMessageHabits.isHidden = true
+        } else {
+            tableView.isHidden = true
+        }
+        
+        NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 60),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            groupsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            groupsStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            groupsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            groupsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            habitsStackView.topAnchor.constraint(equalTo: defaultMessageGroups.bottomAnchor, constant: 200),
+            habitsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            habitsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            tableView.topAnchor.constraint(equalTo: groupsStackView.bottomAnchor, constant: 10),
+            tableView.bottomAnchor.constraint(equalTo: habitsStackView.topAnchor, constant: -10),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            defaultMessageGroups.topAnchor.constraint(equalTo: groupsStackView.bottomAnchor, constant: 10),
+            defaultMessageGroups.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
+            defaultMessageHabits.topAnchor.constraint(equalTo: habitsStackView.bottomAnchor, constant: 10),
+            defaultMessageHabits.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40)
+        ])
     }
     
     @objc func handleAddGroupPlusButton() {
