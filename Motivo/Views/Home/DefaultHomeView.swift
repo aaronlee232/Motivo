@@ -50,6 +50,7 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     private func setupUI() {
+        
         myGroupsLabel.setBoldText(status: true)
         myHabitsLabel.setBoldText(status: true)
         
@@ -68,9 +69,10 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         habitsStackView.spacing = 0
         habitsStackView.distribution = .equalSpacing
         
-        tableView.rowHeight = UITableView.automaticDimension;
-        tableView.estimatedRowHeight = GroupCell.groupViewHeight + 40;
-        tableView.separatorStyle = .none
+//        tableView.rowHeight = UITableView.automaticDimension;
+//        tableView.estimatedRowHeight = GroupCell.groupViewHeight + 40;
+        tableView.separatorStyle = .singleLine
+//        tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 //        myGroupsLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -135,10 +137,17 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Group: \(groupList[indexPath.row].groupName)")
-        print(groupList[indexPath.row].categories)
-        print("Members: \(groupList[indexPath.row].memberCount)")
-        print("Habits: \(groupList[indexPath.row].habitsCount)")
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        print("Group: \(groupList[indexPath.row].groupName)")
+//        print(groupList[indexPath.row].categories)
+//        print("Members: \(groupList[indexPath.row].memberCount)")
+//        print("Habits: \(groupList[indexPath.row].habitsCount)")
+//        tableView.deselectRow(at: indexPath, animated: false)
+//    }
+
+    
+    // height for each cell
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
     }
 }
