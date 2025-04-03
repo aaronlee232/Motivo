@@ -105,6 +105,15 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
 //            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
 //        ])
         
+        // TODO: for UI testing purposes only, need to implement checking if user already has groups
+        var hasGroups = true
+        if hasGroups {
+            defaultMessageGroups.isHidden = true
+            defaultMessageHabits.isHidden = true
+        } else {
+            tableView.isHidden = true
+        }
+        
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 60),

@@ -182,6 +182,7 @@ class GroupCell: UITableViewCell {
         ])
         
         // enable tap feature so user can go to group details
+
 //        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(stackViewTapped))
 //        mainStackView.addGestureRecognizer(tapGestureRecognizer)
 //        mainStackView.isUserInteractionEnabled = true
