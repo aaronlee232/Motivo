@@ -17,16 +17,16 @@ enum TaskStatus: Int, Comparable {
     }
 }
 
-class TaskPreviewCell: UITableViewCell {
+class TaskProgressPreviewCell: UITableViewCell {
     
     // MARK: - UI Elements
-    static let reuseIdentifier = "TaskPreviewCell"
-    
-    let mainStackView = UIStackView()
-    let statusImageView = UIImageView()
-    let taskNameLabel = UILabel()
-    let spacerView = UIView()
-    let messageLabel = UILabel()
+    static let identifier = "TaskPreviewCell"
+
+    private let mainStackView = UIStackView()
+    private let statusImageView = UIImageView()
+    private let taskNameLabel = UILabel()
+    private let spacerView = UIView()
+    private let messageLabel = UILabel()
     
     // MARK: - Initializers
     init(taskStatus: TaskStatus, taskName: String) {
@@ -45,7 +45,7 @@ class TaskPreviewCell: UITableViewCell {
 }
 
 //MARK: - Cell Configuration
-extension TaskPreviewCell {
+extension TaskProgressPreviewCell {
     func configureWith(taskStatus: TaskStatus, taskName: String) {
         self.taskNameLabel.text = taskName
         self.statusImageView.image = statusImage(for: taskStatus)
@@ -84,14 +84,14 @@ extension TaskPreviewCell {
 }
 
 // MARK: - UI Setup
-extension TaskPreviewCell {
+extension TaskProgressPreviewCell {
     private func setupUI() {
         setupMainStackView()
 
         NSLayoutConstraint.activate([
             mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 44),
             mainStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }

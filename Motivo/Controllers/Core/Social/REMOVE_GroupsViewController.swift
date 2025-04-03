@@ -23,8 +23,8 @@ let dummyTaskList2: [DummyTask] = [
 
 class ChatViewController: UIViewController {
 
-    let progressOverviewBob = TaskProgressOverviewView(name: "Bob", profileImage: nil)
-    let progressOverviewJane = TaskProgressOverviewView(name: "Jane", profileImage: nil)
+    let progressOverviewBob = UserProgressOverviewCell(name: "Bob", profileImageURL: nil, taskList: dummyTaskList1)
+    let progressOverviewJane = UserProgressOverviewCell(name: "Jane", profileImageURL: nil, taskList: dummyTaskList2)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,9 +65,7 @@ class ChatViewController: UIViewController {
         let spacer = UIView()
         spacer.setContentHuggingPriority(.defaultLow, for: .vertical)
         spacer.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        
-        progressOverviewBob.taskList = dummyTaskList1
-        progressOverviewJane.taskList = dummyTaskList2
+
         stack.addArrangedSubview(progressOverviewBob)
         stack.addArrangedSubview(progressOverviewJane)
         

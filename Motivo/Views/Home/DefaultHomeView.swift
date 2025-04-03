@@ -10,7 +10,7 @@ import UIKit
 protocol DefaultHomeViewDelegate:HomeViewController {
     func didTouchAddGroupPlusButton()
     func didTouchAddHabitsPlusButton()
-//    func didSelectGroupCell()
+    func didSelectGroupCell(groupIdx: Int)
 }
 
 class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
@@ -124,6 +124,10 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         delegate?.didTouchAddHabitsPlusButton()
     }
     
+    @objc func handleDidSelectGroupCell(groupIdx: Int) {
+        delegate?.didSelectGroupCell(groupIdx: groupIdx)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return groupList.count
     }
@@ -135,10 +139,16 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Group: \(groupList[indexPath.row].groupName)")
-        print(groupList[indexPath.row].categories)
-        print("Members: \(groupList[indexPath.row].memberCount)")
-        print("Habits: \(groupList[indexPath.row].habitsCount)")
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        handleDidSelectGroupCell(groupIdx: indexPath.row)
     }
+    
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+////        print("Group: \(groupList[indexPath.row].groupName)")
+////        print(groupList[indexPath.row].categories)
+////        print("Members: \(groupList[indexPath.row].memberCount)")
+////        print("Habits: \(groupList[indexPath.row].habitsCount)")
+//    }
+    
+    
 }

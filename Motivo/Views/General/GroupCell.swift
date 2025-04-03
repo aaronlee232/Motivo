@@ -58,7 +58,7 @@ class GroupCell: UITableViewCell {
         self.habitsLabel = SubtitleLabel(textLabel: "Habits")
         self.habitsCountLabel = NormalLabel(textLabel: String(habitsCount))
         print("Inside configureWith")
-        print("GroupId: \(self.groupId)")
+        print("GroupId: \(self.groupId!)")
         print("GroupName: \(self.groupName)")
         print("Categories: \(self.categories)")
         print("Member Count: \(self.memberCountLabel)")
@@ -183,15 +183,14 @@ class GroupCell: UITableViewCell {
     }
     
     // Action when group view component is tapped
-    @objc func stackViewTapped() {
-        UIView.animate(withDuration: 0.2) {
-            self.mainStackView.backgroundColor = colorMainText.withAlphaComponent(0.4)
-            self.mainStackView.backgroundColor = .systemBackground
-        }
-        print("Group view tapped!")
-        // TODO: segue to group details
-    }
-    
+//    @objc func stackViewTapped() {
+//        UIView.animate(withDuration: 0.2) {
+//            self.mainStackView.backgroundColor = colorMainText.withAlphaComponent(0.4)
+//            self.mainStackView.backgroundColor = .systemBackground
+//        }
+//        print("Group view tapped!")
+//    }
+//    
     private func createCategoryLabels(categoryString: String) -> UILabel {
 //        let categoryLabel = NormalLabel(textLabel: categoryString)
         let categoryLabel = UILabel()
