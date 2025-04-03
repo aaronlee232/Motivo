@@ -8,10 +8,14 @@
 import UIKit
 import FirebaseAuth
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, ProfileViewDelegate {
+    
+    private var profileView:UIView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupProfile()
 
         // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
@@ -29,6 +33,26 @@ class ProfileViewController: UIViewController {
         ])
     }
     
+    private func setupProfile() {
+        profileView = ProfileView(groupList: dummyGroupMetadataList)
+        view.addSubview(profileView!)
+        
+        if let testView = profileView as? ProfileView {
+            profileView = testView
+            testView.delegate = self
+        }
+        
+        profileView?.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            profileView!.topAnchor.constraint(equalTo: view.topAnchor),
+            profileView!.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            profileView!.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            profileView!.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        
+    }
+    
     @objc func handleLogout() {
         do {
             try Auth.auth().signOut()
@@ -36,15 +60,4 @@ class ProfileViewController: UIViewController {
             print("Sign out error")
         }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

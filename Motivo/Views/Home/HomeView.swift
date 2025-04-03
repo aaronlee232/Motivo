@@ -7,18 +7,18 @@
 
 import UIKit
 
-protocol DefaultHomeViewDelegate:HomeViewController {
+protocol HomeViewDelegate:HomeViewController {
     func didTouchAddGroupPlusButton()
     func didTouchAddHabitsPlusButton()
     func didSelectGroupCell(groupIdx: Int)
 }
 
-class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
+class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     private var groupList:[GroupMetadata]!
     private var tableView = UITableView()
     
-    private let titleLabel = BoldTitleLabel(textLabel: "Hi User") // TODO: replace with username
+    private let titleLabel = BoldTitleLabel(textLabel: "Hi User")
     private let myGroupsLabel = NormalLabel(textLabel: "My Groups")
     private let addGroupPlusButton = IconButton(image: UIImage(systemName: "plus")!)
     private let defaultMessageGroups = NormalLabel(textLabel: "No groups joined yet.")
@@ -29,7 +29,7 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     private var groupsStackView: UIStackView!
     private var habitsStackView: UIStackView!
     
-    var delegate:DefaultHomeViewDelegate?
+    var delegate:HomeViewDelegate?
     
     init(groupList:[GroupMetadata]) {
         self.groupList = groupList
@@ -37,6 +37,18 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
+        Task {
+            do {
+                let username = try await FirestoreService.shared.fetchCurrentUsername()
+                DispatchQueue.main.async {
+                    self.titleLabel.text = "Hi \(username ?? "User")"
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    print("Username Error: Failed to load username")
+                }
+            }
+        }
         setupUI()
     }
     
@@ -50,6 +62,9 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     private func setupUI() {
+        
+        titleLabel.textAlignment = .center
+        
         myGroupsLabel.setBoldText(status: true)
         myHabitsLabel.setBoldText(status: true)
         
@@ -67,53 +82,54 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         habitsStackView.alignment = .center
         habitsStackView.spacing = 0
         habitsStackView.distribution = .equalSpacing
-        
-        tableView.rowHeight = UITableView.automaticDimension;
-        tableView.estimatedRowHeight = GroupCell.groupViewHeight + 40;
-        tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-//        myGroupsLabel.translatesAutoresizingMaskIntoConstraints = false
-//        addGroupPlusButton.translatesAutoresizingMaskIntoConstraints = false
         defaultMessageGroups.translatesAutoresizingMaskIntoConstraints = false
-//        myHabitsLabel.translatesAutoresizingMaskIntoConstraints = false
-//        addHabitsPlusButton.translatesAutoresizingMaskIntoConstraints = false
         defaultMessageHabits.translatesAutoresizingMaskIntoConstraints = false
         groupsStackView.translatesAutoresizingMaskIntoConstraints = false
         habitsStackView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
-//        addSubview(titleLabel)
-//        addSubview(groupsStackView)
-//        addSubview(defaultMessageGroups)
-//        addSubview(habitsStackView)
-//        addSubview(defaultMessageHabits)
+        addSubview(titleLabel)
+        addSubview(groupsStackView)
+        addSubview(defaultMessageGroups)
+        addSubview(habitsStackView)
+        addSubview(defaultMessageHabits)
         addSubview(tableView)
         
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-        
 //        NSLayoutConstraint.activate([
-//            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 60),
-//            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-//            groupsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            groupsStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-//            groupsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-//            groupsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-//            defaultMessageGroups.topAnchor.constraint(equalTo: groupsStackView.bottomAnchor, constant: 10),
-//            defaultMessageGroups.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-//            habitsStackView.topAnchor.constraint(equalTo: defaultMessageGroups.bottomAnchor, constant: 100),
-//            habitsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-//            habitsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-//            defaultMessageHabits.topAnchor.constraint(equalTo: habitsStackView.bottomAnchor, constant: 10),
-//            defaultMessageHabits.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40)
+//            tableView.topAnchor.constraint(equalTo: topAnchor),
+//            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+//            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
 //        ])
+        
+        NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 60),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            groupsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            groupsStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            groupsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            groupsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            habitsStackView.topAnchor.constraint(equalTo: defaultMessageGroups.bottomAnchor, constant: 200),
+            habitsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            habitsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            tableView.topAnchor.constraint(equalTo: groupsStackView.bottomAnchor, constant: 10),
+            tableView.bottomAnchor.constraint(equalTo: habitsStackView.topAnchor, constant: -10),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            defaultMessageGroups.topAnchor.constraint(equalTo: groupsStackView.bottomAnchor, constant: 10),
+            defaultMessageGroups.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
+            defaultMessageHabits.topAnchor.constraint(equalTo: habitsStackView.bottomAnchor, constant: 10),
+            defaultMessageHabits.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40)
+        ])
     }
     
     @objc func handleAddGroupPlusButton() {
@@ -139,16 +155,12 @@ class DefaultHomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         handleDidSelectGroupCell(groupIdx: indexPath.row)
     }
-    
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-////        print("Group: \(groupList[indexPath.row].groupName)")
-////        print(groupList[indexPath.row].categories)
-////        print("Members: \(groupList[indexPath.row].memberCount)")
-////        print("Habits: \(groupList[indexPath.row].habitsCount)")
-//    }
-    
-    
+
+    // height for each cell
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
+    }
 }

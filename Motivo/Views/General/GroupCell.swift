@@ -14,15 +14,16 @@ class GroupCell: UITableViewCell {
     // Group View size constants
     static let groupViewWidth:CGFloat = 380
     static let groupViewHeight:CGFloat = 80
+    static let groupViewDeadSpace:CGFloat = 20
     
     private var groupId: String!
     private var profileImageView = UIImageView()
-    private var groupName = UILabel()
+    private var groupName = BoldTitleLabel()
     private var categories:[String] = []
-    private var memberLabel = UILabel()
-    private var memberCountLabel = UILabel()
-    private var habitsLabel = UILabel()
-    private var habitsCountLabel = UILabel()
+    private var memberLabel = SubtitleLabel(textLabel: "Members")
+    private var memberCountLabel = NormalLabel()
+    private var habitsLabel = SubtitleLabel(textLabel: "Habits")
+    private var habitsCountLabel = NormalLabel()
     
     private var memberHabitsCountStackView: UIStackView!
     private var memberHabitsLabelsStackView: UIStackView!
@@ -33,14 +34,13 @@ class GroupCell: UITableViewCell {
     private var mainStackView: UIStackView!
     private var spaceView: UIView!
     
-    init(groupId: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
-        self.init(frame: .zero)
-        configureWith(groupId: groupId, image: image, groupName: groupName, categories: categories, memberCount: memberCount, habitsCount: habitsCount)
-    }
-    
+//    init(groupId: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
+//        self.init(frame: .zero)
+//        configureWith(groupId: groupId, image: image, groupName: groupName, categories: categories, memberCount: memberCount, habitsCount: habitsCount)
+//    }
+//    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        backgroundColor = .systemBlue
         setupGroupView()
     }
     
@@ -51,24 +51,24 @@ class GroupCell: UITableViewCell {
     func configureWith(groupId: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
         self.groupId = groupId
         self.profileImageView.image = image
-        self.groupName = BoldTitleLabel(textLabel: groupName)
+        self.groupName.text = groupName
         self.categories = categories
-        self.memberLabel = SubtitleLabel(textLabel: "Members")
-        self.memberCountLabel = NormalLabel(textLabel: String(memberCount))
-        self.habitsLabel = SubtitleLabel(textLabel: "Habits")
-        self.habitsCountLabel = NormalLabel(textLabel: String(habitsCount))
-        print("Inside configureWith")
-        print("GroupId: \(self.groupId!)")
-        print("GroupName: \(self.groupName)")
-        print("Categories: \(self.categories)")
-        print("Member Count: \(self.memberCountLabel)")
-        print("Habit Count: \(self.habitsCountLabel)")
+        self.memberCountLabel.text = String(memberCount)
+        self.habitsCountLabel.text = String(habitsCount)
+//        print("Inside configureWith")
+//        print("GroupId: \(self.groupId)")
+//        print("GroupName: \(self.groupName)")
+//        print("Categories: \(self.categories)")
+//        print("Member Count: \(self.memberCountLabel)")
+//        print("Habit Count: \(self.habitsCountLabel)")
+        setupGroupView()
     }
     
     private func setupGroupView() {
-        layer.borderColor = colorMainPrimary.cgColor
-        layer.borderWidth = 2
-        layer.cornerRadius = 0.1875 * GroupCell.groupViewHeight
+//        layer.borderColor = colorMainPrimary.cgColor
+//        layer.borderWidth = 2
+//        layer.cornerRadius = 0.1875 * GroupCell.groupViewHeight
+        selectionStyle = .none // prevents the user from seeing that the table view cell is clicked
         profileImageView.tintColor = colorMainText
         profileImageView.contentMode = .scaleAspectFit
         profileImageView.clipsToBounds = true
@@ -76,18 +76,18 @@ class GroupCell: UITableViewCell {
         profileImageView.layer.borderWidth = 2
         profileImageView.layer.cornerRadius = (GroupCell.groupViewHeight - (4 * 2)) / 2
         
-//        groupName.changeFontSize(fontSize: 22)
+        groupName.changeFontSize(fontSize: 22)
         groupName.textAlignment = .left
         
-//        memberLabel.changeFontSize(fontSize: 16)
+        memberLabel.changeFontSize(fontSize: 16)
         memberLabel.textAlignment = .left
         
-//        memberCountLabel.setBoldText(status: true)
+        memberCountLabel.setBoldText(status: true)
         
-//        habitsLabel.changeFontSize(fontSize: 16)
+        habitsLabel.changeFontSize(fontSize: 16)
         habitsLabel.textAlignment = .left
         
-//        habitsCountLabel.setBoldText(status: true)
+        habitsCountLabel.setBoldText(status: true)
         
         memberHabitsCountStackView = UIStackView(arrangedSubviews: [memberCountLabel, habitsCountLabel])
         memberHabitsCountStackView.axis = .vertical
@@ -105,18 +105,18 @@ class GroupCell: UITableViewCell {
         categoriesStackView1.alignment = .fill
         categoriesStackView1.distribution = .fillEqually
         
-        if categories.count > 3 {
+        if self.categories.count > 3 {
             categoriesStackView2 = UIStackView()
             categoriesStackView2.axis = .horizontal
             categoriesStackView2.spacing = 8
             categoriesStackView2.alignment = .fill
             categoriesStackView2.distribution = .fillEqually
         }
-        for string in categories.prefix(3) {
+        for string in self.categories.prefix(3) {
             let categoryLabel = createCategoryLabels(categoryString: string)
             categoriesStackView1.addArrangedSubview(categoryLabel)
         }
-        if categories.count > 3 {
+        if self.categories.count > 3 {
             for string in categories.suffix(from: 3) {
                 let categoryLabel = createCategoryLabels(categoryString: string)
                 categoriesStackView2.addArrangedSubview(categoryLabel)
@@ -128,23 +128,27 @@ class GroupCell: UITableViewCell {
             UIStackView(arrangedSubviews: [groupName, categoriesStackView1])
         groupNameCategoriesStackView.axis = .vertical
         
-//        mainStackView = UIStackView(arrangedSubviews: [profileImageView, groupNameCategoriesStackView, memberHabitsOverallStackView])
-        mainStackView = UIStackView(arrangedSubviews: [profileImageView, groupName, memberCountLabel, habitsLabel])
+        mainStackView = UIStackView(arrangedSubviews: [profileImageView, groupNameCategoriesStackView, memberHabitsOverallStackView])
         mainStackView.axis = .horizontal
         mainStackView.spacing = 8
         mainStackView.distribution = .fillProportionally
-        mainStackView.alignment = .fill
+        mainStackView.alignment = .center
         mainStackView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4) // padding
         mainStackView.isLayoutMarginsRelativeArrangement = true
-//        memberHabitsOverallStackView.setContentCompressionResistancePriority(.required, for: .horizontal)
-//        memberHabitsOverallStackView.setContentHuggingPriority(.required, for: .horizontal)
-//        groupNameCategoriesStackView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-//        groupNameCategoriesStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        mainStackView.backgroundColor = .red
         
-        spaceView = UIView()
+        mainStackView.layer.borderColor = colorMainPrimary.cgColor
+        mainStackView.layer.borderWidth = 2
+        mainStackView.layer.cornerRadius = 0.1875 * GroupCell.groupViewHeight
+        
+        memberHabitsOverallStackView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        memberHabitsOverallStackView.setContentHuggingPriority(.required, for: .horizontal)
+        groupNameCategoriesStackView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        groupNameCategoriesStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+//        mainStackView.backgroundColor = .red
+        
+//        spaceView = UIView()
 
-//        contentView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+//        contentView.layoutMargins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
         
         // Set up to use Auto Layout
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -161,25 +165,26 @@ class GroupCell: UITableViewCell {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(mainStackView)
-        contentView.addSubview(spaceView)
+//        contentView.addSubview(spaceView)
         
         NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: GroupCell.groupViewHeight - (4 * 2)),
             profileImageView.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight - (4 * 2)),
             groupNameCategoriesStackView.widthAnchor.constraint(equalToConstant: 0.50 * GroupCell.groupViewWidth),
             mainStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            mainStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+//            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
 //            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             mainStackView.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
             mainStackView.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
-            spaceView.topAnchor.constraint(equalTo: mainStackView.bottomAnchor),
-            spaceView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+//            spaceView.topAnchor.constraint(equalTo: mainStackView.bottomAnchor),
+//            spaceView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
         // enable tap feature so user can go to group details
 //        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(stackViewTapped))
-//        self.addGestureRecognizer(tapGestureRecognizer)
-//        self.isUserInteractionEnabled = true
+//        mainStackView.addGestureRecognizer(tapGestureRecognizer)
+//        mainStackView.isUserInteractionEnabled = true
     }
     
     // Action when group view component is tapped
@@ -192,14 +197,15 @@ class GroupCell: UITableViewCell {
 //    }
 //    
     private func createCategoryLabels(categoryString: String) -> UILabel {
-//        let categoryLabel = NormalLabel(textLabel: categoryString)
-        let categoryLabel = UILabel()
+        let categoryLabel = NormalLabel(textLabel: categoryString)
+//        let categoryLabel = UILabel()
         categoryLabel.text = categoryString
         categoryLabel.textAlignment = .center
-//        categoryLabel.changeFontSize(fontSize: 10)
+        categoryLabel.changeFontSize(fontSize: 10)
         categoryLabel.layer.borderColor = colorMainPrimary.cgColor
         categoryLabel.layer.borderWidth = 2
         categoryLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return categoryLabel
     }
+
 }
