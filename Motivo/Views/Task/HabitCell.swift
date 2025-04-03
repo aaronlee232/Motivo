@@ -101,6 +101,8 @@ class HabitCell: UITableViewCell {
                 
                 let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
 
+                // Task Verification Code added here -> This should add an unverified photo to the list, not directly increment completedCount
+                
                 if let existingRecord = existingRecords.first {
                     var updatedRecord = existingRecord
                     updatedRecord.completedCount += 1
