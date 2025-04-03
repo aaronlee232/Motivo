@@ -31,11 +31,17 @@ class HabitViewController: UIViewController, UITableViewDataSource, UITableViewD
         ])
     }
     
-    override func viewWillAppear(_ animated: Bool){
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         habitsView.loadHabits()
-        self.tableView.reloadData()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTableView), name: .didUpdateHabitRecords, object: nil)
     }
+
+    @objc private func updateTableView() {
+        tableView.reloadData()
+    }
+
 
     @objc private func addHabit() {
         // Navigate to Add Habit page
@@ -60,7 +66,19 @@ class HabitViewController: UIViewController, UITableViewDataSource, UITableViewD
         let record = habitsView.habitRecord(for: habit.id)
 
         let completedCount = record?.completedCount ?? 0
-        let progressText = "\(completedCount) / \(habit.goal) times per \(habit.frequency)"
+        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)" // Ensure unit is used properly
+        let progressText: String
+
+        switch habit.frequency {
+        case "Daily":
+            progressText = "\(completedCount) / \(habit.goal)\(unit) Today"
+        case "Weekly":
+            progressText = "\(completedCount) / \(habit.goal)\(unit) This Week"
+        case "Monthly":
+            progressText = "\(completedCount) / \(habit.goal)\(unit) This Month"
+        default:
+            progressText = "\(completedCount) / \(habit.goal)\(unit)"
+        }
 
         cell.configure(with: habit, progressText: progressText)
         cell.onPlusTapped = { [weak self] in
@@ -70,4 +88,6 @@ class HabitViewController: UIViewController, UITableViewDataSource, UITableViewD
 
         return cell
     }
+
+
 }

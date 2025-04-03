@@ -8,13 +8,16 @@ import UIKit
 
 class HabitCell: UITableViewCell {
     static let identifier = "HabitCell"
-    var hm : HabitModel = HabitModel(name: "hi", isGroupHabit: false, category: [], streak: 0, goal: 0, unit: "", frequency: "", userID: "")
-
+    
     private let nameLabel = UILabel()
+    private let streakLabel = UILabel()
+    private let categoryLabel = UILabel()
+    private let groupEmojiLabel = UILabel()
     private let progressLabel = UILabel()
     private let plusButton = UIButton(type: .system)
 
     var onPlusTapped: (() -> Void)?
+    private var habit: HabitModel?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,57 +29,95 @@ class HabitCell: UITableViewCell {
     }
 
     private func setupUI() {
-        nameLabel.font = .boldSystemFont(ofSize: 16)
+        nameLabel.font = .boldSystemFont(ofSize: 18)
+
+        streakLabel.font = .systemFont(ofSize: 12) // Smaller font for streak number
+        streakLabel.textColor = .darkGray
+
+        categoryLabel.font = .systemFont(ofSize: 12)
+        categoryLabel.textColor = .gray
+
+        groupEmojiLabel.font = .systemFont(ofSize: 14)
+
         progressLabel.font = .systemFont(ofSize: 14)
+        progressLabel.textAlignment = .right // Right align progress text
 
         plusButton.setTitle("+", for: .normal)
         plusButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
         plusButton.tintColor = .blue
         plusButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [nameLabel, progressLabel, plusButton])
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.alignment = .center
-        stack.distribution = .fill
+        let nameStack = UIStackView(arrangedSubviews: [nameLabel, streakLabel])
+        nameStack.axis = .horizontal
+        nameStack.spacing = 6
+        nameStack.alignment = .center
 
-        contentView.addSubview(stack)
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        let bottomStack = UIStackView(arrangedSubviews: [categoryLabel, groupEmojiLabel])
+        bottomStack.axis = .horizontal
+        bottomStack.spacing = 6
+        bottomStack.alignment = .center
+
+        let leftStack = UIStackView(arrangedSubviews: [nameStack, bottomStack])
+        leftStack.axis = .vertical
+        leftStack.spacing = 4
+        leftStack.alignment = .leading
+
+        let containerStack = UIStackView(arrangedSubviews: [leftStack, progressLabel, plusButton])
+        containerStack.axis = .horizontal
+        containerStack.spacing = 8
+        containerStack.alignment = .center
+        containerStack.distribution = .fill
+
+        contentView.addSubview(containerStack)
+        containerStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            containerStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            containerStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            containerStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            containerStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
 
-            plusButton.widthAnchor.constraint(equalToConstant: 30)
+            plusButton.widthAnchor.constraint(equalToConstant: 30),
+            progressLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 80) // Ensure progress text doesn't shrink too much
         ])
     }
 
     func configure(with habit: HabitModel, progressText: String) {
+        self.habit = habit
+
         nameLabel.text = habit.name
-        hm = habit
+        streakLabel.text = "🔥 \(habit.streak)" // Smaller streak label
+
+        categoryLabel.text = "Categories: \(habit.category.joined(separator: ", "))"
+        groupEmojiLabel.text = habit.isGroupHabit ? "👥" : ""
+
         progressLabel.text = progressText
     }
 
     @objc private func plusButtonTapped() {
-        
-        // VERIFICATION HAPPENS HERE
-        
-        let newHabitRecrd = HabitRecord(habitID: hm.id,
-                                        completedCount: 1,
-                                        unverifiedPhotosList: [],
-                                        timestamp: Date().formatted(),
-                                        userID: hm.userID)
-        
-        do {
-            try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecrd)
-//            navigationController?.popViewController(animated: true)
-            
-        } catch {
-            print("Error adding habit: \(error.localizedDescription)")
+        Task {
+            do {
+                guard let habit = habit else { return }
+                
+                let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+
+                if let existingRecord = existingRecords.first {
+                    var updatedRecord = existingRecord
+                    updatedRecord.completedCount += 1
+                    try FirestoreService.shared.updateHabitRecord(habitRecord: updatedRecord)
+                } else {
+                    let newHabitRecord = HabitRecord(habitID: habit.id,
+                                                     completedCount: 1,
+                                                     unverifiedPhotosList: [],
+                                                     timestamp: Date().formatted(),
+                                                     userID: habit.userID)
+                    try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecord)
+                }
+                
+                onPlusTapped?()
+            } catch {
+                print("Error updating habit record: \(error.localizedDescription)")
+            }
         }
-        
-        onPlusTapped?()
     }
 }

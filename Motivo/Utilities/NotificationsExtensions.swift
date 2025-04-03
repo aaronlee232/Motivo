@@ -9,4 +9,6 @@ import Foundation
 
 extension Notification.Name {
     static let didUpdateCategories = Notification.Name("didUpdateCategories")
+    
+    static let didUpdateHabitRecords = Notification.Name("didUpdateHabitRecords")
 }

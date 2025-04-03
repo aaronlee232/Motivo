@@ -15,62 +15,59 @@ class HabitsView {
     }
 
     @objc func loadHabits() {
-//        let selectedCategories = UserDefaults.standard.array(forKey: "selectedCategories") as? [String] ?? ["Exercise", "Nutrition", "Productivity", "Social", "Finance"]
-
         db.collection(FirestoreCollection.habit).getDocuments { snapshot, error in
-                if let error = error {
-                    print("Error fetching habits: \(error.localizedDescription)")
-                    return
-                }
-
-                self.habits = snapshot?.documents.compactMap { doc in
-                    let data = doc.data()
-                    return HabitModel(
-                        id: doc.documentID,
-                        name: data["name"] as? String ?? "",
-                        isGroupHabit: data["isGroupHabit"] as? Bool ?? false,
-                        category: data["category"] as! [String],  // <-- FIXED: Take the first category
-                        streak: data["streak"] as? Int ?? 0,
-                        goal: data["goal"] as? Int ?? 0,
-                        unit: data["unit"] as? String ?? "",
-                        frequency: data["frequency"] as? String ?? "Daily",
-                        userID: AuthManager.shared.getCurrentUserAuthInstance()?.uid ?? ""
-                    )
-                } ?? []
-
-                print("Loaded habits:", self.habits) // Debugging
-
-                DispatchQueue.main.async {
-//                    self.tableView.reloadData()
-                }
-            }
-    }
-    
-    func testFetchHabits() {
-        db.collection("habits").getDocuments { (snapshot, error) in
             if let error = error {
                 print("Error fetching habits: \(error.localizedDescription)")
                 return
             }
 
-            guard let documents = snapshot?.documents else {
-                print("No documents found")
-                return
-            }
+            self.habits = snapshot?.documents.compactMap { doc in
+                let data = doc.data()
+                return HabitModel(
+                    id: doc.documentID,
+                    name: data["name"] as? String ?? "",
+                    isGroupHabit: data["isGroupHabit"] as? Bool ?? false,
+                    category: data["category"] as! [String],
+                    streak: data["streak"] as? Int ?? 0,
+                    goal: data["goal"] as? Int ?? 0,
+                    unit: data["unit"] as? String ?? "",
+                    frequency: data["frequency"] as? String ?? "Daily",
+                    userID: AuthManager.shared.getCurrentUserAuthInstance()?.uid ?? ""
+                )
+            } ?? []
 
-            for doc in documents {
-                print("Document ID: \(doc.documentID) - Data: \(doc.data())")
-            }
+            print("Loaded habits:", self.habits)
+
+            // Fetch habit records after habits are loaded
+            self.loadHabitRecords()
         }
     }
+
+    
+//    func testFetchHabits() {
+//        db.collection("habits").getDocuments { (snapshot, error) in
+//            if let error = error {
+//                print("Error fetching habits: \(error.localizedDescription)")
+//                return
+//            }
+//
+//            guard let documents = snapshot?.documents else {
+//                print("No documents found")
+//                return
+//            }
+//
+//            for doc in documents {
+//                print("Document ID: \(doc.documentID) - Data: \(doc.data())")
+//            }
+//        }
+//    }
 
 
     private func loadHabitRecords() {
         let habitIDs = habits.map { $0.id! }
 
-        // Prevent invalid query by ensuring habitIDs is non-empty
         guard !habitIDs.isEmpty else {
-            self.habitRecords = [:] // Clear records if there are no habits
+            self.habitRecords = [:] // Clear records if no habits
             return
         }
 
@@ -88,9 +85,13 @@ class HabitsView {
                     }
                 } ?? [:]
 
-                self.sortHabits()
+                DispatchQueue.main.async {
+                    self.sortHabits()
+                    NotificationCenter.default.post(name: .didUpdateHabitRecords, object: nil) // Notify the UI
+                }
             }
     }
+
 
 
     func sortHabits() {
