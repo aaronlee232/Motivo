@@ -8,7 +8,7 @@
 import UIKit
 
 class JoinRandomGroupViewController: UIViewController, JoinRandomGroupViewDelegate, CategorySelectionViewDelegate {    
-    let groupMatchingManager = GroupMatchingManager()
+    let groupEntryManager = GroupEntryManager()
     private let joinRandomGroupView = JoinRandomGroupView()
     var selectedCategories = Set<CategoryModel>()
     
@@ -60,7 +60,7 @@ extension JoinRandomGroupViewController {
             }
             
             do {
-                try await groupMatchingManager.joinRandomGroup(with: Array(selectedCategories), as: user.uid)
+                try await groupEntryManager.joinRandomGroup(with: Array(selectedCategories), as: user.uid)
                 // TODO: Replace alert with segue to group screen
                 AlertUtils.shared.showAlert(self, title: "Debug: Success", message: "Joined random group")
             } catch {

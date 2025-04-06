@@ -1,5 +1,5 @@
 //
-//  GroupMatchingManager.swift
+//  GroupEntryManager.swift
 //  Motivo
 //
 //  Created by Arisyia Wong on 3/11/25.
@@ -7,7 +7,7 @@
 
 import FirebaseFirestore
 
-class GroupMatchingManager {
+class GroupEntryManager {
     
     let db = Firestore.firestore()
     

@@ -13,10 +13,12 @@ class GroupViewController: UIViewController {
         case progress = 1
     }
     
+    // MARK: - UI Elements
     private let groupOverviewView = GroupOverviewView()
     private let groupProgressView = GroupProgressView()
     private let segmentedControl = UISegmentedControl()
     
+    // MARK: - Properties
     private var groupID: String!
     private var currentScreen: GroupScreenType {
         didSet {
@@ -24,6 +26,7 @@ class GroupViewController: UIViewController {
         }
     }
     
+    // MARK: - Initializers
     init(groupID: String) {
         self.groupID = groupID
         currentScreen = GroupScreenType.overview
@@ -37,12 +40,15 @@ class GroupViewController: UIViewController {
     override func viewDidLoad() {
         setupTitleBar()
         setupSegmentedControl()
-        setupViews()
+        setupTabViews()
         
         // Manually switch screen
         switchScreen(screen: currentScreen)
     }
-    
+}
+
+// MARK: - UI Setup
+extension GroupViewController {
     private func setupTitleBar() {
         self.title = "Group Name (\(groupID!))"
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -88,7 +94,7 @@ class GroupViewController: UIViewController {
         ])
     }
     
-    private func setupViews() {
+    private func setupTabViews() {
         view.addSubview(groupOverviewView)
         groupOverviewView.isHidden = true
         groupOverviewView.translatesAutoresizingMaskIntoConstraints = false
@@ -109,7 +115,11 @@ class GroupViewController: UIViewController {
             groupProgressView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
     }
-    
+}
+
+
+// MARK: - Actions
+extension GroupViewController {
     private func switchScreen(screen: GroupScreenType) {
         switch screen {
         case GroupScreenType.overview:
@@ -122,16 +132,14 @@ class GroupViewController: UIViewController {
     }
     
     @objc private func didTapEditGroupNameButton() {
-        
+        // TODO: Implement edit group segue/view
     }
     
     @objc private func didTapInviteUserButton() {
-        
+        // TODO: Implement invite user segue/view
     }
     
     @objc private func didTapLeaveGroupButton() {
-        
+        // TODO: Implement leave group confirmation alert and segue
     }
-    
 }
-
