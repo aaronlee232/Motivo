@@ -53,8 +53,16 @@ class JoinInviteGroupViewController: UIViewController, JoinInviteGroupViewDelega
                 }
                 let groupMembership = GroupMembershipModel(groupID: verifiedGroup.id!, userUID: userAuthInstance.uid)
                 try groupEntryManager.insertGroupMembership(membership: groupMembership)
-                AlertUtils.shared.showAlert(self, title: "Debug: Group Membership created", message: "This is a debug message")
+                
                 joinInviteGroupView.inviteCodeTextField.text = nil
+                
+                // Pop to HomeVC, then push GroupVC
+                if let navController = navigationController,
+                   let homeVC = navController.viewControllers.first(where: { $0 is HomeViewController }) {
+                    
+                    let groupVC = GroupViewController(groupID: groupID)
+                    navController.setViewControllers([homeVC, groupVC], animated: true)
+                }
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to join group specified")
             }

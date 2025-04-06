@@ -41,7 +41,7 @@ extension FirestoreService {
     
     // Convenience: retrieves a single user by UID
     func fetchUser(forUserUID userUID: String) async throws -> UserModel? {
-        try await fetchUsers(forUserUIDs: [userUID]).first
+        return try await fetchUsers(forUserUIDs: [userUID]).first
     }
     
     // Retrieves a list of users for a list of user UIDs
@@ -65,12 +65,12 @@ extension FirestoreService {
 // MARK: - group collection
 extension FirestoreService {
     // Convenience: retrieves a single group by group ID
-    func fetchGroup(forGroupID groupID: String) async throws -> GroupModel? {
-        try await fetchGroups(forGroupIDs: [groupID]).first
+    func fetchGroup(withGroupID groupID: String) async throws -> GroupModel? {
+        return try await fetchGroups(withGroupIDs: [groupID]).first
     }
     
     // Retrieves a list of groups for a list of group IDs
-    func fetchGroups(forGroupIDs groupIDs: [String]) async throws -> [GroupModel] {
+    func fetchGroups(withGroupIDs groupIDs: [String]) async throws -> [GroupModel] {
         let snapshot = try await groupCollectionRef
             .whereField(FieldPath.documentID(), in: groupIDs)
             .getDocuments()
@@ -133,7 +133,7 @@ extension FirestoreService {
     
     // Convenience: retrieves a list of memberships for a single user UID
     func fetchGroupMemberships(forUserUID userUID: String) async throws -> [GroupMembershipModel] {
-        try await fetchGroupMemberships(forUserUIDs: [userUID])
+        return try await fetchGroupMemberships(forUserUIDs: [userUID])
     }
     
     // Retrieves a list of memberships for a list of user UIDs
@@ -149,7 +149,7 @@ extension FirestoreService {
     
     // Convenience: retrieves a list of memberships for a single group ID
     func fetchGroupMemberships(forGroupID groupID: String) async throws -> [GroupMembershipModel] {
-        try await fetchGroupMemberships(forGroupIDs: [groupID])
+        return try await fetchGroupMemberships(forGroupIDs: [groupID])
     }
     
     // Retrieves a list of memberships for a list of group IDs
@@ -176,6 +176,22 @@ extension FirestoreService {
     // Retrieves the list of all categories
     func fetchCategories() async throws -> [CategoryModel] {
         let snapshot = try await categoryCollectionRef
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: CategoryModel.self)
+        }
+    }
+    
+    // Convenience: retrieves a category by categoryID
+    func fetchCategory(withCategoryID: String) async throws -> CategoryModel? {
+        return try await fetchCategories(withCategoryIDs: [withCategoryID]).first
+    }
+    
+    // Retrieve a list of categories that are in the list of categoryIDs
+    func fetchCategories(withCategoryIDs: [String]) async throws -> [CategoryModel] {
+        let snapshot = try await categoryCollectionRef
+            .whereField("id", in: withCategoryIDs)
             .getDocuments()
         
         return try snapshot.documents.map { document in

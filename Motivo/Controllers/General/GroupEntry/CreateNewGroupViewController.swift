@@ -11,6 +11,7 @@ class CreateNewGroupViewController: UIViewController, CreateNewGroupViewDelegate
     let groupEntryManager = GroupEntryManager()
     private let createNewGroupView = CreateNewGroupView()
     var selectedCategories = Set<CategoryModel>()
+    var isPublicSelected = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,16 +83,33 @@ extension CreateNewGroupViewController {
     private func createNewGroup(groupName: String, userUID: String) async {
         do {
             let selectedCategoryIDs = selectedCategories.map{ $0.id! }
-            let group = GroupModel(groupName: groupName, groupCategoryIDs: selectedCategoryIDs, creatorUID: userUID)
+            let isPublic = isPublicSelected
+            let group = GroupModel(
+                groupName: groupName,
+                isPublic: isPublic,
+                groupCategoryIDs: selectedCategoryIDs,
+                creatorUID: userUID
+            )
             
             // adds to firestore for both group and group membership async
             let groupID = try groupEntryManager.insertGroup(group: group)
             let groupMembership = GroupMembershipModel(groupID: groupID, userUID: userUID)
             try groupEntryManager.insertGroupMembership(membership: groupMembership)
-            AlertUtils.shared.showAlert(self, title: "Debug: Group \(groupName) Created", message: "This is a debug message")
+            
+            // Pop to HomeVC, then push GroupVC
+            if let navController = navigationController,
+               let homeVC = navController.viewControllers.first(where: { $0 is HomeViewController }) {
+                
+                let groupVC = GroupViewController(groupID: groupID)
+                navController.setViewControllers([homeVC, groupVC], animated: true)
+            }
         } catch {
             AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to create a new group.")
         }
+    }
+    
+    func didUpdateSelectedVisibility(_ isPublicSelected: Bool) {
+        self.isPublicSelected = isPublicSelected
     }
 }
 

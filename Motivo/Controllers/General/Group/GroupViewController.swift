@@ -19,6 +19,7 @@ class GroupViewController: UIViewController {
     private let segmentedControl = UISegmentedControl()
     
     // MARK: - Properties
+    private let groupManager = GroupManager()
     private var groupID: String!
     private var currentScreen: GroupScreenType {
         didSet {
@@ -38,6 +39,7 @@ class GroupViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        fetchAndSetGroupName()
         setupTitleBar()
         setupSegmentedControl()
         setupTabViews()
@@ -47,10 +49,24 @@ class GroupViewController: UIViewController {
     }
 }
 
+// MARK: - Data Fetching
+extension GroupViewController {
+    private func fetchAndSetGroupName() {
+        Task {
+            do {
+                try self.title = await groupManager.fetchGroupName(groupID: groupID)
+            } catch {
+                print("Error loading group name: \(error.localizedDescription)")
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "The group name couldn't be retrieved")
+            }
+        }
+    }
+}
+
 // MARK: - UI Setup
 extension GroupViewController {
     private func setupTitleBar() {
-        self.title = "Group Name (\(groupID!))"
+        self.title = ""
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         let menu = UIMenu(title: "", children: [
             UIAction(title: "Edit Group Name", image: UIImage(systemName: "pencil"), handler: { _ in

@@ -5,11 +5,7 @@
 //  Created by Arisyia Wong on 3/11/25.
 //
 
-import FirebaseFirestore
-
 class GroupEntryManager {
-    
-    let db = Firestore.firestore()
     
     // Inserts an instance of Group Model into the 'group' collection in Firestore
     func insertGroup(group: GroupModel) throws -> String {
@@ -23,7 +19,7 @@ class GroupEntryManager {
     
     // Fetch group based on groupID
     func fetchGroup(groupID: String) async throws -> GroupModel? {
-        return try await FirestoreService.shared.fetchGroup(forGroupID: groupID)
+        return try await FirestoreService.shared.fetchGroup(withGroupID: groupID)
     }
     
     // Check if there a user is a member of a group
@@ -38,7 +34,7 @@ class GroupEntryManager {
     }
     
     // Put a user into a random group based on selected categories. Creates group if no group with categories exist
-    func joinRandomGroup(with categories:[CategoryModel], as userUID:String) async throws {
+    func joinRandomGroup(with categories:[CategoryModel], as userUID:String) async throws -> String {
         // Extract categoryIDs
         let categoryIDs = categories.map { category in
             return category.id!
@@ -70,7 +66,7 @@ class GroupEntryManager {
             // Case 2: No groups with matching categories, create a new group to join
             print("joinable groups are empty")
             let defaultName = "Random Group"
-            let newGroup = GroupModel(groupName: defaultName, groupCategoryIDs: categoryIDs, creatorUID: userUID)
+            let newGroup = GroupModel(groupName: defaultName, isPublic: true, groupCategoryIDs: categoryIDs, creatorUID: userUID) // TODO: replace hardcoded isPublic with selectedValue from CreateNewGroupView segmentedControl
             selectedGroupId = try insertGroup(group: newGroup)
         }
         
@@ -78,5 +74,7 @@ class GroupEntryManager {
         print("selected group: \(selectedGroupId)")
         let membership = GroupMembershipModel(groupID: selectedGroupId, userUID: userUID)
         try insertGroupMembership(membership: membership)
+        
+        return selectedGroupId
     }
 }

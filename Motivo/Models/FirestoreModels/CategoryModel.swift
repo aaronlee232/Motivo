@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct CategoryModel: Hashable, Codable {
     @DocumentID var id: String!
-    var name: String
+    var name: String  // TODO: rename to categoryName
     
     // Compare based on documentID `id`
     static func == (lhs: CategoryModel, rhs: CategoryModel) -> Bool {

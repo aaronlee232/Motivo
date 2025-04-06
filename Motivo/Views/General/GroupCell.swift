@@ -16,7 +16,7 @@ class GroupCell: UITableViewCell {
     static let groupViewHeight:CGFloat = 80
     static let groupViewDeadSpace:CGFloat = 20
     
-    private var groupId: String!
+    private var groupID: String!
     private var profileImageView = UIImageView()
     private var groupName = BoldTitleLabel()
     private var categories:[String] = []
@@ -48,8 +48,8 @@ class GroupCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureWith(groupId: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
-        self.groupId = groupId
+    func configureWith(groupID: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
+        self.groupID = groupID
         self.profileImageView.image = image
         self.groupName.text = groupName
         self.categories = categories

@@ -60,9 +60,15 @@ extension JoinRandomGroupViewController {
             }
             
             do {
-                try await groupEntryManager.joinRandomGroup(with: Array(selectedCategories), as: user.uid)
-                // TODO: Replace alert with segue to group screen
-                AlertUtils.shared.showAlert(self, title: "Debug: Success", message: "Joined random group")
+                let groupID = try await groupEntryManager.joinRandomGroup(with: Array(selectedCategories), as: user.uid)
+                
+                // Pop to HomeVC, then push GroupVC
+                if let navController = navigationController,
+                   let homeVC = navController.viewControllers.first(where: { $0 is HomeViewController }) {
+                    
+                    let groupVC = GroupViewController(groupID: groupID)
+                    navController.setViewControllers([homeVC, groupVC], animated: true)
+                }
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to join group")
             }
