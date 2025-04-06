@@ -8,12 +8,12 @@
 import UIKit
 
 // MARK: - ConnectionsViewController (Main Class)
-class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, HeaderViewDelegate {
+class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     // MARK: - Properties
     private let connectionsManager = ConnectionsManager()
     
-    private let headerView = HeaderView()
+//    private let headerView = HeaderView()
     private let tableView = UITableView()
     private var sections: [UserSection] = []
     private var buttonIndexMapping: [UIButton: IndexPath] = [:]
@@ -23,14 +23,13 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        
         configureScreen()
         setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
+//        navigationController?.setNavigationBarHidden(true, animated: false)
         loadConnections()
     }
     
@@ -44,23 +43,23 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         view.addSubview(tableView)
         
         // Set up Header View
-        headerView.delegate = self
-        headerView.titleLabel.text = "Connections"
-        view.addSubview(headerView)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        self.title = "Connections"
     }
     
     private func setupConstraints() {
-        headerView.translatesAutoresizingMaskIntoConstraints = false
+//        headerView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             // Header Constraints
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            headerView.heightAnchor.constraint(equalToConstant: 50),
+//            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+//            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+//            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+//            headerView.heightAnchor.constraint(equalToConstant: 50),
             
             // Table Constraints
-            tableView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
@@ -168,14 +167,14 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     
     // MARK: - HeaderViewDelegate
     // Implement delegate methods for the HeaderView Buttons
-    func didTapHeaderButton(_ button: HeaderButtonType) {
-        switch button {
-        case .menu:
-            // TODO: Add dropdown menu for "Hide People", "View Hidden"
-            print("Menu Tapped")
-            break
-        }
-    }
+//    func didTapHeaderButton(_ button: HeaderButtonType) {
+//        switch button {
+//        case .menu:
+//            // TODO: Add dropdown menu for "Hide People", "View Hidden"
+//            print("Menu Tapped")
+//            break
+//        }
+//    }
 
 }
 

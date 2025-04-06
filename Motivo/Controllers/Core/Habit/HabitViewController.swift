@@ -1,5 +1,5 @@
 //
-//  TaskViewController.swift
+//  HabitViewController.swift
 //  Motivo
 //
 //  Created by Cooper Wilk on 3/10/25.
@@ -21,10 +21,10 @@ class HabitData {
 }
 
 
-class TaskViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class HabitViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private let tableView = UITableView()
-    private var viewModel = HabitsView()  // TODO: HabbitsView is not a model. It is also technically not a view either currently. Refactor HabitsView to conform to MVC and change variable name to be more self-descriptive (taskViewModel, taskView, etc)
+    private var viewModel = HabitsView()  // TODO: HabbitsView is not a model. It is also technically not a view either currently. Refactor HabitsView to conform to MVC and change variable name to be more self-descriptive (habitViewModel, habitView, etc)
     private var isExpandedView = false // Toggle for expanded/compact views
     
     override func viewDidLoad() {
@@ -77,7 +77,7 @@ class TaskViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // MARK: - Button Actions
     @objc private func changeViewTapped() {
-        let settingsVC = TaskSettingsViewController()
+        let settingsVC = HabitSettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: true)
     }
 
@@ -91,8 +91,8 @@ class TaskViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc private func addHabitTapped() {
-        let addTaskVC = AddTaskViewController()
-        navigationController?.pushViewController(addTaskVC, animated: true)
+        let addHabitVC = AddHabitViewController()
+        navigationController?.pushViewController(addHabitVC, animated: true)
     }
     
     // MARK: - TableView DataSource

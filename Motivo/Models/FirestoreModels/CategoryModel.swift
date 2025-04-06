@@ -1,5 +1,5 @@
 //
-//  TaskCategoryModel.swift
+//  CategoryModel.swift
 //  Motivo
 //
 //  Created by Aaron Lee on 3/19/25.
@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct CategoryModel: Hashable, Codable {
     @DocumentID var id: String!
-    var name: String
+    var name: String  // TODO: rename to categoryName
     
     // Compare based on documentID `id`
     static func == (lhs: CategoryModel, rhs: CategoryModel) -> Bool {
@@ -20,7 +20,7 @@ struct CategoryModel: Hashable, Codable {
     // Hash using id (guaranteed to be unique by Firestore)
     func hash(into hasher: inout Hasher) {
         guard let id = id else {
-            assertionFailure("TaskCategoryModel must have an ID before being used in a Set or Dictionary")
+            assertionFailure("CategoryModel must have an ID before being used in a Set or Dictionary")
             return
         }
         hasher.combine(id)

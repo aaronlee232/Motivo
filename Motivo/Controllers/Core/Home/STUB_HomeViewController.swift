@@ -7,78 +7,68 @@
 
 import UIKit
 
-class HomeViewController: UIViewController, DefaultHomeViewDelegate {
+class HomeViewController: UIViewController, HomeViewDelegate {
 
-    let dummyDataUtils = DummyDataUtils()
-    private var homeView:UIView?
+    private var homeView = HomeView()
+    private let groupManager = GroupManager()
+    
+    private var groupMetadataList: [GroupMetadata] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupHomepage()
-
-        // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
-        
-//        let addGroupButton = UIButton(type: .system)
-//        addGroupButton.setTitle("Add Group", for: .normal)
-//        addGroupButton.addTarget(self, action: #selector(openGroups), for: .touchUpInside)
-//        
-//        let populateConnectionsButton = UIButton(type: .system)
-//        populateConnectionsButton.setTitle("(debug) Populate Connections", for: .normal)
-//        populateConnectionsButton.addTarget(self, action: #selector(populateConnections), for: .touchUpInside)
-        
 
-//        view.addSubview(addGroupButton)
-//        view.addSubview(populateConnectionsButton)
-//        addGroupButton.translatesAutoresizingMaskIntoConstraints = false
-//        populateConnectionsButton.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            addGroupButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
-//            addGroupButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-//            populateConnectionsButton.topAnchor.constraint(equalTo: addGroupButton.bottomAnchor, constant: 30),
-//            populateConnectionsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//        ])
+        setupHomepage()
+        loadGroupMetadataList()
     }
     
-//    @objc func openGroups() {
-//        let groupRootVC = GroupEntryViewController()
-//        navigationController?.pushViewController(groupRootVC, animated: true) // push show segue
-//    }
-    
-    @objc func populateConnections () {
-        dummyDataUtils.populateConnections()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadGroupMetadataList()
     }
     
     private func setupHomepage() {
-        // TODO: set up logic for populating the homepage
-        // right now, it just goes to the default homepage
-        homeView = DefaultHomeView()
-        view.addSubview(homeView!) // will have homeView initialized beforehand
-        
-        if let testView = homeView as? DefaultHomeView {
-            homeView = testView
-            testView.delegate = self
-        }
-        
-        homeView?.translatesAutoresizingMaskIntoConstraints = false
-        
+        view.addSubview(homeView)
+        homeView.delegate = self
+    
+        homeView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            homeView!.topAnchor.constraint(equalTo: view.topAnchor),
-            homeView!.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            homeView!.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            homeView!.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            homeView.topAnchor.constraint(equalTo: view.topAnchor),
+            homeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            homeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
-    func didTouchAddGroupPlusButton() {
-        let groupRootVC = GroupEntryViewController()
-        navigationController?.pushViewController(groupRootVC, animated: true) // push show segue
+    func loadGroupMetadataList() {
+        Task {
+            do {
+                // TODO: consolidate alert error messages for getCurrentUserAuthInstance
+                guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
+                    AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
+                    return
+                }
+                
+                groupMetadataList = try await groupManager.fetchGroupMetadataList(forUserUID: user.uid)
+                homeView.groupList = groupMetadataList
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to retrieve user's group metadata list")
+            }
+        }
     }
     
-    func didTouchAddHabitsPlusButton() {
-        let groupRootVC = AddTaskViewController()
-        navigationController?.pushViewController(groupRootVC, animated: true)
+    func didTouchAddGroupPlusButton() {
+        let groupEntryVC = GroupEntryViewController()
+        navigationController?.pushViewController(groupEntryVC, animated: true) // push show segue
+    }
+    
+    func didTouchAddHabitPlusButton() {
+        let addHabitVC = AddHabitViewController()
+        navigationController?.pushViewController(addHabitVC, animated: true)
+    }
+    
+    func didSelectGroupCell(groupIdx: Int) {
+        let groupVC = GroupViewController(groupID: groupMetadataList[groupIdx].groupID)
+        navigationController?.pushViewController(groupVC, animated: true)
     }
 }

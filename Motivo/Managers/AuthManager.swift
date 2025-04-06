@@ -5,7 +5,6 @@
 //  Created by Aaron Lee on 3/9/25.
 //
 import FirebaseAuth
-import FirebaseFirestore
 
 class AuthManager {
     // Singleton AuthManager
