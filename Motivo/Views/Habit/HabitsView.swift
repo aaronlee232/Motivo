@@ -27,7 +27,7 @@ class HabitsView {
                     id: doc.documentID,
                     name: data["name"] as? String ?? "",
                     isGroupHabit: data["isGroupHabit"] as? Bool ?? false,
-                    category: data["category"] as! [String],
+                    categoryIDs: data["category"] as! [String],
                     streak: data["streak"] as? Int ?? 0,
                     goal: data["goal"] as? Int ?? 0,
                     unit: data["unit"] as? String ?? "",

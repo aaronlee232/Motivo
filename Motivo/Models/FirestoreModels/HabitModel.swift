@@ -11,8 +11,7 @@ import FirebaseFirestore
 struct HabitModel: Codable {
     @DocumentID var id: String!
     let name: String
-    let isGroupHabit: Bool
-    let category: [String]
+    let categoryIDs: [String]
     var streak: Int
     let goal: Int
     let unit: String
@@ -23,18 +22,23 @@ struct HabitModel: Codable {
 struct HabitRecord: Codable {
     @DocumentID var id: String!
     let habitID: String
-    var completedCount: Int
-    var unverifiedPhotosList: [String]
+    var unverifiedPhotoURLs: [String]
+    var verifiedPhotoURLs: [String]
     let timestamp: String
     let userID: String
     
+    var completedCount: Int {
+        return verifiedPhotoURLs.count
+    }
+    
+    // TODO: Replace with verifiedPhotoURLs count >= HabitModel.goal
     // Computed properties
     var isCompleted: Bool {
         return completedCount >= 3 // Fetch goal from HabitModel
     }
     
     var isPending: Bool {
-        return !unverifiedPhotosList.isEmpty
+        return !unverifiedPhotoURLs.isEmpty
     }
 }
 

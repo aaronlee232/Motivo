@@ -88,7 +88,7 @@ class HabitCell: UITableViewCell {
         nameLabel.text = habit.name
         streakLabel.text = "🔥 \(habit.streak)" // Smaller streak label
 
-        categoryLabel.text = "Categories: \(habit.category.joined(separator: ", "))"
+        categoryLabel.text = "Categories: \(habit.categoryIDs.joined(separator: ", "))"  // TODO: fetch in VC and pass in /populate here
         groupEmojiLabel.text = habit.isGroupHabit ? "👥" : ""
 
         progressLabel.text = progressText
@@ -104,13 +104,13 @@ class HabitCell: UITableViewCell {
                 // Task Verification Code added here -> This should add an unverified photo to the list, not directly increment completedCount
                 
                 if let existingRecord = existingRecords.first {
-                    var updatedRecord = existingRecord
-                    updatedRecord.completedCount += 1
-                    try FirestoreService.shared.updateHabitRecord(habitRecord: updatedRecord)
+//                    var updatedRecord = existingRecord
+//                    updatedRecord.completedCount += 1
+//                    try FirestoreService.shared.updateHabitRecord(habitRecord: updatedRecord)
                 } else {
                     let newHabitRecord = HabitRecord(habitID: habit.id,
-                                                     completedCount: 1,
-                                                     unverifiedPhotosList: [],
+                                                     unverifiedPhotoURLs: [],
+                                                     verifiedPhotoURLs: [],
                                                      timestamp: Date().formatted(),
                                                      userID: habit.userID)
                     try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecord)
