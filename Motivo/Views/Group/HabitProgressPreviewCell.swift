@@ -1,5 +1,5 @@
 //
-//  TaskPreviewCell.swift
+//  HabitPreviewCell.swift
 //  Motivo
 //
 //  Created by Aaron Lee on 3/28/25.
@@ -7,31 +7,31 @@
 
 import UIKit
 
-enum TaskStatus: Int, Comparable {
+enum HabitStatus: Int, Comparable {
     case complete = 0
     case pending = 1
     case incomplete = 2
     
-    static func < (lhs: TaskStatus, rhs: TaskStatus) -> Bool {
+    static func < (lhs: HabitStatus, rhs: HabitStatus) -> Bool {
         return lhs.rawValue < rhs.rawValue
     }
 }
 
-class TaskProgressPreviewCell: UITableViewCell {
+class HabitProgressPreviewCell: UITableViewCell {
     
     // MARK: - UI Elements
-    static let identifier = "TaskPreviewCell"
+    static let identifier = "HabitProgressPreviewCell"
 
     private let mainStackView = UIStackView()
     private let statusImageView = UIImageView()
-    private let taskNameLabel = UILabel()
+    private let habitNameLabel = UILabel()
     private let spacerView = UIView()
     private let messageLabel = UILabel()
     
     // MARK: - Initializers
-    init(taskStatus: TaskStatus, taskName: String) {
+    init(habitStatus: HabitStatus, habitName: String) {
         self.init(frame: .zero)
-        configureWith(taskStatus: taskStatus, taskName: taskName)
+        configureWith(habitStatus: habitStatus, habitName: habitName)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -45,18 +45,18 @@ class TaskProgressPreviewCell: UITableViewCell {
 }
 
 //MARK: - Cell Configuration
-extension TaskProgressPreviewCell {
-    func configureWith(taskStatus: TaskStatus, taskName: String) {
-        self.taskNameLabel.text = taskName
-        self.statusImageView.image = statusImage(for: taskStatus)
-        self.messageLabel.text = message(for: taskStatus)
+extension HabitProgressPreviewCell {
+    func configureWith(habitStatus: HabitStatus, habitName: String) {
+        self.habitNameLabel.text = habitName
+        self.statusImageView.image = statusImage(for: habitStatus)
+        self.messageLabel.text = message(for: habitStatus)
         
         // Hide messageLabel if it's nil
         messageLabel.isHidden = (messageLabel.text == nil)
     }
     
-    private func statusImage(for taskStatus: TaskStatus) -> UIImage {
-        switch taskStatus {
+    private func statusImage(for habitStatus: HabitStatus) -> UIImage {
+        switch habitStatus {
         case .incomplete:
             return UIImage(systemName: "circle")!
         case .pending:
@@ -66,8 +66,8 @@ extension TaskProgressPreviewCell {
         }
     }
     
-    private func message(for taskStatus: TaskStatus) -> String? {
-        switch taskStatus {
+    private func message(for habitStatus: HabitStatus) -> String? {
+        switch habitStatus {
         case .incomplete, .complete:
             return nil
         case .pending:
@@ -77,14 +77,14 @@ extension TaskProgressPreviewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        taskNameLabel.text = nil
+        habitNameLabel.text = nil
         statusImageView.image = nil
         messageLabel.text = nil
     }
 }
 
 // MARK: - UI Setup
-extension TaskProgressPreviewCell {
+extension HabitProgressPreviewCell {
     private func setupUI() {
         setupMainStackView()
 
@@ -102,7 +102,7 @@ extension TaskProgressPreviewCell {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         mainStackView.addArrangedSubview(statusImageView)
-        mainStackView.addArrangedSubview(taskNameLabel)
+        mainStackView.addArrangedSubview(habitNameLabel)
         mainStackView.addArrangedSubview(spacerView)
         mainStackView.addArrangedSubview(messageLabel)
         

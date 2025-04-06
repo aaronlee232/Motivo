@@ -185,6 +185,6 @@ extension FirestoreService {
 }
 
 
-// MARK: - habit/task collection
+// MARK: - habit collection
 extension FirestoreService {
 }

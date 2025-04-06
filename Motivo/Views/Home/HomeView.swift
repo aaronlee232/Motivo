@@ -9,7 +9,7 @@ import UIKit
 
 protocol HomeViewDelegate:HomeViewController {
     func didTouchAddGroupPlusButton()
-    func didTouchAddHabitsPlusButton()
+    func didTouchAddHabitPlusButton()
     func didSelectGroupCell(groupIdx: Int)
 }
 
@@ -146,7 +146,7 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     @objc func handleAddHabitsPlusButton() {
-        delegate?.didTouchAddHabitsPlusButton()
+        delegate?.didTouchAddHabitPlusButton()
     }
     
     @objc func handleDidSelectGroupCell(groupIdx: Int) {

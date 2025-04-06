@@ -15,8 +15,6 @@ let dummyGroupMetadataList = [
 
 class HomeViewController: UIViewController, HomeViewDelegate {
 
-//    let dummyDataUtils = DummyDataUtils()
-
     private var homeView:UIView?
     private let groupMetadataList =  dummyGroupMetadataList  // replace with firestore logic in homeManager
     
@@ -55,9 +53,9 @@ class HomeViewController: UIViewController, HomeViewDelegate {
         navigationController?.pushViewController(groupEntryVC, animated: true) // push show segue
     }
     
-    func didTouchAddHabitsPlusButton() {
-        let addTaskVC = AddTaskViewController()
-        navigationController?.pushViewController(addTaskVC, animated: true)
+    func didTouchAddHabitPlusButton() {
+        let addHabitVC = AddHabitViewController()
+        navigationController?.pushViewController(addHabitVC, animated: true)
     }
     
     func didSelectGroupCell(groupIdx: Int) {
