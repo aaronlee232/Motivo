@@ -13,8 +13,12 @@ protocol ProfileViewDelegate:ProfileViewController {
 
 class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
     
+    static let profileImageViewHeight:CGFloat = 50
+    
     private var groupList:[GroupMetadata]!
     private var tableView = UITableView()
+    
+    // bar button
     
     private let titleLabel = BoldTitleLabel(textLabel: "My Profile")
     private let profileImageView = UIImageView(image: UIImage(systemName: "person.circle.fill"))
@@ -27,6 +31,7 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
     private let myDaysLabel = SubtitleLabel(textLabel: "Days")
     private let groupsLabel = NormalLabel(textLabel: "Groups")
     
+    private var userInfoStackView: UIStackView!
     private var habitsStackView: UIStackView!
     private var groupsStackView: UIStackView!
     private var daysStackView: UIStackView!
@@ -69,9 +74,10 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
         
         profileImageView.tintColor = colorMainPrimary
         profileImageView.contentMode = .scaleAspectFit
-        profileImageView.clipsToBounds = true
         profileImageView.layer.borderColor = colorMainText.cgColor
         profileImageView.layer.borderWidth = 2
+        profileImageView.layer.cornerRadius = ProfileView.profileImageViewHeight / 2
+        profileImageView.clipsToBounds = true
         
         myHabitsCountLabel.setBoldText(status: true)
         myGroupsCountLabel.setBoldText(status: true)
@@ -80,6 +86,11 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
         myHabitsLabel.changeFontSize(fontSize: 16)
         myGroupsLabel.changeFontSize(fontSize: 16)
         myDaysLabel.changeFontSize(fontSize: 16)
+        
+        userInfoStackView = UIStackView(arrangedSubviews: [profileImageView, username])
+        userInfoStackView.axis = .horizontal
+        userInfoStackView.alignment = .center
+        userInfoStackView.spacing = 1
         
         habitsStackView = UIStackView(arrangedSubviews: [myHabitsCountLabel, myHabitsLabel])
         habitsStackView.axis = .vertical
@@ -96,7 +107,7 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
         daysStackView.alignment = .center
         daysStackView.distribution = .equalSpacing
         
-        statsStackView = UIStackView(arrangedSubviews: [profileImageView, username, habitsStackView, groupsStackView, daysStackView])
+        statsStackView = UIStackView(arrangedSubviews: [userInfoStackView, habitsStackView, groupsStackView, daysStackView])
         statsStackView.axis = .horizontal
         statsStackView.alignment = .center
         statsStackView.spacing = 2
@@ -115,6 +126,9 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
         addSubview(tableView)
         
         NSLayoutConstraint.activate([
+            profileImageView.heightAnchor.constraint(equalToConstant: ProfileView.profileImageViewHeight),
+            profileImageView.widthAnchor.constraint(equalToConstant: ProfileView.profileImageViewHeight),
+            
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 60),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -129,7 +143,7 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
             tableView.topAnchor.constraint(equalTo: groupsLabel.bottomAnchor, constant: 10),
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
     
@@ -144,10 +158,7 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//    
-//        profileImageView.layer.cornerRadius = profileImageView.bounds.height / 2
-//        profileImageView.layer.masksToBounds = true
-//    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
+    }
 }

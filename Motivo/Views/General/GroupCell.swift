@@ -68,7 +68,7 @@ class GroupCell: UITableViewCell {
 //        layer.borderColor = colorMainPrimary.cgColor
 //        layer.borderWidth = 2
 //        layer.cornerRadius = 0.1875 * GroupCell.groupViewHeight
-        selectionStyle = .none // prevents the user from seeing that the table view cell is clicked
+//        selectionStyle = .none // prevents the user from seeing that the table view cell is clicked
         profileImageView.tintColor = colorMainText
         profileImageView.contentMode = .scaleAspectFit
         profileImageView.clipsToBounds = true
