@@ -93,9 +93,12 @@ class HabitSettingsViewController: UIViewController {
     }
     
     @objc private func saveSettings() {
-        // Save selected categories to UserDefaults for now
+        // Save selected categories to UserDefaults
         UserDefaults.standard.set(Array(selectedCategories), forKey: "selectedCategories")
-        
+
+        // Notify observers (HabitsView) about the update
+        NotificationCenter.default.post(name: .didUpdateCategories, object: nil)
+
         // Go back to main screen
         navigationController?.popViewController(animated: true)
     }

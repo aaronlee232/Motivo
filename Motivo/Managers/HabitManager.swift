@@ -1,28 +1,43 @@
-//
-//  HabitManager.swift
-//  Motivo
-//
-//  Created by Cooper Wilk on 3/10/25.
-//
-
-
-import Foundation
+import FirebaseFirestore
+//import FirebaseFirestoreSwift
 
 class HabitManager {
-    // TODO: I don't think this needs a singleton design pattern since we probably won't have app-wide references to this manager
     static let shared = HabitManager()
     
-    private(set) var habits: [Habit] = HabitData.habits
+    private var db = Firestore.firestore()
+    private(set) var habits: [HabitModel] = []
     
-    // TODO: Implement firestore methods here
-    // TODO: If applicable, move data related methods from HabitsView here (ex: sortHabits)
+    // Fetch habits from Firestore
+    func loadHabits(completion: @escaping () -> Void) {
+        db.collection(FirestoreCollection.habit).getDocuments { snapshot, error in
+            guard let documents = snapshot?.documents, error == nil else {
+                print("Error fetching habits: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            self.habits = documents.compactMap { doc in
+                try? doc.data(as: HabitModel.self) // Assumes Habit conforms to Codable
+            }
+            
+            self.sortHabits()
+            completion() // Notify UI to refresh
+        }
+    }
     
-    func addHabit(_ habit: Habit) {
-        habits.append(habit)
-        sortHabits()
+    // Add a new habit to Firestore
+    func addHabit(_ habit: HabitModel, completion: @escaping (Bool) -> Void) {
+        do {
+            let _ = try db.collection(FirestoreCollection.habit).addDocument(from: habit)
+            self.habits.append(habit)
+            self.sortHabits()
+            completion(true)
+        } catch {
+            print("Error adding habit: \(error.localizedDescription)")
+            completion(false)
+        }
     }
     
     func sortHabits() {
-        habits.sort { !$0.isCompleted && $1.isCompleted }
+//        habits.sort { !$0.isCompleted && $1.isCompleted }
     }
 }

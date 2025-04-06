@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class AddHabitViewController: UIViewController {
     
@@ -27,6 +28,8 @@ class AddHabitViewController: UIViewController {
     // Categories
     private let categories = ["Exercise", "Nutrition", "Productivity", "Social", "Finance"]
     private var selectedCategories = Set<String>()
+    
+    private let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,21 +107,36 @@ class AddHabitViewController: UIViewController {
         let frequency = frequencySegmentedControl.titleForSegment(at: frequencySegmentedControl.selectedSegmentIndex) ?? "Daily"
         let isGroupHabit = visibilitySegmentedControl.selectedSegmentIndex == 0 // Public = Group Habit
         
-        let newHabit = Habit(
-            name: name,
-            isGroupHabit: isGroupHabit,
-            category: selectedCategories.joined(separator: ", "),
-            streak: 0,
-            completed: 0,
-            goal: goal,
-            unit: unit,
-            frequency: frequency
-        )
+//        let newHabit: [String: Any] = [
+//            "name": name,
+//            "isGroupHabit": isGroupHabit,
+//            "category": Array(selectedCategories),
+//            "streak": 0,
+//            "goal": goal,
+//            "unit": unit,
+//            "frequency": frequency
+//
+//        ]
         
-        // Add new habit to HabitData so it's persistent
-        HabitData.habits.append(newHabit)
-        HabitManager.shared.addHabit(newHabit)
+        let newHabit = HabitModel(name: name, isGroupHabit: isGroupHabit, category: Array(selectedCategories), streak: 0, goal: goal, unit: unit, frequency: frequency, userID: AuthManager.shared.getCurrentUserAuthInstance()?.uid ?? "")
         
-        navigationController?.popViewController(animated: true)
+        // Save to Firebase
+//        db.collection("habits").addDocument(data: newHabit) { error in
+//            if let error = error {
+//                print("Error adding habit: \(error.localizedDescription)")
+//            } else {
+//                print("Habit successfully added")
+//                DispatchQueue.main.async {
+//                    self.navigationController?.popViewController(animated: true)
+//                }
+//            }
+//        }
+        do {
+            try FirestoreService.shared.addHabit(habit: newHabit)
+            navigationController?.popViewController(animated: true)
+            
+        } catch {
+            print("Error adding habit: \(error.localizedDescription)")
+        }
     }
 }

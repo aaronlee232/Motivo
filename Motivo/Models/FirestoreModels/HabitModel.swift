@@ -6,19 +6,35 @@
 //
 import FirebaseFirestore
 
-struct Habit: Codable{
-    @DocumentID var id: String?
+// This should be split into HabitModel which contains information about the metadata of a task and HabitRecord which contains the instances of that task being completed
+
+struct HabitModel: Codable {
+    @DocumentID var id: String!
     let name: String
     let isGroupHabit: Bool
-    let category: String
+    let category: [String]
     var streak: Int
-    var completed: Int
     let goal: Int
     let unit: String
     let frequency: String
+    let userID: String
+}
+
+struct HabitRecord: Codable {
+    @DocumentID var id: String!
+    let habitID: String
+    var completedCount: Int
+    var unverifiedPhotosList: [String]
+    let timestamp: String
+    let userID: String
     
-    // Computed property to check if a habit is fully completed
+    // Computed properties
     var isCompleted: Bool {
-        return completed >= goal
+        return completedCount >= 3 // Fetch goal from HabitModel
+    }
+    
+    var isPending: Bool {
+        return !unverifiedPhotosList.isEmpty
     }
 }
+

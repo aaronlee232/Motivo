@@ -56,7 +56,7 @@ class HomeViewController: UIViewController, HomeViewDelegate {
             }
         }
     }
-    
+
     func didTouchAddGroupPlusButton() {
         let groupEntryVC = GroupEntryViewController()
         navigationController?.pushViewController(groupEntryVC, animated: true) // push show segue

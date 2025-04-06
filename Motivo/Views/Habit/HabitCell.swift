@@ -6,109 +6,120 @@
 //
 import UIKit
 
-// MARK: - Custom Habit Cell
 class HabitCell: UITableViewCell {
     static let identifier = "HabitCell"
     
     private let nameLabel = UILabel()
-    private let groupIconLabel = UILabel()
     private let streakLabel = UILabel()
+    private let categoryLabel = UILabel()
+    private let groupEmojiLabel = UILabel()
     private let progressLabel = UILabel()
     private let plusButton = UIButton(type: .system)
-    
-    private let categoryLabel = UILabel()
-    private let statsPlaceholder = UIView()  // Placeholder for heatmap/statistics
-    
-    var onPlusTapped: (() -> Void)? // Closure for button action
-    
+
+    var onPlusTapped: (() -> Void)?
+    private var habit: HabitModel?
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupUI() {
-        // Configure fonts
-        nameLabel.font = .boldSystemFont(ofSize: 16)
-        streakLabel.font = .systemFont(ofSize: 14)
+        nameLabel.font = .boldSystemFont(ofSize: 18)
+
+        streakLabel.font = .systemFont(ofSize: 12) // Smaller font for streak number
+        streakLabel.textColor = .darkGray
+
+        categoryLabel.font = .systemFont(ofSize: 12)
+        categoryLabel.textColor = .gray
+
+        groupEmojiLabel.font = .systemFont(ofSize: 14)
+
         progressLabel.font = .systemFont(ofSize: 14)
-        categoryLabel.font = .italicSystemFont(ofSize: 14)
-        groupIconLabel.font = .systemFont(ofSize: 16)
-        
-        // Allow text wrapping for progress label to prevent cutoff
-        progressLabel.numberOfLines = 1
-        progressLabel.adjustsFontSizeToFitWidth = true
-        progressLabel.minimumScaleFactor = 0.8
-        
-        // Configure plus button
+        progressLabel.textAlignment = .right // Right align progress text
+
         plusButton.setTitle("+", for: .normal)
         plusButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
         plusButton.tintColor = .blue
         plusButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
-        
-        // Configure stats placeholder (hidden by default)
-        statsPlaceholder.backgroundColor = .lightGray
-        statsPlaceholder.layer.cornerRadius = 10
-        statsPlaceholder.isHidden = true
-        
-        // Create a horizontal stack for name, group icon, and streak
-        let nameStack = UIStackView(arrangedSubviews: [nameLabel, groupIconLabel, streakLabel])
+
+        let nameStack = UIStackView(arrangedSubviews: [nameLabel, streakLabel])
         nameStack.axis = .horizontal
-        nameStack.spacing = 8
-        nameStack.alignment = .leading
-        nameStack.distribution = .fillProportionally
-        
-        // Main stack for compact view (no category)
-        let mainStack = UIStackView(arrangedSubviews: [nameStack, progressLabel])
-        mainStack.axis = .vertical
-        mainStack.spacing = 4
-        mainStack.alignment = .leading
-        
-        // Expanded stack (includes category & stats)
-        let expandedStack = UIStackView(arrangedSubviews: [mainStack, categoryLabel, statsPlaceholder])
-        expandedStack.axis = .vertical
-        expandedStack.spacing = 4
-        
-        // Final layout: content + plus button
-        let containerStack = UIStackView(arrangedSubviews: [expandedStack, plusButton])
+        nameStack.spacing = 6
+        nameStack.alignment = .center
+
+        let bottomStack = UIStackView(arrangedSubviews: [categoryLabel, groupEmojiLabel])
+        bottomStack.axis = .horizontal
+        bottomStack.spacing = 6
+        bottomStack.alignment = .center
+
+        let leftStack = UIStackView(arrangedSubviews: [nameStack, bottomStack])
+        leftStack.axis = .vertical
+        leftStack.spacing = 4
+        leftStack.alignment = .leading
+
+        let containerStack = UIStackView(arrangedSubviews: [leftStack, progressLabel, plusButton])
         containerStack.axis = .horizontal
         containerStack.spacing = 8
         containerStack.alignment = .center
         containerStack.distribution = .fill
-        
+
         contentView.addSubview(containerStack)
         containerStack.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             containerStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             containerStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             containerStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             containerStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            
+
             plusButton.widthAnchor.constraint(equalToConstant: 30),
-            statsPlaceholder.heightAnchor.constraint(equalToConstant: 100)  // Reserved for future statistics
+            progressLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 80) // Ensure progress text doesn't shrink too much
         ])
     }
-    
-    func configure(with habit: Habit, isExpanded: Bool) {
+
+    func configure(with habit: HabitModel, progressText: String) {
+        self.habit = habit
+
         nameLabel.text = habit.name
-        groupIconLabel.text = habit.isGroupHabit ? "👥" : ""
-        streakLabel.text = "🔥 \(habit.streak) days"
-        progressLabel.text = "\(habit.completed) / \(habit.goal) \(habit.unit) \(habit.frequency)"
-        categoryLabel.text = "Category: \(habit.category)"
-        
-        // Show category and stats only in expanded view
-        categoryLabel.isHidden = !isExpanded
-        statsPlaceholder.isHidden = !isExpanded
-        
-        // Gray out fully completed habits
-        contentView.alpha = habit.isCompleted ? 0.5 : 1.0
+        streakLabel.text = "🔥 \(habit.streak)" // Smaller streak label
+
+        categoryLabel.text = "Categories: \(habit.category.joined(separator: ", "))"
+        groupEmojiLabel.text = habit.isGroupHabit ? "👥" : ""
+
+        progressLabel.text = progressText
     }
-    
+
     @objc private func plusButtonTapped() {
-        onPlusTapped?() // Call the closure when button is tapped
+        Task {
+            do {
+                guard let habit = habit else { return }
+                
+                let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+
+                // Task Verification Code added here -> This should add an unverified photo to the list, not directly increment completedCount
+                
+                if let existingRecord = existingRecords.first {
+                    var updatedRecord = existingRecord
+                    updatedRecord.completedCount += 1
+                    try FirestoreService.shared.updateHabitRecord(habitRecord: updatedRecord)
+                } else {
+                    let newHabitRecord = HabitRecord(habitID: habit.id,
+                                                     completedCount: 1,
+                                                     unverifiedPhotosList: [],
+                                                     timestamp: Date().formatted(),
+                                                     userID: habit.userID)
+                    try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecord)
+                }
+                
+                onPlusTapped?()
+            } catch {
+                print("Error updating habit record: \(error.localizedDescription)")
+            }
+        }
     }
 }

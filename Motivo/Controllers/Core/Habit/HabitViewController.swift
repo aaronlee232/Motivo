@@ -1,115 +1,93 @@
-//
-//  HabitViewController.swift
-//  Motivo
-//
-//  Created by Cooper Wilk on 3/10/25.
-//
 import UIKit
 
-
-// TODO: Remove and connect to Firebase
-class HabitData {
-    static var habits: [Habit] = [
-        Habit(name: "Exercise", isGroupHabit: true, category: "Exercise", streak: 5, completed: 1, goal: 3, unit: "Times", frequency: "Today"),
-        Habit(name: "Drink Water", isGroupHabit: false, category: "Nutrition", streak: 7, completed: 2, goal: 3, unit: "Glasses", frequency: "Today"),
-        Habit(name: "Hike", isGroupHabit: true, category: "Social", streak: 14, completed: 2, goal: 3, unit: "Trips", frequency: "This Week"),
-        Habit(name: "Read", isGroupHabit: false, category: "Productivity", streak: 15, completed: 18, goal: 20, unit: "Pages", frequency: "Today"),
-        Habit(name: "Drink Protein", isGroupHabit: false, category: "Nutrition", streak: 8, completed: 1, goal: 2, unit: "Shakes", frequency: "This Week"),
-        Habit(name: "Tutor", isGroupHabit: true, category: "Finance", streak: 6, completed: 2, goal: 2, unit: "Sessions", frequency: "This Week"),
-        Habit(name: "Meditate", isGroupHabit: false, category: "Nutrition", streak: 10, completed: 1, goal: 1, unit: "Session", frequency: "Today")
-    ]
-}
-
-
-class HabitViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+class HabitViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private let tableView = UITableView()
-    private var viewModel = HabitsView()  // TODO: HabbitsView is not a model. It is also technically not a view either currently. Refactor HabitsView to conform to MVC and change variable name to be more self-descriptive (habitViewModel, habitView, etc)
-    private var isExpandedView = false // Toggle for expanded/compact views
-    
+    private let habitsView = HabitsView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+    }
+
+    private func setupUI() {
         title = "Habits"
-        view.backgroundColor = .white
-        setupNavigationBar()
-        setupTableView()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.loadHabits()  // Reload data
-        tableView.reloadData()   // Refresh UI
-    }
-    
-    // MARK: - Navigation Bar Setup
-    //TODO: Refactor this button logic into a proper MVC format
-    /**
-        Initialize button inside view
-        Implement action handler function logic here using a delegate to the view
-        Use AuthView and AuthenticationViewController as a reference
-     */
-    private func setupNavigationBar() {
-        let changeViewButton = UIBarButtonItem(image: UIImage(systemName: "line.horizontal.3"), style: .plain, target: self, action: #selector(changeViewTapped))
-        let gridViewButton = UIBarButtonItem(image: UIImage(systemName: "square.grid.2x2"), style: .plain, target: self, action: #selector(gridViewTapped))
-        let addHabitButton = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addHabitTapped))
-        
-        navigationItem.leftBarButtonItem = changeViewButton
-        navigationItem.rightBarButtonItems = [addHabitButton, gridViewButton]
-    }
-    
-    private func setupTableView() {
-        tableView.delegate = self
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
+
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(HabitCell.self, forCellReuseIdentifier: HabitCell.identifier)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 60
-        
+        tableView.tableFooterView = UIView()
+
         view.addSubview(tableView)
-        
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
     
-    // MARK: - Button Actions
-    @objc private func changeViewTapped() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        habitsView.loadHabits()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTableView), name: .didUpdateHabitRecords, object: nil)
+    }
+
+    @objc private func updateTableView() {
+        tableView.reloadData()
+    }
+
+
+    @objc private func addHabit() {
+        // Navigate to Add Habit page
+        let addHabitVC = AddHabitViewController()
+        navigationController?.pushViewController(addHabitVC, animated: true)
+    }
+
+    @objc private func openSettings() {
+        // Navigate to Settings page
         let settingsVC = HabitSettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: true)
     }
 
-    
-    @objc private func gridViewTapped() {
-        isExpandedView.toggle()  // Toggle the expanded state
-        
-        UIView.transition(with: tableView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-            self.tableView.reloadData()
-        }, completion: nil)
-    }
-    
-    @objc private func addHabitTapped() {
-        let addHabitVC = AddHabitViewController()
-        navigationController?.pushViewController(addHabitVC, animated: true)
-    }
-    
-    // MARK: - TableView DataSource
+    // MARK: - UITableView DataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.numberOfHabits()
+        return habitsView.numberOfHabits()
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HabitCell.identifier, for: indexPath) as! HabitCell
-        let habit = viewModel.habit(at: indexPath.row)
-        cell.configure(with: habit, isExpanded: isExpandedView)
-        cell.onPlusTapped = {
-            self.viewModel.updateHabit(at: indexPath.row)
-            UIView.transition(with: self.tableView, duration: 0.2, options: .transitionCrossDissolve, animations: {
-                self.tableView.reloadData()
-            }, completion: nil)
+        let habit = habitsView.habit(at: indexPath.row)
+        let record = habitsView.habitRecord(for: habit.id)
+
+        let completedCount = record?.completedCount ?? 0
+        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)" // Ensure unit is used properly
+        let progressText: String
+
+        switch habit.frequency {
+        case "Daily":
+            progressText = "\(completedCount) / \(habit.goal)\(unit) Today"
+        case "Weekly":
+            progressText = "\(completedCount) / \(habit.goal)\(unit) This Week"
+        case "Monthly":
+            progressText = "\(completedCount) / \(habit.goal)\(unit) This Month"
+        default:
+            progressText = "\(completedCount) / \(habit.goal)\(unit)"
         }
+
+        cell.configure(with: habit, progressText: progressText)
+        cell.onPlusTapped = { [weak self] in
+            self?.habitsView.updateHabitRecord(for: habit.id)
+            self?.tableView.reloadData()
+        }
+
         return cell
     }
+
+
 }
