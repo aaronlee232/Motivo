@@ -6,12 +6,9 @@
 //
 
 // TODO: one screen for hiding / showing contacts, having local data and updating in firebase
-import FirebaseFirestore
 
 class ConnectionsManager {
-    
-    let db = Firestore.firestore()
-    
+
     // Uses a User's UID to fetch their UserModel in FireStore
     func fetchUser(uid: String) async throws -> UserModel? {
         return try await FirestoreService.shared.fetchUser(forUserUID: uid)

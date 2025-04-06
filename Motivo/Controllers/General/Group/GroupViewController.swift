@@ -13,10 +13,13 @@ class GroupViewController: UIViewController {
         case progress = 1
     }
     
+    // MARK: - UI Elements
     private let groupOverviewView = GroupOverviewView()
     private let groupProgressView = GroupProgressView()
     private let segmentedControl = UISegmentedControl()
     
+    // MARK: - Properties
+    private let groupManager = GroupManager()
     private var groupID: String!
     private var currentScreen: GroupScreenType {
         didSet {
@@ -24,6 +27,7 @@ class GroupViewController: UIViewController {
         }
     }
     
+    // MARK: - Initializers
     init(groupID: String) {
         self.groupID = groupID
         currentScreen = GroupScreenType.overview
@@ -35,16 +39,34 @@ class GroupViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        fetchAndSetGroupName()
         setupTitleBar()
         setupSegmentedControl()
-        setupViews()
+        setupTabViews()
         
         // Manually switch screen
         switchScreen(screen: currentScreen)
     }
-    
+}
+
+// MARK: - Data Fetching
+extension GroupViewController {
+    private func fetchAndSetGroupName() {
+        Task {
+            do {
+                try self.title = await groupManager.fetchGroupName(groupID: groupID)
+            } catch {
+                print("Error loading group name: \(error.localizedDescription)")
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "The group name couldn't be retrieved")
+            }
+        }
+    }
+}
+
+// MARK: - UI Setup
+extension GroupViewController {
     private func setupTitleBar() {
-        self.title = "Group Name (\(groupID!))"
+        self.title = ""
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         let menu = UIMenu(title: "", children: [
             UIAction(title: "Edit Group Name", image: UIImage(systemName: "pencil"), handler: { _ in
@@ -88,7 +110,7 @@ class GroupViewController: UIViewController {
         ])
     }
     
-    private func setupViews() {
+    private func setupTabViews() {
         view.addSubview(groupOverviewView)
         groupOverviewView.isHidden = true
         groupOverviewView.translatesAutoresizingMaskIntoConstraints = false
@@ -109,7 +131,11 @@ class GroupViewController: UIViewController {
             groupProgressView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
     }
-    
+}
+
+
+// MARK: - Actions
+extension GroupViewController {
     private func switchScreen(screen: GroupScreenType) {
         switch screen {
         case GroupScreenType.overview:
@@ -122,16 +148,14 @@ class GroupViewController: UIViewController {
     }
     
     @objc private func didTapEditGroupNameButton() {
-        
+        // TODO: Implement edit group segue/view
     }
     
     @objc private func didTapInviteUserButton() {
-        
+        // TODO: Implement invite user segue/view
     }
     
     @objc private func didTapLeaveGroupButton() {
-        
+        // TODO: Implement leave group confirmation alert and segue
     }
-    
 }
-

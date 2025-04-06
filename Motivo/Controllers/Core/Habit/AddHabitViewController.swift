@@ -1,5 +1,5 @@
 //
-//  AddTaskViewController.swift
+//  AddHabitViewController.swift
 //  Motivo
 //
 //  Created by Cooper Wilk on 3/10/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AddTaskViewController: UIViewController {
+class AddHabitViewController: UIViewController {
     
     // UI Elements
     private let visibilityLabel = UILabel()
@@ -115,7 +115,7 @@ class AddTaskViewController: UIViewController {
             frequency: frequency
         )
         
-        // Add new task to HabitData so it's persistent
+        // Add new habit to HabitData so it's persistent
         HabitData.habits.append(newHabit)
         HabitManager.shared.addHabit(newHabit)
         

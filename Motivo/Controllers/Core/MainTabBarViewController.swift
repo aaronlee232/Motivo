@@ -16,7 +16,7 @@ class MainTabBarViewController: UITabBarController {
         tabBar.tintColor = .label
         
         // Configure Tab Navigation for core view controllers
-        let taskVC = UINavigationController(rootViewController: TaskViewController())
+        let habitVC = UINavigationController(rootViewController: HabitViewController())
         let chatVC = UINavigationController(rootViewController: ChatViewController())
         let homeVC = UINavigationController(rootViewController: HomeViewController())
         let peopleVC = UINavigationController(rootViewController: ConnectionsViewController())
@@ -24,19 +24,19 @@ class MainTabBarViewController: UITabBarController {
         
         // Set icons for navigation items (using SF Symbols)
         homeVC.tabBarItem.image = UIImage(systemName: "house")
-        taskVC.tabBarItem.image = UIImage(systemName: "checklist.checked")
+        habitVC.tabBarItem.image = UIImage(systemName: "checklist.checked")
         chatVC.tabBarItem.image = UIImage(systemName: "message")
         peopleVC.tabBarItem.image = UIImage(systemName: "person.3")
         profileVC.tabBarItem.image = UIImage(systemName: "person.crop.circle")
         
         // Set titles for VC
         homeVC.title = "Overview"
-        taskVC.title = "My Habits"
+        habitVC.title = "My Habits"
         chatVC.title = "Chats"
         peopleVC.title = "Connections"
         profileVC.title = "My Profile"
         
-        setViewControllers([taskVC, chatVC, homeVC, peopleVC, profileVC], animated: true)
+        setViewControllers([habitVC, chatVC, homeVC, peopleVC, profileVC], animated: true)
     }
 
 

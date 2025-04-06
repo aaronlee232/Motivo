@@ -8,10 +8,10 @@
 import UIKit
 
 struct GroupMetadata {
-    var groupId: String
-    var image: UIImage
+    var groupID: String
+    var image: UIImage?  // Allow for nil and replace with 
     var groupName: String
-    var categories: [String]
+    var categoryNames: [String]
     var memberCount: Int
     var habitsCount: Int
 }

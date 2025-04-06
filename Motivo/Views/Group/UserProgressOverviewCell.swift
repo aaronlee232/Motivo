@@ -7,20 +7,20 @@
 
 import UIKit
 
-// TODO: Replace with real task model
-struct DummyTask {
+// TODO: Replace with real habit model
+struct DummyHabit {
     var name: String
-    var taskStatus: TaskStatus
+    var habitStatus: HabitStatus
     
-    init(name: String, taskStatus: TaskStatus) {
+    init(name: String, habitStatus: HabitStatus) {
         self.name = name
-        self.taskStatus = taskStatus
+        self.habitStatus = habitStatus
     }
 }
 
 class UserProgressOverviewCell: UITableViewCell {
     
-    static let identifier = "TaskProgressOverviewCell"
+    static let identifier = "HabitProgressOverviewCell"
     
     // MARK: - UI Elements
     let mainStackView = UIStackView() // horizontal container stack
@@ -36,17 +36,16 @@ class UserProgressOverviewCell: UITableViewCell {
     let spacerView = UIView()
     
     // MARK: - Properties
-    private var taskTableHeightConstraint: NSLayoutConstraint?
-    private var taskList: [DummyTask] = [] {
+    private var habitList: [DummyHabit] = [] {
         didSet {
             updateProgressBar()
         }
     }
     
     // MARK: - Initializers
-    convenience init(name: String, profileImageURL: String?, taskList: [DummyTask]) {
+    convenience init(name: String, profileImageURL: String?, habitList: [DummyHabit]) {
         self.init(frame: .zero)
-        configureWith(name: name, profileImageURL: profileImageURL, taskList: taskList)
+        configureWith(name: name, profileImageURL: profileImageURL, habitList: habitList)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -109,11 +108,11 @@ extension UserProgressOverviewCell {
 
 // MARK: - Configuration
 extension UserProgressOverviewCell {
-    func configureWith(name: String, profileImageURL: String?, taskList: [DummyTask]) {
+    func configureWith(name: String, profileImageURL: String?, habitList: [DummyHabit]) {
         self.nameLabel.text = name
         // replace with kingfisher image loading for profileImageURL ??  UIImage(systemName: "person.crop.circle")
         self.profileImageView.image = UIImage(systemName: "person.crop.circle")
-        self.taskList = taskList
+        self.habitList = habitList
     }
     
     private func configureDefaultValues() {
@@ -137,11 +136,11 @@ extension UserProgressOverviewCell {
 // MARK: - ProgressBar
 extension UserProgressOverviewCell {
     func updateProgressBar() {
-        let totalTasks = taskList.count
-        let completedTasks = taskList.filter { $0.taskStatus == .complete }.count
+        let totalHabits = habitList.count
+        let completedHabits = habitList.filter { $0.habitStatus == .complete }.count
         
         // Avoid division by zero
-        let progress = totalTasks > 0 ? Float(completedTasks) / Float(totalTasks) : 0.0
+        let progress = totalHabits > 0 ? Float(completedHabits) / Float(totalHabits) : 0.0
         
         progressBarView.setProgress(progress, animated: false)
     }

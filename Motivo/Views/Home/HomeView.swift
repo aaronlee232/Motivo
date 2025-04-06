@@ -9,13 +9,12 @@ import UIKit
 
 protocol HomeViewDelegate:HomeViewController {
     func didTouchAddGroupPlusButton()
-    func didTouchAddHabitsPlusButton()
+    func didTouchAddHabitPlusButton()
     func didSelectGroupCell(groupIdx: Int)
 }
 
 class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     
-    private var groupList:[GroupMetadata]!
     private var tableView = UITableView()
     
     private let titleLabel = BoldTitleLabel(textLabel: "Hi User")
@@ -30,10 +29,14 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     private var habitsStackView: UIStackView!
     
     var delegate:HomeViewDelegate?
+    var groupList:[GroupMetadata] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
-    init(groupList:[GroupMetadata]) {
-        self.groupList = groupList
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -49,11 +52,6 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
                 }
             }
         }
-        setupUI()
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
         setupUI()
     }
     
@@ -152,7 +150,7 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     @objc func handleAddHabitsPlusButton() {
-        delegate?.didTouchAddHabitsPlusButton()
+        delegate?.didTouchAddHabitPlusButton()
     }
     
     @objc func handleDidSelectGroupCell(groupIdx: Int) {
@@ -175,8 +173,8 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         }
 
         let group = groupList[indexPath.section]
-        cell.configureWith(groupId: group.groupId, image: group.image, groupName: group.groupName, categories: group.categories, memberCount: group.memberCount, habitsCount: group.habitsCount)
-
+        cell.configureWith(groupID: group.groupID, image: group.image ?? UIImage(systemName: "person.3.fill")!, groupName: group.groupName, categories: group.categoryNames, memberCount: group.memberCount, habitsCount: group.habitsCount)
+     
         return cell
     }
     

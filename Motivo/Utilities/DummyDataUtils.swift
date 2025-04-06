@@ -108,6 +108,7 @@ class DummyDataUtils {
         let group1 = GroupModel(
             id: nil,
             groupName: "Group Alpha",
+            isPublic: true,
             groupCode: UUID().uuidString.prefix(6).description,
             groupCategoryIDs: [],
             creatorUID: UUID().uuidString
@@ -116,6 +117,7 @@ class DummyDataUtils {
         let group2 = GroupModel(
             id: nil,
             groupName: "Group Beta",
+            isPublic: true,
             groupCode: UUID().uuidString.prefix(6).description,
             groupCategoryIDs: [],
             creatorUID: UUID().uuidString

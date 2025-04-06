@@ -8,7 +8,7 @@
 import UIKit
 
 class JoinInviteGroupViewController: UIViewController, JoinInviteGroupViewDelegate {
-    let groupMatchingManager = GroupMatchingManager()
+    let groupEntryManager = GroupEntryManager()
     private let joinInviteGroupView = JoinInviteGroupView()
     
     override func viewDidLoad() {
@@ -43,18 +43,26 @@ class JoinInviteGroupViewController: UIViewController, JoinInviteGroupViewDelega
                     AlertUtils.shared.showAlert(self, title: "User not valid", message: "User not logged in")
                     return
                 }
-                guard let verifiedGroup = try await groupMatchingManager.fetchGroup(groupID: groupID) else {
+                guard let verifiedGroup = try await groupEntryManager.fetchGroup(groupID: groupID) else {
                     AlertUtils.shared.showAlert(self, title: "Invalid group invite code", message: "Please enter a valid group invite code")
                     return
                 }
-                guard try await !groupMatchingManager.isUserMemberOfGroup(with: verifiedGroup.id!, uid: userAuthInstance.uid) else {
+                guard try await !groupEntryManager.isUserMemberOfGroup(with: verifiedGroup.id!, uid: userAuthInstance.uid) else {
                     AlertUtils.shared.showAlert(self, title: "Already in group", message: "Please enter a different group invite code")
                     return
                 }
                 let groupMembership = GroupMembershipModel(groupID: verifiedGroup.id!, userUID: userAuthInstance.uid)
-                try groupMatchingManager.insertGroupMembership(membership: groupMembership)
-                AlertUtils.shared.showAlert(self, title: "Debug: Group Membership created", message: "This is a debug message")
+                try groupEntryManager.insertGroupMembership(membership: groupMembership)
+                
                 joinInviteGroupView.inviteCodeTextField.text = nil
+                
+                // Pop to HomeVC, then push GroupVC
+                if let navController = navigationController,
+                   let homeVC = navController.viewControllers.first(where: { $0 is HomeViewController }) {
+                    
+                    let groupVC = GroupViewController(groupID: groupID)
+                    navController.setViewControllers([homeVC, groupVC], animated: true)
+                }
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to join group specified")
             }

@@ -11,12 +11,12 @@ struct CellData {
     var opened = Bool()
     var name: String
     var profileImageURL: String?
-    var taskList: [DummyTask]
+    var habitList: [DummyHabit]
 }
 
 let dummyTableViewData = [
-    CellData(opened: false, name: "Bob", profileImageURL: nil, taskList: dummyTaskList1.sorted { $0.taskStatus < $1.taskStatus }),
-    CellData(opened: false, name: "Jane", profileImageURL: nil, taskList: dummyTaskList2.sorted { $0.taskStatus < $1.taskStatus })
+    CellData(opened: false, name: "Bob", profileImageURL: nil, habitList: dummyHabitList1.sorted { $0.habitStatus < $1.habitStatus }),
+    CellData(opened: false, name: "Jane", profileImageURL: nil, habitList: dummyHabitList2.sorted { $0.habitStatus < $1.habitStatus })
 ]
 
 class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
@@ -35,7 +35,7 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
 
     private func setupUI() {
         tableView.register(UserProgressOverviewCell.self, forCellReuseIdentifier: UserProgressOverviewCell.identifier)
-        tableView.register(TaskProgressPreviewCell.self, forCellReuseIdentifier: TaskProgressPreviewCell.identifier)
+        tableView.register(HabitProgressPreviewCell.self, forCellReuseIdentifier: HabitProgressPreviewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
@@ -56,8 +56,8 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableViewData[section].opened == true {
-            // Header cell + expanded task cells
-            return tableViewData[section].taskList.count + 1
+            // Header cell + expanded habit progress cells
+            return tableViewData[section].habitList.count + 1
         } else {
             // Header cell
             return 1
@@ -72,19 +72,19 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
             }
             
             let sectionData = tableViewData[indexPath.section]
-            cell.configureWith(name: sectionData.name, profileImageURL: sectionData.profileImageURL, taskList: sectionData.taskList)
+            cell.configureWith(name: sectionData.name, profileImageURL: sectionData.profileImageURL, habitList: sectionData.habitList)
             cell.updateExpandIcon(isExpanded: sectionData.opened)
             
             return cell
         } else {
-            // Expanded task cells
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: TaskProgressPreviewCell.identifier, for: indexPath) as? TaskProgressPreviewCell else {
+            // Expanded habit cells
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: HabitProgressPreviewCell.identifier, for: indexPath) as? HabitProgressPreviewCell else {
                 return UITableViewCell()
             }
 
             let sectionData = tableViewData[indexPath.section]
-            let taskData = sectionData.taskList[indexPath.row - 1]
-            cell.configureWith(taskStatus: taskData.taskStatus, taskName: taskData.name)
+            let habitData = sectionData.habitList[indexPath.row - 1]
+            cell.configureWith(habitStatus: habitData.habitStatus, habitName: habitData.name)
             
             return cell
         }
@@ -92,7 +92,7 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            // Open/Close a header cell's tasks
+            // Open/Close a header cell's habits
             if tableViewData[indexPath.section].opened == true {
                 tableViewData[indexPath.section].opened = false
                 let sections = IndexSet.init(integer: indexPath.section)
@@ -103,7 +103,7 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
                 tableView.reloadSections(sections, with: .none)
             }
         } else {
-            // Placeholder for tap event on taskPreview cell
+            // Placeholder for tap event on habitPreview cell
         }
     }
     

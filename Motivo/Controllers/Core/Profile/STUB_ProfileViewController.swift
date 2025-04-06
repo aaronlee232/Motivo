@@ -34,7 +34,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate {
     }
     
     private func setupProfile() {
-        profileView = ProfileView(groupList: dummyGroupMetadataList)
+        profileView = ProfileView(groupList: [])  // TODO: adjust approach to not use constructor and replace with real data
         view.addSubview(profileView!)
         
         if let testView = profileView as? ProfileView {

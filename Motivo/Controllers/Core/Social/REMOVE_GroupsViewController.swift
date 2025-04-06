@@ -7,24 +7,24 @@
 
 import UIKit
 
-let dummyTaskList1: [DummyTask] = [
-    DummyTask(name: "Charge phone", taskStatus: .incomplete),
-    DummyTask(name: "Wash dishes", taskStatus: .complete),
-    DummyTask(name: "Run a mile", taskStatus: .pending),
-    DummyTask(name: "Do homework", taskStatus: .incomplete),
-    DummyTask(name: "Cook dinner", taskStatus: .complete)
+let dummyHabitList1: [DummyHabit] = [
+    DummyHabit(name: "Charge phone", habitStatus: .incomplete),
+    DummyHabit(name: "Wash dishes", habitStatus: .complete),
+    DummyHabit(name: "Run a mile", habitStatus: .pending),
+    DummyHabit(name: "Do homework", habitStatus: .incomplete),
+    DummyHabit(name: "Cook dinner", habitStatus: .complete)
 ]
 
 
-let dummyTaskList2: [DummyTask] = [
-    DummyTask(name: "Wash dishes", taskStatus: .complete),
-    DummyTask(name: "Cook dinner", taskStatus: .complete)
+let dummyHabitList2: [DummyHabit] = [
+    DummyHabit(name: "Wash dishes", habitStatus: .complete),
+    DummyHabit(name: "Cook dinner", habitStatus: .complete)
 ]
 
 class ChatViewController: UIViewController {
 
-    let progressOverviewBob = UserProgressOverviewCell(name: "Bob", profileImageURL: nil, taskList: dummyTaskList1)
-    let progressOverviewJane = UserProgressOverviewCell(name: "Jane", profileImageURL: nil, taskList: dummyTaskList2)
+    let progressOverviewBob = UserProgressOverviewCell(name: "Bob", profileImageURL: nil, habitList: dummyHabitList1)
+    let progressOverviewJane = UserProgressOverviewCell(name: "Jane", profileImageURL: nil, habitList: dummyHabitList2)
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -7,47 +7,54 @@
 
 import UIKit
 
-let dummyGroupMetadataList = [
-    GroupMetadata(groupId: "000", image: UIImage(systemName: "person.3.fill")!, groupName: "Fitness 101", categories: ["Exercise", "Nutrition"], memberCount: 4, habitsCount: 3),
-    GroupMetadata(groupId: "001", image: UIImage(systemName: "person.3.fill")!, groupName: "Bob's Warehouse", categories: ["Fitness", "Hobby"], memberCount: 10, habitsCount: 4),
-    GroupMetadata(groupId: "002", image: UIImage(systemName: "person.3.fill")!, groupName: "Budget Fooding", categories: ["Finance", "Nutrition"], memberCount: 4, habitsCount: 20),
-]
-
 class HomeViewController: UIViewController, HomeViewDelegate {
 
-//    let dummyDataUtils = DummyDataUtils()
-
-    private var homeView:UIView?
-    private let groupMetadataList =  dummyGroupMetadataList  // replace with firestore logic in homeManager
+    private var homeView = HomeView()
+    private let groupManager = GroupManager()
+    
+    private var groupMetadataList: [GroupMetadata] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupHomepage()
-
-        // Do any additional setup after loading the view.
         view.backgroundColor = .systemBackground
+
+        setupHomepage()
+        loadGroupMetadataList()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadGroupMetadataList()
     }
     
     private func setupHomepage() {
-        // TODO: set up logic for populating the homepage
-        // right now, it just goes to the default homepage
-        homeView = HomeView(groupList: dummyGroupMetadataList)
-        view.addSubview(homeView!) // will have homeView initialized beforehand
-        
-        if let testView = homeView as? HomeView {
-            homeView = testView
-            testView.delegate = self
-        }
-        
-        homeView?.translatesAutoresizingMaskIntoConstraints = false
-        
+        view.addSubview(homeView)
+        homeView.delegate = self
+    
+        homeView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            homeView!.topAnchor.constraint(equalTo: view.topAnchor),
-            homeView!.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            homeView!.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            homeView!.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            homeView.topAnchor.constraint(equalTo: view.topAnchor),
+            homeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            homeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    func loadGroupMetadataList() {
+        Task {
+            do {
+                // TODO: consolidate alert error messages for getCurrentUserAuthInstance
+                guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
+                    AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
+                    return
+                }
+                
+                groupMetadataList = try await groupManager.fetchGroupMetadataList(forUserUID: user.uid)
+                homeView.groupList = groupMetadataList
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to retrieve user's group metadata list")
+            }
+        }
     }
     
     func didTouchAddGroupPlusButton() {
@@ -55,13 +62,13 @@ class HomeViewController: UIViewController, HomeViewDelegate {
         navigationController?.pushViewController(groupEntryVC, animated: true) // push show segue
     }
     
-    func didTouchAddHabitsPlusButton() {
-        let addTaskVC = AddTaskViewController()
-        navigationController?.pushViewController(addTaskVC, animated: true)
+    func didTouchAddHabitPlusButton() {
+        let addHabitVC = AddHabitViewController()
+        navigationController?.pushViewController(addHabitVC, animated: true)
     }
     
     func didSelectGroupCell(groupIdx: Int) {
-        let groupVC = GroupViewController(groupID: groupMetadataList[groupIdx].groupId)
+        let groupVC = GroupViewController(groupID: groupMetadataList[groupIdx].groupID)
         navigationController?.pushViewController(groupVC, animated: true)
     }
 }

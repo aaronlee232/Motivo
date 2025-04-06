@@ -25,7 +25,7 @@ import UIKit
  - data management logic (sorting, counting, selecting, etc). Move this into Manager
  
  
- It would be nice if the file/class for HabitView was also kept consistent with the controllers. Rename everything to use habit or task so its consistent.
+ It would be nice if the file/class for HabitView was also kept consistent with the controllers. Rename everything to use habit so its consistent.
  */
 
 
@@ -52,7 +52,7 @@ class HabitsView {
     func updateHabit(at index: Int) {
         guard index < habits.count else { return }
         
-        // If task reaches goal on this press, increment streak
+        // If habit reaches goal on this press, increment streak
         if habits[index].completed == habits[index].goal - 1 {
             habits[index].streak += 1
         }

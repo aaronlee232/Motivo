@@ -9,12 +9,12 @@ import UIKit
 
 protocol CreateNewGroupViewDelegate:CreateNewGroupViewController {
     func didTouchCreateNewGroupConfirmButton()
+    func didUpdateSelectedVisibility(_ isPublicSelected: Bool)
 }
 
 class CreateNewGroupView: UIView {
     
     let titleLabel = BoldTitleLabel(textLabel: "New Group")
-    let items = ["Public", "Private"]
     let visibilityLabel = NormalLabel(textLabel: "Visibility")
     var visibilitySegCtrl:SegCtrl
     let groupNameLabel = NormalLabel(textLabel: "Group Name")
@@ -23,13 +23,11 @@ class CreateNewGroupView: UIView {
     let categorySelectionView = CategorySelectionView()
     let confirmButton = ActionButton(title: "CONFIRM")
     
-    var selectedSegValue:String
     var delegate:CreateNewGroupViewDelegate?
     
     override init(frame: CGRect) {
-        self.visibilitySegCtrl = SegCtrl(items: items)
+        self.visibilitySegCtrl = SegCtrl(items: ["Public", "Private"])
         self.visibilitySegCtrl.selectedSegmentIndex = 0
-        self.selectedSegValue = self.visibilitySegCtrl.titleForSegment(at: 0)!
         super.init(frame: frame)
         setupUI()
     }
@@ -115,6 +113,8 @@ class CreateNewGroupView: UIView {
     
     @objc func segmentChanged(sender: UISegmentedControl) {
         let selectedIndex = sender.selectedSegmentIndex
-        selectedSegValue = sender.titleForSegment(at: selectedIndex)!
+        let isPublicSelected = (selectedIndex == 0)
+
+        delegate?.didUpdateSelectedVisibility(isPublicSelected)
     }
 }
