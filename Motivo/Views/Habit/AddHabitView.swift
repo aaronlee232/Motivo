@@ -29,6 +29,7 @@ class AddHabitView: UIView, CategorySelectionViewDelegate {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        categorySelectionView.delegate = self
         setupUI()
     }
     

@@ -18,6 +18,7 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate {
         title = "Add Habit"
         view.backgroundColor = .systemBackground
         
+        addHabitView.delegate = self
         view.addSubview(addHabitView)
         
         loadCategoryOptions()
@@ -72,13 +73,12 @@ extension AddHabitViewController {
             goal: goal,
             unit: unit,
             frequency: frequency,
-            userID: user.uid
+            userUID: user.uid
         )
 
         do {
             try FirestoreService.shared.addHabit(habit: newHabit)
             navigationController?.popViewController(animated: true)
-            
         } catch {
             print("Error adding habit: \(error.localizedDescription)")
         }

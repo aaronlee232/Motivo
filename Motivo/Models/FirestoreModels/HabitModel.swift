@@ -16,7 +16,7 @@ struct HabitModel: Codable {
     let goal: Int
     let unit: String
     let frequency: String
-    let userID: String
+    let userUID: String
 }
 
 struct HabitRecord: Codable {
@@ -25,7 +25,7 @@ struct HabitRecord: Codable {
     var unverifiedPhotoURLs: [String]
     var verifiedPhotoURLs: [String]
     let timestamp: String
-    let userID: String
+    let userUID: String
     
     var completedCount: Int {
         return verifiedPhotoURLs.count

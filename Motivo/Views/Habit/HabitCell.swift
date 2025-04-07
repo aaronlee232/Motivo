@@ -111,7 +111,7 @@ class HabitCell: UITableViewCell {
                                                      unverifiedPhotoURLs: [],
                                                      verifiedPhotoURLs: [],
                                                      timestamp: Date().formatted(),
-                                                     userID: habit.userID)
+                                                     userUID: habit.userUID)
                     try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecord)
                 }
                 

@@ -17,6 +17,7 @@ class HabitSettingsViewController: UIViewController, HabitSettingsViewDelegate {
         title = "Settings"
         view.backgroundColor = .systemBackground
         
+        habitSettingsView.delegate = self
         view.addSubview(habitSettingsView)
         
         loadCategoryOptions()
