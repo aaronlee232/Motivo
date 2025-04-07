@@ -59,22 +59,33 @@ extension HabitSettingsView {
         let stackView = UIStackView(arrangedSubviews: [
             notificationsLabel, notificationsToggle,
             viewModeLabel, viewModeToggle,
-            categoryLabel, categorySelectionView,
-            saveButton
+            categoryLabel,
+            categorySelectionView,
         ])
         stackView.axis = .vertical
         stackView.spacing = 10
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(stackView)
+        addSubview(saveButton)
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20)
+            stackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            categorySelectionView.heightAnchor.constraint(equalToConstant: 250),
+            
+            saveButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 50),
+            saveButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -50),
+            saveButton.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor)
         ])
     }
-    
+}
+
+// MARK: - Actions
+extension HabitSettingsView {
     @objc private func handleDidTapSaveSettings() {
         delegate?.didTapSaveSettings()
     }

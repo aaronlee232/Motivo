@@ -17,8 +17,31 @@ class HabitSettingsViewController: UIViewController, HabitSettingsViewDelegate {
         title = "Settings"
         view.backgroundColor = .systemBackground
         
-        // TODO: load categories into habitSettingsView.categorySelector.categories
-        // TODO: implement constraints for habitSettingsView
+        view.addSubview(habitSettingsView)
+        
+        loadCategoryOptions()
+        setupConstraints()
+    }
+    
+    private func setupConstraints() {
+        habitSettingsView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            habitSettingsView.topAnchor.constraint(equalTo: view.topAnchor),
+            habitSettingsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            habitSettingsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            habitSettingsView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+    
+    private func loadCategoryOptions() {
+        Task {
+            do {
+                let categories = try await FirestoreService.shared.fetchCategories()
+                habitSettingsView.categorySelectionView.categories = categories
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch categories")
+            }
+        }
     }
 }
 
