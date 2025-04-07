@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeViewController: UIViewController, HomeViewDelegate {
+class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDelegate {
 
     private var homeView = HomeView()
     private let groupManager = GroupManager()
@@ -30,6 +30,7 @@ class HomeViewController: UIViewController, HomeViewDelegate {
     private func setupHomepage() {
         view.addSubview(homeView)
         homeView.delegate = self
+        homeView.groupTableView.delegate = self
     
         homeView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

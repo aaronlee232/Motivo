@@ -10,11 +10,11 @@ import UIKit
 protocol HomeViewDelegate:HomeViewController {
     func didTouchAddGroupPlusButton()
     func didTouchAddHabitPlusButton()
-    func didSelectGroupCell(groupIdx: Int)
+//    func didSelectGroupCell(groupIdx: Int)
 }
 
-class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
-    
+class HomeView: UIView {
+    let groupTableView = GroupTableView()
     private var tableView = UITableView()
     
     private let titleLabel = BoldTitleLabel(textLabel: "Hi User")
@@ -31,15 +31,17 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     var delegate:HomeViewDelegate?
     var groupList:[GroupMetadata] = [] {
         didSet {
+            groupTableView.updateTableData(givenList: groupList)
             tableView.reloadData()
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
-        tableView.delegate = self
-        tableView.dataSource = self
+//        tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
+//        tableView.delegate = self
+//        tableView.dataSource = self
+        tableView = groupTableView.tableView
         Task {
             do {
                 let username = try await FirestoreService.shared.fetchCurrentUsername()
@@ -80,8 +82,8 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         habitsStackView.alignment = .center
         habitsStackView.spacing = 0
         habitsStackView.distribution = .equalSpacing
-        tableView.separatorStyle = .singleLine
-//        tableView.separatorStyle = .none
+//        tableView.separatorStyle = .singleLine
+////        tableView.separatorStyle = .none
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         defaultMessageGroups.translatesAutoresizingMaskIntoConstraints = false
@@ -146,45 +148,51 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         delegate?.didTouchAddHabitPlusButton()
     }
     
-    @objc func handleDidSelectGroupCell(groupIdx: Int) {
-        delegate?.didSelectGroupCell(groupIdx: groupIdx)
-    }
+//    @objc func handleDidSelectGroupCell(groupIdx: Int) {
+//        groupTableView.delegate?.didSelectGroupCell(groupIdx: groupIdx)
+//    }
+//    
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        handleDidSelectGroupCell(groupIdx: indexPath.section)
+//        tableView.deselectRow(at: indexPath, animated: true)
+//    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else { return UITableViewCell() }
-//        let group = groupList[indexPath.row]
-//        cell.configureWith(groupId: group.groupId, image: group.image, groupName: group.groupName, categories: group.categories, memberCount: group.memberCount, habitsCount: group.habitsCount)
+    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+////        guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else { return UITableViewCell() }
+////        let group = groupList[indexPath.row]
+////        cell.configureWith(groupId: group.groupId, image: group.image, groupName: group.groupName, categories: group.categories, memberCount: group.memberCount, habitsCount: group.habitsCount)
+////        return cell
+//        
+//        // Header cells
+//        guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else {
+//            return UITableViewCell()
+//        }
+//
+//        let group = groupList[indexPath.section]
+//        cell.configureWith(groupID: group.groupID, image: group.image ?? UIImage(systemName: "person.3.fill")!, groupName: group.groupName, categories: group.categoryNames, memberCount: group.memberCount, habitsCount: group.habitsCount)
 //        return cell
-        
-        // Header cells
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else {
-            return UITableViewCell()
-        }
-
-        let group = groupList[indexPath.section]
-        cell.configureWith(groupID: group.groupID, image: group.image ?? UIImage(systemName: "person.3.fill")!, groupName: group.groupName, categories: group.categoryNames, memberCount: group.memberCount, habitsCount: group.habitsCount)
-        return cell
-    }
+//    }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        handleDidSelectGroupCell(groupIdx: indexPath.section)
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        handleDidSelectGroupCell(groupIdx: indexPath.section)
+//        tableView.deselectRow(at: indexPath, animated: true)
+//    }
 
     // height for each cell
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
-        return GroupCell.groupViewHeight
-    }
-    
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let footerView = UIView()
-        return footerView
-    }
-
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return GroupCell.groupViewDeadSpace // Adjust the space between sections
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+////        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
+//        return GroupCell.groupViewHeight
+//    }
+//    
+//    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+//        let footerView = UIView()
+//        return footerView
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+//        return GroupCell.groupViewDeadSpace // Adjust the space between sections
+//    }
     
     // Set header height to create spacing
 //    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -198,11 +206,11 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
 //        return spacer
 //    }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return groupList.count
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1  // 1 row per section
-    }
+//    func numberOfSections(in tableView: UITableView) -> Int {
+//        return groupList.count
+//    }
+//
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return 1  // 1 row per section
+//    }
 }
