@@ -160,6 +160,7 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
+//        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
+        return GroupCell.groupViewHeight
     }
 }

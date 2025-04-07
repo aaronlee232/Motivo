@@ -34,11 +34,6 @@ class GroupCell: UITableViewCell {
     private var mainStackView: UIStackView!
     private var spaceView: UIView!
     
-//    init(groupId: String, image: UIImage, groupName: String, categories: [String], memberCount: Int, habitsCount: Int) {
-//        self.init(frame: .zero)
-//        configureWith(groupId: groupId, image: image, groupName: groupName, categories: categories, memberCount: memberCount, habitsCount: habitsCount)
-//    }
-//    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupGroupView()
@@ -55,12 +50,6 @@ class GroupCell: UITableViewCell {
         self.categories = categories
         self.memberCountLabel.text = String(memberCount)
         self.habitsCountLabel.text = String(habitsCount)
-//        print("Inside configureWith")
-//        print("GroupId: \(self.groupId)")
-//        print("GroupName: \(self.groupName)")
-//        print("Categories: \(self.categories)")
-//        print("Member Count: \(self.memberCountLabel)")
-//        print("Habit Count: \(self.habitsCountLabel)")
         setupGroupView()
     }
     
@@ -144,11 +133,6 @@ class GroupCell: UITableViewCell {
         memberHabitsOverallStackView.setContentHuggingPriority(.required, for: .horizontal)
         groupNameCategoriesStackView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         groupNameCategoriesStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-//        mainStackView.backgroundColor = .red
-        
-//        spaceView = UIView()
-
-//        contentView.layoutMargins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
         
         // Set up to use Auto Layout
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -165,7 +149,6 @@ class GroupCell: UITableViewCell {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(mainStackView)
-//        contentView.addSubview(spaceView)
         
         NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: GroupCell.groupViewHeight - (4 * 2)),
@@ -173,12 +156,8 @@ class GroupCell: UITableViewCell {
             groupNameCategoriesStackView.widthAnchor.constraint(equalToConstant: 0.50 * GroupCell.groupViewWidth),
             mainStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mainStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-//            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             mainStackView.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
             mainStackView.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
-//            spaceView.topAnchor.constraint(equalTo: mainStackView.bottomAnchor),
-//            spaceView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
         // enable tap feature so user can go to group details
@@ -199,7 +178,6 @@ class GroupCell: UITableViewCell {
 //    
     private func createCategoryLabels(categoryString: String) -> UILabel {
         let categoryLabel = NormalLabel(textLabel: categoryString)
-//        let categoryLabel = UILabel()
         categoryLabel.text = categoryString
         categoryLabel.textAlignment = .center
         categoryLabel.changeFontSize(fontSize: 10)

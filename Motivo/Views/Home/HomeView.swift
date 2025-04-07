@@ -80,8 +80,8 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         habitsStackView.alignment = .center
         habitsStackView.spacing = 0
         habitsStackView.distribution = .equalSpacing
-//        tableView.separatorStyle = .singleLine
-        tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
+//        tableView.separatorStyle = .none
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         defaultMessageGroups.translatesAutoresizingMaskIntoConstraints = false
@@ -96,13 +96,6 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         addSubview(habitsStackView)
         addSubview(defaultMessageHabits)
         addSubview(tableView)
-        
-//        NSLayoutConstraint.activate([
-//            tableView.topAnchor.constraint(equalTo: topAnchor),
-//            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-//            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
-//        ])
         
         // TODO: for UI testing purposes only, need to implement checking if user already has groups
         var hasGroups = true
@@ -156,10 +149,6 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     @objc func handleDidSelectGroupCell(groupIdx: Int) {
         delegate?.didSelectGroupCell(groupIdx: groupIdx)
     }
-//    
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return groupList.count
-//    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else { return UITableViewCell() }
@@ -174,12 +163,12 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
 
         let group = groupList[indexPath.section]
         cell.configureWith(groupID: group.groupID, image: group.image ?? UIImage(systemName: "person.3.fill")!, groupName: group.groupName, categories: group.categoryNames, memberCount: group.memberCount, habitsCount: group.habitsCount)
-     
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         handleDidSelectGroupCell(groupIdx: indexPath.section)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     // height for each cell
@@ -188,26 +177,26 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         return GroupCell.groupViewHeight
     }
     
-//    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-//        let footerView = UIView()
-//        footerView.backgroundColor = .systemBlue // Makes the footer view invisible but gives you spacing
-//        return footerView
-//    }
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        return footerView
+    }
 
-//    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-//        return 10 // Adjust the space between sections
-//    }
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return GroupCell.groupViewDeadSpace // Adjust the space between sections
+    }
     
     // Set header height to create spacing
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 0 : GroupCell.groupViewDeadSpace // no top spacing before the first section
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let spacer = UIView()
-        spacer.backgroundColor = .systemRed
-        return spacer
-    }
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return section == 0 ? 0 : GroupCell.groupViewDeadSpace // no top spacing before the first section
+//    }
+//
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let spacer = UIView()
+//        spacer.backgroundColor = .systemRed
+//        print("making header for section: \(section)")
+//        return spacer
+//    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return groupList.count
