@@ -17,6 +17,7 @@ class FirestoreService {
     let groupMembershipCollectionRef:CollectionReference
     let categoryCollectionRef:CollectionReference
     let habitCollectionRef: CollectionReference
+    let habitRecordCollectionRef: CollectionReference
     
     init() {
         userCollectionRef = db.collection(FirestoreCollection.user)
@@ -24,7 +25,7 @@ class FirestoreService {
         groupMembershipCollectionRef = db.collection(FirestoreCollection.groupMembership)
         categoryCollectionRef = db.collection(FirestoreCollection.category)
         habitCollectionRef = db.collection(FirestoreCollection.habit)
-
+        habitRecordCollectionRef = db.collection(FirestoreCollection.habitRecord)
     }
     
     enum FirestoreError: Error {
@@ -204,8 +205,19 @@ extension FirestoreService {
 }
 
 
-// MARK: - habit collection
+// MARK: - Habit collection
 extension FirestoreService {
+    // Fetch all habit documents
+    func fetchHabits() async throws -> [HabitModel] {
+        let snapshot = try await habitCollectionRef
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: HabitModel.self)
+        }
+    }
+    
+    // Fetch all habit documents belonging to a user with userUID
     func fetchHabits(forUserUID userUID: String) async throws -> [HabitModel] {
         let snapshot = try await habitCollectionRef
             .whereField("userUID", isEqualTo: userUID)
@@ -231,9 +243,10 @@ extension FirestoreService {
     }
 }
 
+// MARK: - HabitRecord Collection
 extension FirestoreService {
     func fetchHabitRecords(forHabitID habitID: String) async throws -> [HabitRecord] {
-        let snapshot = try await db.collection("habitRecords")
+        let snapshot = try await habitRecordCollectionRef
             .whereField("habitID", isEqualTo: habitID)
             .getDocuments()
         
@@ -243,12 +256,12 @@ extension FirestoreService {
     }
     
     func addHabitRecord(habitRecord: HabitRecord) throws {
-        let recordDocument = db.collection("habitRecords").document()
+        let recordDocument = habitRecordCollectionRef.document()
         try recordDocument.setData(from: habitRecord)
     }
     
     func updateHabitRecord(habitRecord: HabitRecord) throws {
-        let recordDocument = db.collection("habitRecords").document(habitRecord.id ?? "")
+        let recordDocument = habitRecordCollectionRef.document(habitRecord.id ?? "")
         try recordDocument.setData(from: habitRecord, merge: true)
     }
 }

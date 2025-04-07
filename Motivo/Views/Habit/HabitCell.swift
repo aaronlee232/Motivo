@@ -89,7 +89,6 @@ class HabitCell: UITableViewCell {
         streakLabel.text = "🔥 \(habit.streak)" // Smaller streak label
 
         categoryLabel.text = "Categories: \(habit.categoryIDs.joined(separator: ", "))"  // TODO: fetch in VC and pass in /populate here
-        groupEmojiLabel.text = habit.isGroupHabit ? "👥" : ""
 
         progressLabel.text = progressText
     }
