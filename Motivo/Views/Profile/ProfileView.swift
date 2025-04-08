@@ -11,11 +11,12 @@ protocol ProfileViewDelegate:ProfileViewController {
     
 }
 
-class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
+class ProfileView: UIView {
     
     static let profileImageViewHeight:CGFloat = 50
     
-    private var groupList:[GroupMetadata]!
+//    private var groupList:[GroupMetadata]!
+    let groupTableView = GroupTableView()
     private var tableView = UITableView()
     
     // bar button
@@ -38,13 +39,37 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
     private var statsStackView: UIStackView!
     
     var delegate:ProfileViewDelegate?
+    var groupList:[GroupMetadata] = [] {
+        didSet {
+            groupTableView.updateTableData(givenList: groupList)
+            tableView.reloadData()
+        }
+    }
     
-    init(groupList:[GroupMetadata]) {
-        self.groupList = groupList
-        super.init(frame: .zero)
-        tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
-        tableView.delegate = self
-        tableView.dataSource = self
+//    init(groupList:[GroupMetadata]) {
+//        self.groupList = groupList
+//        super.init(frame: .zero)
+//        tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
+//        tableView.delegate = self
+//        tableView.dataSource = self
+//        Task {
+//            do {
+//                let username = try await FirestoreService.shared.fetchCurrentUsername()
+//                DispatchQueue.main.async {
+//                    self.username.text = username ?? ""
+//                }
+//            } catch {
+//                DispatchQueue.main.async {
+//                    print("Username Error: Failed to load username")
+//                }
+//            }
+//        }
+//        setupUI()
+//    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        tableView = groupTableView.tableView
         Task {
             do {
                 let username = try await FirestoreService.shared.fetchCurrentUsername()
@@ -57,11 +82,6 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
                 }
             }
         }
-        setupUI()
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
         setupUI()
     }
     
@@ -147,20 +167,19 @@ class ProfileView: UIView, UITableViewDelegate, UITableViewDataSource {
         ])
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groupList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else { return UITableViewCell() }
-        let group = groupList[indexPath.row]
-        // TODO: - if there is a merge conflict, disregard the following line.
-        cell.configureWith(groupID: group.groupID, image: group.image ?? UIImage(systemName: "person.3.fill")!, groupName: group.groupName, categories: group.categoryNames, memberCount: group.memberCount, habitsCount: group.habitsCount)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return GroupCell.groupViewHeight + GroupCell.groupViewDeadSpace
-        return GroupCell.groupViewHeight
-    }
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return groupList.count
+//    }
+//    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else { return UITableViewCell() }
+//        let group = groupList[indexPath.row]
+//        // TODO: - if there is a merge conflict, disregard the following line.
+//        cell.configureWith(groupID: group.groupID, image: group.image ?? UIImage(systemName: "person.3.fill")!, groupName: group.groupName, categories: group.categoryNames, memberCount: group.memberCount, habitsCount: group.habitsCount)
+//        return cell
+//    }
+//    
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return GroupCell.groupViewHeight
+//    }
 }

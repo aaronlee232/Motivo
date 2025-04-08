@@ -23,10 +23,11 @@ class GroupTableView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     var delegate:GroupTableViewDelegate?
     
-//    init(givenList: [GroupMetadata]) {
-//        super.init(frame: .zero)
-//        self.list = givenList
-//    }
+    init(givenList: [GroupMetadata]) {
+        super.init(frame: .zero)
+        self.list = givenList
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: .zero)
         tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
