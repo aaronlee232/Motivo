@@ -12,7 +12,19 @@ class HabitViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        loadCategories()
         loadHabits()
+    }
+    
+    private func loadCategories() {
+        Task {
+            do {
+                let categories = try await FirestoreService.shared.fetchCategories()
+                habitsView.categories = categories
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch categories")
+            }
+        }
     }
     
     private func loadHabits() {

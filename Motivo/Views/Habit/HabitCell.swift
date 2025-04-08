@@ -82,13 +82,13 @@ class HabitCell: UITableViewCell {
         ])
     }
 
-    func configure(with habit: HabitModel, progressText: String) {
+    func configureWith(habit: HabitModel, progressText: String, categoryNames: [String]) {
         self.habit = habit
 
         nameLabel.text = habit.name
         streakLabel.text = "🔥 \(habit.streak)" // Smaller streak label
 
-        categoryLabel.text = "Categories: \(habit.categoryIDs.joined(separator: ", "))"  // TODO: fetch in VC and pass in /populate here
+        categoryLabel.text = "Categories: \(categoryNames.joined(separator: ", "))"
 
         progressLabel.text = progressText
     }
