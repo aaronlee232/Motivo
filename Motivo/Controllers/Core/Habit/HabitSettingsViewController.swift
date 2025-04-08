@@ -48,11 +48,11 @@ class HabitSettingsViewController: UIViewController, HabitSettingsViewDelegate {
 
 extension HabitSettingsViewController {
     func didTapSaveSettings() {
+        // Retrieve selected category IDs
+        let selectedCategoryIDs = habitSettingsView.selectedCategories.map { $0.id }
+        
         // Save selected categories to UserDefaults
-        UserDefaults.standard.set(Array(habitSettingsView.selectedCategories), forKey: "selectedCategories")
-
-        // Notify observers (HabitsView) about the update
-        NotificationCenter.default.post(name: .didUpdateCategories, object: nil)
+        UserDefaults.standard.set(selectedCategoryIDs, forKey: UserDefaultKeys.selectedCategoryIDs)
 
         // Go back to main screen
         navigationController?.popViewController(animated: true)

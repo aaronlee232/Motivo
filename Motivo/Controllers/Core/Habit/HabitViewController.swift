@@ -4,6 +4,9 @@ class HabitViewController: UIViewController {
     
     // MARK: UI Elements
     private let habitsView = HabitsView()
+    
+    // MARK: - Properties
+    private var selectedCategoryIDs: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -13,6 +16,7 @@ class HabitViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadCategories()
+        loadHabitFilter()
         loadHabits()
     }
     
@@ -36,11 +40,36 @@ class HabitViewController: UIViewController {
                 }
                 
                 let habits = try await FirestoreService.shared.fetchHabits(forUserUID: user.uid)
-                habitsView.habits = habits
+                habitsView.habits = filterHabits(habits: habits)
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch habits")
             }
         }
+    }
+    
+    private func loadHabitFilter() {
+        if let selectedCategoryIDs = UserDefaults.standard.array(forKey: UserDefaultKeys.selectedCategoryIDs) as? [String] {
+            self.selectedCategoryIDs = selectedCategoryIDs
+        }
+    }
+    
+    private func filterHabits(habits: [HabitModel]) -> [HabitModel] {
+        var filteredHabits: [HabitModel] = []
+        
+        habits.forEach { habit in
+            // Filter by selected category IDs
+            let containsSelectedCategory = habit.categoryIDs.contains { categoryID in
+                selectedCategoryIDs.contains(categoryID)
+            }
+            
+            // TODO: Add additional filters conditions here
+            
+            if (containsSelectedCategory) {
+                filteredHabits.append(habit)
+            }
+        }
+        
+        return filteredHabits
     }
 }
 
