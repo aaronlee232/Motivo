@@ -1,6 +1,6 @@
 import UIKit
 
-class HabitViewController: UIViewController {
+class HabitViewController: UIViewController, HabitViewDelegate {
     
     // MARK: UI Elements
     private let habitsView = HabitsView()
@@ -10,6 +10,7 @@ class HabitViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        habitsView.delegate = self
         setupUI()
     }
 
@@ -110,5 +111,15 @@ extension HabitViewController {
         // Navigate to Settings page
         let settingsVC = HabitSettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: true)
+    }
+}
+
+// MARK: - HabitViewDelegate
+extension HabitViewController {
+    // Handler for opening camera and uploading photo as proof of task completion. Will start as "unverified"
+    func plusButtonTapped(with habit: HabitModel) {
+        print("tapped \(habit.name) cell")
+        
+        // TODO: Add camera and image uplaod logic
     }
 }

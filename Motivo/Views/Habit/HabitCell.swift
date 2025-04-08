@@ -16,6 +16,7 @@ class HabitCell: UITableViewCell {
     private let progressLabel = UILabel()
     private let plusButton = UIButton(type: .system)
 
+    // TODO: If more actions are added to cell, possibly replace var onPlusTapped: (() -> Void)? with delegate/protocol
     var onPlusTapped: (() -> Void)?
     private var habit: HabitModel?
 

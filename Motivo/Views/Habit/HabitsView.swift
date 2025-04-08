@@ -1,10 +1,16 @@
 import FirebaseFirestore
 
+protocol HabitViewDelegate: HabitViewController {
+    func plusButtonTapped(with habit: HabitModel)
+}
+
 class HabitsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
-    private let habitManager = HabitManager()
+    // MARK: UI Elements
     private let tableView = UITableView()
     
+    // MARK: Properties
+    private let habitManager = HabitManager()
     var categoryIDToName: [String:String] = [:]
     var categories: [CategoryModel] = [] {
         didSet {
@@ -12,13 +18,14 @@ class HabitsView: UIView, UITableViewDataSource, UITableViewDelegate {
             tableView.reloadData()
         }
     }
-
+    private var habitRecords: [String: HabitRecord] = [:] // Map habit ID to its record
     var habits: [HabitModel] = [] {
         didSet {
             tableView.reloadData()
         }
     }
-    private var habitRecords: [String: HabitRecord] = [:] // Map habit ID to its record
+    
+    var delegate: HabitViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -108,10 +115,10 @@ extension HabitsView {
         }
 
         cell.configureWith(habit: habit, progressText: progressText, categoryNames: categoryNames)
-//        cell.onPlusTapped = { [weak self] in
-//            updateHabitRecord(for: habit.id)
-//            tableView.reloadData()
-//        }
+
+        cell.onPlusTapped = { [weak delegate] in
+            delegate?.plusButtonTapped(with: habit)
+        }
 
         return cell
     }
