@@ -7,22 +7,14 @@
 
 import UIKit
 
-struct CellData {
-    var opened = Bool()
-    var name: String
-    var profileImageURL: String?
-    var habitList: [DummyHabit]
-}
-
-let dummyTableViewData = [
-    CellData(opened: false, name: "Bob", profileImageURL: nil, habitList: dummyHabitList1.sorted { $0.habitStatus < $1.habitStatus }),
-    CellData(opened: false, name: "Jane", profileImageURL: nil, habitList: dummyHabitList2.sorted { $0.habitStatus < $1.habitStatus })
-]
-
 class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
     let tableView = UITableView()
 
-    var tableViewData: [CellData] = dummyTableViewData
+    var progressCells: [ProgressCell] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,7 +26,7 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
 
     private func setupUI() {
-        tableView.register(UserProgressOverviewCell.self, forCellReuseIdentifier: UserProgressOverviewCell.identifier)
+        tableView.register(UserProgressCell.self, forCellReuseIdentifier: UserProgressCell.identifier)
         tableView.register(HabitProgressPreviewCell.self, forCellReuseIdentifier: HabitProgressPreviewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -51,13 +43,13 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return tableViewData.count
+        return progressCells.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableViewData[section].opened == true {
+        if progressCells[section].opened == true {
             // Header cell + expanded habit progress cells
-            return tableViewData[section].habitList.count + 1
+            return progressCells[section].habitEntries.count + 1
         } else {
             // Header cell
             return 1
@@ -67,12 +59,16 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             // Header cells
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: UserProgressOverviewCell.identifier, for: indexPath) as? UserProgressOverviewCell else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: UserProgressCell.identifier, for: indexPath) as? UserProgressCell else {
                 return UITableViewCell()
             }
             
-            let sectionData = tableViewData[indexPath.section]
-            cell.configureWith(name: sectionData.name, profileImageURL: sectionData.profileImageURL, habitList: sectionData.habitList)
+            let sectionData = progressCells[indexPath.section]
+            cell.configureWith(
+                name: sectionData.name,
+                profileImageURL: sectionData.profileImageURL,
+                habitEntries: sectionData.habitEntries
+            )
             cell.updateExpandIcon(isExpanded: sectionData.opened)
             
             return cell
@@ -82,9 +78,12 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
                 return UITableViewCell()
             }
 
-            let sectionData = tableViewData[indexPath.section]
-            let habitData = sectionData.habitList[indexPath.row - 1]
-            cell.configureWith(habitStatus: habitData.habitStatus, habitName: habitData.name)
+            let sectionData = progressCells[indexPath.section]
+            let habitEntry = sectionData.habitEntries[indexPath.row - 1]
+            cell.configureWith(
+                habitStatus: habitEntry.status,
+                habitName: habitEntry.habit.name
+            )
             
             return cell
         }
@@ -93,12 +92,12 @@ class GroupProgressView: UIView, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             // Open/Close a header cell's habits
-            if tableViewData[indexPath.section].opened == true {
-                tableViewData[indexPath.section].opened = false
+            if progressCells[indexPath.section].opened == true {
+                progressCells[indexPath.section].opened = false
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
             } else {
-                tableViewData[indexPath.section].opened = true
+                progressCells[indexPath.section].opened = true
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
             }
