@@ -22,8 +22,35 @@ class HabitsView: UIView, UITableViewDataSource, UITableViewDelegate {
     var habits: [HabitModel] = [] {
         didSet {
             tableView.reloadData()
+            loadHabitRecords()
         }
     }
+    
+    // Added this here to properly load the records in, it was failing earlier - Feel free to move in a refactor
+    func loadHabitRecords() {
+        Task {
+            var newHabitRecords: [String: HabitRecord] = [:]
+
+            for habit in habits {
+                do {
+                    let records = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+                    if let record = records.first {
+                        newHabitRecords[habit.id] = record
+                    }
+                } catch {
+//                    print("Failed to fetch habit record for \(habit.id): \(error)")
+                }
+            }
+
+            // Update UI on the main thread
+            DispatchQueue.main.async {
+                self.habitRecords = newHabitRecords
+                self.sortHabits()
+                self.tableView.reloadData()
+            }
+        }
+    }
+
     
     var delegate: HabitViewDelegate?
     
@@ -95,23 +122,25 @@ extension HabitsView {
         let cell = tableView.dequeueReusableCell(withIdentifier: HabitCell.identifier, for: indexPath) as! HabitCell
         let habit = habits[indexPath.row]
         let record = habitRecord(for: habit.id)
-        
-        // Will be initially empty until categories is loaded
-        let categoryNames = habits[indexPath.row].categoryIDs.compactMap { categoryID in categoryIDToName[categoryID] }
 
-        let completedCount = record?.completedCount ?? 0
-        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)" // Ensure unit is used properly
+        let categoryNames = habit.categoryIDs.compactMap { categoryIDToName[$0] }
+        
+        let numCompleted = record?.completedCount ?? 0
+        let numPending = record?.pendingCount ?? 0
+        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)"
+        
+        let pendingPart = numPending > 0 ? " + (\(numPending))" : ""
         let progressText: String
 
         switch habit.frequency {
         case "Daily":
-            progressText = "\(completedCount) / \(habit.goal)\(unit) Today"
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit) Today"
         case "Weekly":
-            progressText = "\(completedCount) / \(habit.goal)\(unit) This Week"
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit) This Week"
         case "Monthly":
-            progressText = "\(completedCount) / \(habit.goal)\(unit) This Month"
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit) This Month"
         default:
-            progressText = "\(completedCount) / \(habit.goal)\(unit)"
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit)"
         }
 
         cell.configureWith(habit: habit, progressText: progressText, categoryNames: categoryNames)
@@ -122,4 +151,5 @@ extension HabitsView {
 
         return cell
     }
+
 }
