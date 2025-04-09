@@ -255,9 +255,10 @@ extension FirestoreService {
         }
     }
     
-    func addHabitRecord(habitRecord: HabitRecord) throws {
-        let recordDocument = habitRecordCollectionRef.document()
-        try recordDocument.setData(from: habitRecord)
+    func addHabitRecord(habitRecord: HabitRecord) async throws -> HabitRecord {
+        let documentRef = try habitRecordCollectionRef.addDocument(from: habitRecord)
+        let snapshot = try await documentRef.getDocument()
+        return try snapshot.data(as: HabitRecord.self)
     }
     
     func updateHabitRecord(habitRecord: HabitRecord) throws {

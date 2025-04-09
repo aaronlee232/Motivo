@@ -23,8 +23,8 @@ class HabitManager {
     }
     
     // Add a new habit record to Firestore
-    func addHabitRecord(habitRecord: HabitRecord) throws {
-        try FirestoreService.shared.addHabitRecord(habitRecord: habitRecord)
+    func addHabitRecord(habitRecord: HabitRecord) async throws -> HabitRecord {
+        return try await FirestoreService.shared.addHabitRecord(habitRecord: habitRecord)
     }
     
     // Update an existing habit record

@@ -145,12 +145,12 @@ extension HabitViewController: HabitViewDelegate {
                 if let existingRecord = existingRecords.first {
                     activeHabitRecord = existingRecord
                 } else {
-                    activeHabitRecord = HabitRecord(habitID: habit.id,
+                    let newHabitRecord = HabitRecord(habitID: habit.id,
                                               unverifiedPhotoURLs: [],
                                               verifiedPhotoURLs: [],
                                               timestamp: Date().formatted(),
                                               userUID: habit.userUID)
-                    try habitManager.addHabitRecord(habitRecord: activeHabitRecord!)
+                    activeHabitRecord = try await habitManager.addHabitRecord(habitRecord: newHabitRecord)
                 }
                 
                 // Show camera and upload photo
