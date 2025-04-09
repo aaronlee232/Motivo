@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ProfileViewDelegate:ProfileViewController {
-    
+    func didTouchSettingsButton()
 }
 
 class ProfileView: UIView {
@@ -20,6 +20,7 @@ class ProfileView: UIView {
     private var tableView = UITableView()
     
     // bar button
+    let settingsButton = IconButton(image: UIImage(systemName: "gear")!, barType: true)
     
     private let titleLabel = BoldTitleLabel(textLabel: "My Profile")
     private let profileImageView = UIImageView(image: UIImage(systemName: "person.circle.fill"))
@@ -43,6 +44,7 @@ class ProfileView: UIView {
         didSet {
             groupTableView.updateTableData(givenList: groupList)
             tableView.reloadData()
+            setupData()
         }
     }
     
@@ -89,8 +91,16 @@ class ProfileView: UIView {
          fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupData() {
+        myGroupsCountLabel.text = String(groupList.count)
+        // TODO: a bit slow loading time, but not sure how to fix it yet
+        // TODO: Habits and Days are static right now
+    }
+    
     private func setupUI() {
         titleLabel.textAlignment = .center
+        
+        settingsButton.addTarget(self, action: #selector(handleSettingsButton), for: .touchUpInside)
         
         profileImageView.tintColor = colorMainPrimary
         profileImageView.contentMode = .scaleAspectFit
@@ -144,6 +154,7 @@ class ProfileView: UIView {
         addSubview(statsStackView)
         addSubview(groupsLabel)
         addSubview(tableView)
+//        addSubview(settingsButton)
         
         NSLayoutConstraint.activate([
             profileImageView.heightAnchor.constraint(equalToConstant: ProfileView.profileImageViewHeight),
@@ -182,4 +193,8 @@ class ProfileView: UIView {
 //    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return GroupCell.groupViewHeight
 //    }
+    
+    @objc func handleSettingsButton() {
+        delegate?.didTouchSettingsButton()
+    }
 }

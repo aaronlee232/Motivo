@@ -19,10 +19,10 @@ class HomeView: UIView {
     
     private let titleLabel = BoldTitleLabel(textLabel: "Hi User")
     private let myGroupsLabel = NormalLabel(textLabel: "My Groups")
-    private let addGroupPlusButton = IconButton(image: UIImage(systemName: "plus")!)
+    private let addGroupPlusButton = IconButton(image: UIImage(systemName: "plus")!, barType: false)
     private let defaultMessageGroups = NormalLabel(textLabel: "No groups joined yet.")
     private let myHabitsLabel = NormalLabel(textLabel: "My Habits")
-    private let addHabitsPlusButton = IconButton(image: UIImage(systemName: "plus")!)
+    private let addHabitsPlusButton = IconButton(image: UIImage(systemName: "plus")!, barType: false)
     private let defaultMessageHabits = NormalLabel(textLabel: "No habits to track yet.")
     
     private var groupsStackView: UIStackView!

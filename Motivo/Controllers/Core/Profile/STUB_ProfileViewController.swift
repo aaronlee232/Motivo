@@ -19,18 +19,19 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
         view.backgroundColor = .systemBackground
         setupProfile()
         loadGroupMetadataList()
-        
-        let logoutButton = UIButton(type: .system)
-        logoutButton.setTitle("Logout", for: .normal)
-        logoutButton.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
-        
-        view.addSubview(logoutButton)
-        
-        logoutButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoutButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
+//        
+//        let logoutButton = UIButton(type: .system)
+//        logoutButton.setTitle("Logout", for: .normal)
+//        logoutButton.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+//        
+//        view.addSubview(logoutButton)
+//        
+//        logoutButton.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            logoutButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+//        ])
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: profileView.settingsButton)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -41,6 +42,8 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
     private func setupProfile() {
 //        profileView = ProfileView(groupList: [])  // TODO: adjust approach to not use constructor and replace with real data
         view.addSubview(profileView)
+        profileView.delegate = self
+        profileView.groupTableView.delegate = self
         
 //        if let testView = profileView as? ProfileView {
 //            profileView = testView
@@ -73,6 +76,11 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to retrieve user's group metadata list")
             }
         }
+    }
+    
+    func didTouchSettingsButton() {
+        let settingsVC = SettingsViewController()
+        navigationController?.pushViewController(settingsVC, animated: true)
     }
     
     func didSelectGroupCell(groupIdx: Int) {

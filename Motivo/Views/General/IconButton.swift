@@ -17,10 +17,14 @@ class IconButton: UIButton {
         setupIconButtonUI()
     }
     
-    init(image: UIImage) {
+    init(image: UIImage, barType: Bool) {
         super.init(frame: .zero)
         self.image = image
-        setupIconButtonUI()
+        if barType {
+            setupBarIconButtonUI()
+        } else {
+            setupIconButtonUI()
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -49,6 +53,29 @@ class IconButton: UIButton {
             imageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 10),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
             imageView.rightAnchor.constraint(equalTo: rightAnchor, constant: -10)
+        ])
+    }
+    
+    private func setupBarIconButtonUI() {
+        backgroundColor = .systemBackground
+        
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = colorMainAccent
+        imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = false
+        
+        addSubview(imageView)
+        sendSubviewToBack(imageView)
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.widthAnchor.constraint(equalToConstant: miniIconButtonLength),
+            self.heightAnchor.constraint(equalToConstant: miniIconButtonLength),
+            imageView.topAnchor.constraint(equalTo: topAnchor, constant: 5),
+            imageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 5),
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5),
+            imageView.rightAnchor.constraint(equalTo: rightAnchor, constant: -5)
         ])
     }
 }

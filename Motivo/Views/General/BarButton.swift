@@ -8,14 +8,15 @@ import UIKit
 
 class BarButton: UIBarButtonItem {
 //    private var image = UIImage()
+//    private var button = UIButton!
 //    
-//    override init() {
-//        <#code#>
-//    }
-//    
-//    init(image: UIImage) {
-//        super.init(image: image, style: .plain, target: .none, action: .none)
-//        self.image = image
+//    init(title: String?, target: Any?, action: Selector?) {
+//        super.init()
+//        
+//        button = UIButton(type: .system)
+//
+//        button.addTarget(target, action: action!, for: .touchUpInside)
+//        
 //        setupBarButtonUI()
 //    }
 //    
