@@ -8,7 +8,7 @@
 import UIKit
 import FirebaseAuth
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController, SettingsViewDelegate {
     
     private var settingsView = SettingsView()
     
@@ -20,6 +20,7 @@ class SettingsViewController: UIViewController {
     
     private func setupSettings() {
         view.addSubview(settingsView)
+        settingsView.delegate = self
         
         settingsView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -28,5 +29,34 @@ class SettingsViewController: UIViewController {
             settingsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             settingsView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    func didTouchThemesButton() {
+        AlertUtils.shared.showAlert(self, title: "Themes are currently unavailable :(", message: "")
+    }
+    
+    func didTouchHelpButton() {
+        AlertUtils.shared.showAlert(self, title: "Help", message: "Help? You are on your own buddy")
+    }
+    
+    func didTouchAboutButton() {
+        AlertUtils.shared.showAlert(self, title: "About", message: "About page is currently unavailable :(")
+    }
+    
+    func didTouchLogoutButton() {
+        let controller = UIAlertController(
+            title: "Log out of your account?",
+            message: "",
+            preferredStyle: .alert)
+        
+        controller.addAction(UIAlertAction(title: "LOG OUT", style: .destructive) {_ in
+            do {
+                try Auth.auth().signOut()
+            } catch {
+                print("Sign out error")
+            }
+        })
+        controller.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(controller, animated: true)
     }
 }

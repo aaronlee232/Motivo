@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import FirebaseAuth
 
 class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableViewDelegate {
     
@@ -19,18 +18,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
         view.backgroundColor = .systemBackground
         setupProfile()
         loadGroupMetadataList()
-//        
-//        let logoutButton = UIButton(type: .system)
-//        logoutButton.setTitle("Logout", for: .normal)
-//        logoutButton.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
-//        
-//        view.addSubview(logoutButton)
-//        
-//        logoutButton.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            logoutButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-//        ])
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: profileView.settingsButton)
     }
     
@@ -87,12 +75,5 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
         let groupVC = GroupViewController(groupID: groupMetadataList[groupIdx].groupID)
         navigationController?.pushViewController(groupVC, animated: true)
     }
-    
-    @objc func handleLogout() {
-        do {
-            try Auth.auth().signOut()
-        } catch {
-            print("Sign out error")
-        }
-    }
+
 }

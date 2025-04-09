@@ -10,6 +10,9 @@ import UIKit
 let settingsList = ["Themes", "Help", "About", "Logout"]
 
 protocol SettingsViewDelegate:SettingsViewController {
+    func didTouchThemesButton()
+    func didTouchHelpButton()
+    func didTouchAboutButton()
     func didTouchLogoutButton()
 }
 
@@ -50,13 +53,13 @@ class SettingsView: UIView, UITableViewDelegate, UITableViewDataSource {
         let option = indexPath.row
         switch option {
         case 0:
-            print("touched themes cell")
+            handleThemesButton()
         case 1:
-            print("touched help cell")
+            handleHelpButton()
         case 2:
-            print("touched about cell")
+            handleAboutButton()
         case 3:
-            print("touched logout cell")
+            handleLogoutButton()
         default:
             print("accessed unknown cell")
         }
@@ -82,5 +85,21 @@ class SettingsView: UIView, UITableViewDelegate, UITableViewDataSource {
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+    }
+    
+    @objc func handleThemesButton() {
+        delegate?.didTouchThemesButton()
+    }
+    
+    @objc func handleHelpButton() {
+        delegate?.didTouchHelpButton()
+    }
+    
+    @objc func handleAboutButton() {
+        delegate?.didTouchAboutButton()
+    }
+    
+    @objc func handleLogoutButton() {
+        delegate?.didTouchLogoutButton()
     }
 }

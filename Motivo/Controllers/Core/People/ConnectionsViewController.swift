@@ -18,6 +18,8 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     private var sections: [UserSection] = []
     private var buttonIndexMapping: [UIButton: IndexPath] = [:]
     
+    private let titleLabel = BoldTitleLabel(textLabel: "Connections")
+    
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,17 +43,23 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.register(UserCell.self, forCellReuseIdentifier: "UserCell")
         tableView.frame = tableView.bounds
         view.addSubview(tableView)
+        view.addSubview(titleLabel)
         
         // Set up Header View
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        self.title = "Connections"
+//        self.title = "Connections"
     }
     
     private func setupConstraints() {
 //        headerView.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             // Header Constraints
 //            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
 //            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -59,7 +67,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
 //            headerView.heightAnchor.constraint(equalToConstant: 50),
             
             // Table Constraints
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
