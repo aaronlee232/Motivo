@@ -95,31 +95,6 @@ class HabitCell: UITableViewCell {
     }
 
     @objc private func plusButtonTapped() {
-        Task {
-            do {
-                guard let habit = habit else { return }
-                
-                let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
-
-                // Task Verification Code added here -> This should add an unverified photo to the list, not directly increment completedCount
-                
-                if let existingRecord = existingRecords.first {
-//                    var updatedRecord = existingRecord
-//                    updatedRecord.completedCount += 1
-//                    try FirestoreService.shared.updateHabitRecord(habitRecord: updatedRecord)
-                } else {
-                    let newHabitRecord = HabitRecord(habitID: habit.id,
-                                                     unverifiedPhotoURLs: [],
-                                                     verifiedPhotoURLs: [],
-                                                     timestamp: Date().formatted(),
-                                                     userUID: habit.userUID)
-                    try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecord)
-                }
-                
-                onPlusTapped?()
-            } catch {
-                print("Error updating habit record: \(error.localizedDescription)")
-            }
-        }
+        onPlusTapped?()
     }
 }

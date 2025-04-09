@@ -5,14 +5,6 @@
 //  Created by Aaron Lee on 3/8/25.
 //
 
-// MARK: - Setup MockImagePicker
-// Used for simulator without camera
-#if targetEnvironment(simulator)
-import MockImagePicker
-typealias UIImagePickerController = MockImagePicker
-typealias UIImagePickerControllerDelegate = MockImagePickerDelegate
-#endif
-
 import UIKit
 import FirebaseStorage
 

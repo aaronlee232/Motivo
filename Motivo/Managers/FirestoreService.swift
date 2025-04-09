@@ -261,7 +261,7 @@ extension FirestoreService {
     }
     
     func updateHabitRecord(habitRecord: HabitRecord) throws {
-        let recordDocument = habitRecordCollectionRef.document(habitRecord.id ?? "")
+        let recordDocument = habitRecordCollectionRef.document(habitRecord.id!)
         try recordDocument.setData(from: habitRecord, merge: true)
     }
 }

@@ -3,8 +3,13 @@ import FirebaseFirestore
 
 class HabitManager {
     // Fetch habits from Firestore
-    func fetchHabits() async throws -> [HabitModel] {
-        return try await FirestoreService.shared.fetchHabits()
+    func fetchCategories() async throws -> [CategoryModel] {
+        return try await FirestoreService.shared.fetchCategories()
+    }
+    
+    // Fetch habits of userUID
+    func fetchHabits(forUserUID: String) async throws -> [HabitModel] {
+        return try await FirestoreService.shared.fetchHabits(forUserUID: forUserUID)
     }
       
     // Add a new habit to Firestore
@@ -15,5 +20,20 @@ class HabitManager {
     // Fetch habit records of habitID
     func fetchHabitRecords(habitID: String) async throws -> [HabitRecord] {
         return try await FirestoreService.shared.fetchHabitRecords(forHabitID: habitID)
+    }
+    
+    // Add a new habit record to Firestore
+    func addHabitRecord(habitRecord: HabitRecord) throws {
+        try FirestoreService.shared.addHabitRecord(habitRecord: habitRecord)
+    }
+    
+    // Update an existing habit record
+    func updateHabitRecord(withHabitRecord: HabitRecord) async throws {
+        try FirestoreService.shared.updateHabitRecord(habitRecord: withHabitRecord)
+    }
+    
+    // Uploads habit image to Firebase Storage
+    func uploadHabitPhoto(image: UIImage) async throws -> URL {
+        return try await StorageService.shared.uploadPhoto(image)
     }
 }
