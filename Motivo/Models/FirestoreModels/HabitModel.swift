@@ -16,7 +16,13 @@ struct HabitModel: Codable {
     let goal: Int
     let unit: String
     let frequency: String
+    let deadline: String
     let userUID: String
+    
+    // Deadline property
+    // "HH:mm" for daily (e.g. "23:00")
+    // "weekday" ("1" ... "7") for weekly
+    // "day of month" ("1"..."31") for monthly (e.g. "15" = 15th)
 }
 
 struct HabitRecord: Codable {

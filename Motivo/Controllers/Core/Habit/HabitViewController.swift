@@ -141,14 +141,46 @@ extension HabitViewController: HabitViewDelegate {
                 let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
 
                 // if an existing active habit record is found
-                // TODO: replace this with a stricter check for "active" record based on timestamps later
-                if let existingRecord = existingRecords.first {
-                    activeHabitRecord = existingRecord
+                if !existingRecords.isEmpty {
+                    
+                    // TODO: replace this with a stricter check for "active" record based on timestamps later
+                    
+                    // Defines the window for "active" habit records
+                    var startDate: Date
+                    var deadlineDate: Date
+                    switch habit.frequency {
+                    case FrequencyConstants.daily:
+                        deadlineDate = DateUtils.shared.getDeadlineDate(forDailyDeadline: habit.deadline)
+                        startDate = DateUtils.shared.getStartDate(forDailyDeadlineDate: deadlineDate)
+                    case FrequencyConstants.weekly:
+                        deadlineDate = DateUtils.shared.getDeadlineDate(forWeeklyDeadline: habit.deadline)
+                        startDate = DateUtils.shared.getStartDate(forWeeklyDeadlineDate: deadlineDate)
+                    case FrequencyConstants.monthly:
+                        deadlineDate = DateUtils.shared.getDeadlineDate(forMonthlyDeadline: habit.deadline)
+                        startDate = DateUtils.shared.getStartDate(forMonthlyDeadlineDate: deadlineDate)
+                    default:
+                        fatalError("This should not have happened. \"\(habit.frequency)\" is an invalid frequency.")
+                    }
+                    
+                    // Check if record timestamp is active
+                    let records = existingRecords.filter {
+                        ISO8601DateFormatter().date(from: $0.timestamp)! >= startDate &&
+                        ISO8601DateFormatter().date(from: $0.timestamp)! <= deadlineDate
+                    }
+                    
+                    // Sanity check: there should only be one active record
+                    guard records.count == 1,
+                          let activeRecord = records.first else {
+                        fatalError("This should not have happened. There should only be one active habit record per habit")
+                    }
+                    
+                    activeHabitRecord = activeRecord
+                    
                 } else {
                     let newHabitRecord = HabitRecord(habitID: habit.id,
                                               unverifiedPhotoURLs: [],
                                               verifiedPhotoURLs: [],
-                                              timestamp: Date().formatted(),
+                                              timestamp: ISO8601DateFormatter().string(from: Date()),
                                               userUID: habit.userUID)
                     activeHabitRecord = try await habitManager.addHabitRecord(habitRecord: newHabitRecord)
                 }

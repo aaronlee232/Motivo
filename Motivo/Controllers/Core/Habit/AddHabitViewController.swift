@@ -73,6 +73,7 @@ extension AddHabitViewController {
             goal: goal,
             unit: unit,
             frequency: frequency,
+            deadline: "",  // TODO: Replace this with user selected deadline value from picker
             userUID: user.uid
         )
 
