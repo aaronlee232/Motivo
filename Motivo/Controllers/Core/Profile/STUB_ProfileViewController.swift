@@ -17,6 +17,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupProfile()
+        loadUserStats()
         loadGroupMetadataList()
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: profileView.settingsButton)
@@ -24,6 +25,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        loadUserStats()
         loadGroupMetadataList()
     }
     
@@ -47,6 +49,25 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
         ])
         
         
+    }
+    
+    // Loading in username
+    // TODO: might need to move code for calculating groups and days in here too
+    func loadUserStats() {
+        Task {
+            do {
+                guard let userUID = AuthManager.shared.getCurrentUserAuthInstance()?.uid else {
+                    fatalError("Error: No authenticated user.")
+                }
+                guard let username = try await StatsManager.shared.fetchCurrentUsername(forUserUID: userUID) else {
+                    fatalError("Error: Failed to fetch user.")
+                }
+                self.profileView.username.text = username
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Error loading in user stats.")
+                print("Error loading in user stats: \(error.localizedDescription)")
+            }
+        }
     }
     
     // Using homepage function, organize later

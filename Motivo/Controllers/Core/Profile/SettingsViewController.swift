@@ -32,11 +32,11 @@ class SettingsViewController: UIViewController, SettingsViewDelegate {
     }
     
     func didTouchThemesButton() {
-        AlertUtils.shared.showAlert(self, title: "Themes are currently unavailable :(", message: "")
+        AlertUtils.shared.showAlert(self, title: "Themes", message: "Themes are currently unavailable :(")
     }
     
     func didTouchHelpButton() {
-        AlertUtils.shared.showAlert(self, title: "Help", message: "Help? You are on your own buddy")
+        AlertUtils.shared.showAlert(self, title: "Help", message: "Help? Help page is currently unavailable. You are on your own buddy")
     }
     
     func didTouchAboutButton() {

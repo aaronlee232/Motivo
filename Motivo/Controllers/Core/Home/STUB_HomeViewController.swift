@@ -19,11 +19,13 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
         view.backgroundColor = .systemBackground
 
         setupHomepage()
+        loadUserStats()
         loadGroupMetadataList()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        loadUserStats()
         loadGroupMetadataList()
     }
     
@@ -39,6 +41,24 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
             homeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    func loadUserStats() {
+        Task {
+            do {
+                guard let userUID = AuthManager.shared.getCurrentUserAuthInstance()?.uid else {
+                    fatalError("Error: No authenticated user.")
+                }
+                guard let username = try await StatsManager.shared.fetchCurrentUsername(forUserUID: userUID) else {
+                    fatalError("Error: Failed to fetch user.")
+                }
+                self.homeView.username = username
+                self.homeView.titleLabel.text = "Hi \(username)"
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Error loading in user stats.")
+                print("Error loading in user stats: \(error.localizedDescription)")
+            }
+        }
     }
     
     func loadGroupMetadataList() {

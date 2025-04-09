@@ -34,10 +34,9 @@ class FirestoreService {
 
 // MARK: - user collection
 extension FirestoreService {
-    func fetchCurrentUsername() async throws -> String? {
-        if let userUID = AuthManager.shared.getCurrentUserAuthInstance()?.uid {
-            let fetchedUser = try await FirestoreService.shared.fetchUser(forUserUID: userUID)
-            return fetchedUser?.username
+    func fetchCurrentUsername(forUserUID userUID: String) async throws -> String? {
+        if let fetchedUser = try await FirestoreService.shared.fetchUser(forUserUID: userUID) {
+            return fetchedUser.username
         }
         return ""
     }

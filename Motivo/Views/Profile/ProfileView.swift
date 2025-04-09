@@ -23,7 +23,7 @@ class ProfileView: UIView {
     
     private let titleLabel = BoldTitleLabel(textLabel: "My Profile")
     private let profileImageView = UIImageView(image: UIImage(systemName: "person.circle.fill"))
-    private let username = NormalLabel()
+    var username = NormalLabel()
     private let myHabitsCountLabel = NormalLabel(textLabel: "0")
     private let myHabitsLabel = SubtitleLabel(textLabel: "Habits")
     private let myGroupsCountLabel = NormalLabel(textLabel: "0")
@@ -50,18 +50,6 @@ class ProfileView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         tableView = groupTableView.tableView
-        Task {
-            do {
-                let username = try await FirestoreService.shared.fetchCurrentUsername()
-                DispatchQueue.main.async {
-                    self.username.text = username ?? ""
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    print("Username Error: Failed to load username")
-                }
-            }
-        }
         setupUI()
     }
     

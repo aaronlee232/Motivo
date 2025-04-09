@@ -16,7 +16,8 @@ class HomeView: UIView {
     let groupTableView = GroupTableView()
     private var tableView = UITableView()
     
-    private let titleLabel = BoldTitleLabel(textLabel: "Hi User")
+    let titleLabel = BoldTitleLabel(textLabel: "Hi User")
+    var username = ""
     private let myGroupsLabel = NormalLabel(textLabel: "My Groups")
     private let addGroupPlusButton = IconButton(image: UIImage(systemName: "plus")!, barType: false)
     private let defaultMessageGroups = NormalLabel(textLabel: "No groups joined yet.")
@@ -38,18 +39,7 @@ class HomeView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         tableView = groupTableView.tableView
-        Task {
-            do {
-                let username = try await FirestoreService.shared.fetchCurrentUsername()
-                DispatchQueue.main.async {
-                    self.titleLabel.text = "Hi \(username ?? "User")"
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    print("Username Error: Failed to load username")
-                }
-            }
-        }
+        titleLabel.text = "Hi \(username)"
         setupUI()
     }
     
@@ -58,7 +48,6 @@ class HomeView: UIView {
     }
     
     private func setupUI() {
-        
         titleLabel.textAlignment = .center
         
         myGroupsLabel.setBoldText(status: true)
