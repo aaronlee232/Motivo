@@ -18,12 +18,12 @@ class DateUtils {
     private init() {}
     
     // Daily deadline — "HH:mm"
-    func getDeadlineDate(forDailyDeadline: String) -> Date {
+    func getDeadlineDate(forDailyDeadline dailyDeadline: String) -> Date {
         let now = Date()
         let calendar = Calendar.current
         
         // Convert deadline string to hour and minute ints
-        let timeParts = forDailyDeadline.split(separator: ":")
+        let timeParts = dailyDeadline.split(separator: ":")
         guard timeParts.count == 2,
               let hour = Int(timeParts[0]),
               let minute = Int(timeParts[1]) else {
@@ -40,13 +40,13 @@ class DateUtils {
     }
     
     // Weekly deadline — "1" to "7" (1 = Sunday, 7 = Saturday)
-    func getDeadlineDate(forWeeklyDeadline: String) -> Date {
+    func getDeadlineDate(forWeeklyDeadline weeklyDeadline: String) -> Date {
         let now = Date()
         let calendar = Calendar.current
         
         // Convert deadline string to Int (1 = Sunday, 7 = Saturday)
-        guard let targetWeekday = Int(forWeeklyDeadline), (1...7).contains(targetWeekday) else {
-            fatalError("Invalid weekday value. Must be between 1 (Sunday) and 7 (Saturday)")
+        guard let targetWeekday = Int(weeklyDeadline), (1...7).contains(targetWeekday) else {
+            fatalError("Invalid weekday value of \(weeklyDeadline). Must be between 1 (Sunday) and 7 (Saturday)")
         }
 
         // Find the most recent Sunday (start of current week)
@@ -69,13 +69,13 @@ class DateUtils {
     // Gets the actual deadline for monthly habits.
     // ex: Replaces 31 with 28 if last day is 28th
     // Monthly deadline — "1" to "31"
-    func getDeadlineDate(forMonthlyDeadline: String) -> Date {
+    func getDeadlineDate(forMonthlyDeadline monthlyDeadline: String) -> Date {
         let now = Date()
         let calendar = Calendar.current
         
         // Convert deadline string to day int
-        guard let habitDay = Int(forMonthlyDeadline) else {
-            fatalError("Invalid day string passed: \(forMonthlyDeadline)")
+        guard let habitDay = Int(monthlyDeadline) else {
+            fatalError("Invalid day string passed: \(monthlyDeadline)")
         }
         
         // Calculate monthly deadline
@@ -93,25 +93,25 @@ class DateUtils {
         return calendar.date(from: components)!
     }
     
-    func getStartDate(forDailyDeadlineDate: Date) -> Date {
-        return Calendar.current.startOfDay(for: forDailyDeadlineDate)
+    func getStartDate(forDailyDeadlineDate dailyDeadlineDate: Date) -> Date {
+        return Calendar.current.startOfDay(for: dailyDeadlineDate)
     }
     
-    func getStartDate(forWeeklyDeadlineDate: Date) -> Date {
+    func getStartDate(forWeeklyDeadlineDate weeklyDeadlineDate: Date) -> Date {
         let calendar = Calendar.current
 
         // Get weekday (1 = Sunday, 7 = Saturday)
-        let weekday = calendar.component(.weekday, from: forWeeklyDeadlineDate)
+        let weekday = calendar.component(.weekday, from: weeklyDeadlineDate)
         
         // Go back to the most recent Sunday
         let daysToSubtract = weekday - 1
-        let sunday = calendar.date(byAdding: .day, value: -daysToSubtract, to: forWeeklyDeadlineDate)!
+        let sunday = calendar.date(byAdding: .day, value: -daysToSubtract, to: weeklyDeadlineDate)!
         
         // Set time to 00:00:00
         return calendar.startOfDay(for: sunday)
     }
     
-    func getStartDate(forMonthlyDeadlineDate: Date) -> Date {
+    func getStartDate(forMonthlyDeadlineDate _: Date) -> Date {
         let now = Date()
         let calendar = Calendar.current
         

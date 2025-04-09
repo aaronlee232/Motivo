@@ -142,9 +142,6 @@ extension HabitViewController: HabitViewDelegate {
 
                 // if an existing active habit record is found
                 if !existingRecords.isEmpty {
-                    
-                    // TODO: replace this with a stricter check for "active" record based on timestamps later
-                    
                     // Defines the window for "active" habit records
                     var startDate: Date
                     var deadlineDate: Date

@@ -207,9 +207,10 @@ extension FirestoreService {
 
 // MARK: - Habit collection
 extension FirestoreService {
-    // Fetch all habit documents
-    func fetchHabits() async throws -> [HabitModel] {
+    func fetchHabits(forUserUID userUID: String, forCategoryIDs categoryIDs: [String]) async throws -> [HabitModel] {
         let snapshot = try await habitCollectionRef
+            .whereField("userUID", isEqualTo: userUID)
+            .whereField("categoryIDs", arrayContainsAny: categoryIDs)
             .getDocuments()
         
         return try snapshot.documents.map { document in
@@ -217,10 +218,15 @@ extension FirestoreService {
         }
     }
     
-    // Fetch all habit documents belonging to a user with userUID
+    // Convenience: Fetch all habit documents of one userUID
     func fetchHabits(forUserUID userUID: String) async throws -> [HabitModel] {
+        return try await fetchHabits(forUserUIDs: [userUID])
+    }
+    
+    // Fetch all habit documents of specified userUIDs
+    func fetchHabits(forUserUIDs userUIDs: [String]) async throws -> [HabitModel] {
         let snapshot = try await habitCollectionRef
-            .whereField("userUID", isEqualTo: userUID)
+            .whereField("userUID", in: userUIDs)
             .getDocuments()
         
         return try snapshot.documents.map { document in

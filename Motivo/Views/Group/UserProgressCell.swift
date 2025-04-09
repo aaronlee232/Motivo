@@ -18,9 +18,9 @@ struct DummyHabit {
     }
 }
 
-class UserProgressOverviewCell: UITableViewCell {
+class UserProgressCell: UITableViewCell {
     
-    static let identifier = "HabitProgressOverviewCell"
+    static let identifier = "HabitProgressCell"
     
     // MARK: - UI Elements
     let mainStackView = UIStackView() // horizontal container stack
@@ -36,16 +36,16 @@ class UserProgressOverviewCell: UITableViewCell {
     let spacerView = UIView()
     
     // MARK: - Properties
-    private var habitList: [DummyHabit] = [] {
+    private var habitEntries: [HabitWithRecord] = [] {
         didSet {
             updateProgressBar()
         }
     }
     
     // MARK: - Initializers
-    convenience init(name: String, profileImageURL: String?, habitList: [DummyHabit]) {
+    convenience init(name: String, profileImageURL: String?, habitEntries: [HabitWithRecord]) {
         self.init(frame: .zero)
-        configureWith(name: name, profileImageURL: profileImageURL, habitList: habitList)
+        configureWith(name: name, profileImageURL: profileImageURL, habitEntries: habitEntries)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -60,7 +60,7 @@ class UserProgressOverviewCell: UITableViewCell {
 }
 
 // MARK: - UI Setup
-extension UserProgressOverviewCell {
+extension UserProgressCell {
     private func setupUI() {
         setupMainStackView()
         setupNudgeStackView()
@@ -107,12 +107,12 @@ extension UserProgressOverviewCell {
 }
 
 // MARK: - Configuration
-extension UserProgressOverviewCell {
-    func configureWith(name: String, profileImageURL: String?, habitList: [DummyHabit]) {
+extension UserProgressCell {
+    func configureWith(name: String, profileImageURL: String?, habitEntries: [HabitWithRecord]) {
         self.nameLabel.text = name
         // replace with kingfisher image loading for profileImageURL ??  UIImage(systemName: "person.crop.circle")
         self.profileImageView.image = UIImage(systemName: "person.crop.circle")
-        self.habitList = habitList
+        self.habitEntries = habitEntries
     }
     
     private func configureDefaultValues() {
@@ -123,7 +123,7 @@ extension UserProgressOverviewCell {
 }
 
 // MARK: - Actions
-extension UserProgressOverviewCell {
+extension UserProgressCell {
     func updateExpandIcon(isExpanded: Bool) {
         let chevronIcon = isExpanded ? "chevron.down" : "chevron.left"
         expandIndicatorImageView.image = UIImage(systemName: chevronIcon)
@@ -134,10 +134,10 @@ extension UserProgressOverviewCell {
 
 
 // MARK: - ProgressBar
-extension UserProgressOverviewCell {
+extension UserProgressCell {
     func updateProgressBar() {
-        let totalHabits = habitList.count
-        let completedHabits = habitList.filter { $0.habitStatus == .complete }.count
+        let totalHabits = habitEntries.count
+        let completedHabits = habitEntries.filter { $0.status == .complete }.count
         
         // Avoid division by zero
         let progress = totalHabits > 0 ? Float(completedHabits) / Float(totalHabits) : 0.0
