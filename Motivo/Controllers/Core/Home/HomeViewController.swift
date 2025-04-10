@@ -11,6 +11,7 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
 
     private var homeView = HomeView()
     private let groupManager = GroupManager()
+    private let statsManager = StatsManager()
     
     private var groupMetadataList: [GroupMetadata] = []
     
@@ -49,7 +50,7 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
                 guard let userUID = AuthManager.shared.getCurrentUserAuthInstance()?.uid else {
                     fatalError("Error: No authenticated user.")
                 }
-                guard let username = try await StatsManager.shared.fetchCurrentUsername(forUserUID: userUID) else {
+                guard let username = try await statsManager.fetchCurrentUsername(forUserUID: userUID) else {
                     fatalError("Error: Failed to fetch user.")
                 }
                 self.homeView.username = username

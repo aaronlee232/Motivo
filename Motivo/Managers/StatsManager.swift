@@ -7,11 +7,8 @@
 
 class StatsManager {
     
-    static let shared = StatsManager()
-    
-    private init() {}
-    
     func fetchCurrentUsername(forUserUID userUID: String) async throws -> String? {
-        return try await FirestoreService.shared.fetchCurrentUsername(forUserUID: userUID)
+        let user = try await FirestoreService.shared.fetchUser(forUserUID: userUID)
+        return user?.username ?? "Unknown Username"
     }
 }

@@ -9,8 +9,12 @@ import UIKit
 
 class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableViewDelegate {
     
+    // MARK: - UI Elements
     private var profileView = ProfileView()
+    
+    // MARK: - Properties
     private let groupManager = GroupManager()
+    private let statsManager = StatsManager()
     private var groupMetadataList: [GroupMetadata] = []
 
     override func viewDidLoad() {
@@ -59,7 +63,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
                 guard let userUID = AuthManager.shared.getCurrentUserAuthInstance()?.uid else {
                     fatalError("Error: No authenticated user.")
                 }
-                guard let username = try await StatsManager.shared.fetchCurrentUsername(forUserUID: userUID) else {
+                guard let username = try await statsManager.fetchCurrentUsername(forUserUID: userUID) else {
                     fatalError("Error: Failed to fetch user.")
                 }
                 self.profileView.username.text = username
