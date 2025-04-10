@@ -15,19 +15,18 @@ Features removed from initial design:
 
 
 **Contributions**  
-Aaron Lee & Arisyia Wong (%)
+Aaron Lee & Arisyia Wong (25%)
 - Implemented deadlines for Habits and designed logic for determining "active" habit records based on habit deadline
 - Integrated Group Cell data with Firestore
-- 
 
-Aaron Lee & Cooper Wilk (%)
+Aaron Lee & Cooper Wilk (5%)
 - Camera Functionality Research and Implementation
     - Driver as Aaron Lee
     - Configure MockImagePicker
     - Set up test button for opening camera interface
     - Upload photo taken into FirebaseStorage
 
-Aaron Lee (%)
+Aaron Lee (30%)
 - REFACTORING for most files
 - Added Camera functionality to HabitCell buttons
     - Added logic to insert image url into habit records
@@ -36,9 +35,7 @@ Aaron Lee (%)
     - Added Group Progress View tab and functionality
     - Added Group Overview View tab and functionality
 
-
-
-Arisyia Wong (%)
+Arisyia Wong (25%)
 - UI
     - Custom UI components
     - Screens: All
@@ -46,7 +43,7 @@ Arisyia Wong (%)
 - Set up Picker view and functionality for add habit
 - Group Cell UI
 
-Cooper Wilk (%)
+Cooper Wilk (15%)
 - Split Habit Model into HabitModel and HabitRecord
 - Connect habit views to firestore
 - Added pending photo display to habit cells 
