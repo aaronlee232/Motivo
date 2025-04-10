@@ -65,7 +65,7 @@ class GroupCell: UITableViewCell {
         profileImageView.layer.borderWidth = 2
         profileImageView.layer.cornerRadius = (GroupCell.groupViewHeight - (4 * 2)) / 2
         
-        groupName.changeFontSize(fontSize: 22)
+        groupName.changeFontSize(fontSize: 20)
         groupName.textAlignment = .left
         
         memberLabel.changeFontSize(fontSize: 16)
@@ -187,4 +187,16 @@ class GroupCell: UITableViewCell {
         return categoryLabel
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        categories = []
+        categoriesStackView1.arrangedSubviews.forEach { $0.removeFromSuperview() } // clearing the labels
+        categoriesStackView2?.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        categoriesStackView1 = nil
+        categoriesStackView2 = nil
+        groupName.text = nil
+        memberCountLabel.text = nil
+        habitsCountLabel.text = nil
+        profileImageView.image = nil
+    }
 }
