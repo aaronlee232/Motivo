@@ -1,5 +1,54 @@
 # Motivo
-### Updated on: 2025/03/12
+
+### Beta Documentation
+#### Updated on 2025/04/09
+#### Disclaimers:  
+For testing purposes, use the following email and password to show a populated connections list  
+Email: beta@gmail.com  
+Password: 123456
+
+Features removed from initial design:
+- Placeholder
+
+
+**Contributions**  
+Aaron Lee & Arisyia Wong & Cooper Wilk (%)
+- Placeholder
+    - Driver: 
+    - Placeholder elements
+
+Aaron Lee & Arisyia Wong (%)
+- Placeholder
+    - Driver: 
+    - Placeholder elements
+
+Aaron Lee & Cooper Wilk (%)
+- Placeholder
+    - Driver: 
+    - Placeholder elements
+
+Aaron Lee (%)
+- Placeholder
+    - Placeholder elements
+
+Arisyia Wong (%)
+- Placeholder
+    - Placeholder elements
+
+Cooper Wilk (%)
+- Placeholder
+    - Placeholder elements
+
+
+- - -
+**Deviations**  
+Placeholder:
+- Placeholder
+
+
+- - -
+### Alpha Documentation
+#### Updated on: 2025/03/12
 ### Names: Aaron Lee, Cooper Wilk, Arisyia Wong, John Bukoski
 
 #### Disclaimer:  
@@ -11,7 +60,7 @@ Creating account and forget password works, but the populated connections list o
 
 Group Invite Code: It works if user provides the group ID from Firebase. However, we still need to implement retrieving the group code inside the app.
 
-- - -
+
 **Contributions**  
 Aaron Lee & Arisyia Wong (60%)
 - Authentication screens
