@@ -27,9 +27,9 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate, UIPickerVi
 //        view.addSubview(addHabitView)
         addHabitView.picker.delegate = self
         addHabitView.picker.dataSource = self
-        addHabitView.picker.isHidden = true
         
         addHabitView.frequencySegmentedControl.addTarget(self, action: #selector(didSelectFrequency), for: .valueChanged)
+        pickerData = timesOfTheDay
         
         loadCategoryOptions()
         setupConstraints()
@@ -113,7 +113,7 @@ extension AddHabitViewController {
         }
         
         let selectedFrequencyIdx = addHabitView.frequencySegmentedControl.selectedSegmentIndex
-        let frequency = addHabitView.frequencySegmentedControl.titleForSegment(at: selectedFrequencyIdx) ?? FrequencyConstants.daily
+        let frequency = addHabitView.frequencySegmentedControl.titleForSegment(at: selectedFrequencyIdx)
         
         let pickerRow = addHabitView.picker.selectedRow(inComponent: 0)
 
@@ -136,8 +136,8 @@ extension AddHabitViewController {
             streak: 0,
             goal: goal,
             unit: unit,
-            frequency: frequency,
-            deadline: pickerValue,  // TODO: Replace this with user selected deadline value from picker
+            frequency: frequency!,
+            deadline: pickerValue,
             userUID: user.uid
         )
 

@@ -70,6 +70,9 @@ extension AddHabitView {
         goalTextField.placeholder = "Enter goal number"
         goalTextField.keyboardType = .numberPad
         
+        // Frequency Selector
+        frequencySegmentedControl.selectedSegmentIndex = 0
+        
         // Category Checkboxes
         categoryLabel.text = "Select Categories:"
         
@@ -82,6 +85,7 @@ extension AddHabitView {
             visibilityLabel, visibilitySegmentedControl,
             nameTextField, unitTextField,
             goalTextField, frequencySegmentedControl,
+            picker,
             categoryLabel, categorySelectionView,
         ])
         stackView.axis = .vertical
@@ -89,13 +93,13 @@ extension AddHabitView {
         
         addSubview(titleLabel)
         addSubview(stackView)
-        addSubview(picker)
+//        addSubview(picker)
         addSubview(saveButton)
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
-        picker.translatesAutoresizingMaskIntoConstraints = false
+//        picker.translatesAutoresizingMaskIntoConstraints = false
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         
         stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -113,11 +117,8 @@ extension AddHabitView {
 //            categorySelectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
 //            categorySelectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             categorySelectionView.heightAnchor.constraint(equalToConstant: 250),
-            picker.leadingAnchor.constraint(equalTo: leadingAnchor),
-            picker.trailingAnchor.constraint(equalTo: trailingAnchor),
-            picker.topAnchor.constraint(equalTo: categorySelectionView.bottomAnchor, constant: 20),
             
-            saveButton.topAnchor.constraint(equalTo: picker.bottomAnchor, constant: 20),
+            saveButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
             saveButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
             saveButton.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
