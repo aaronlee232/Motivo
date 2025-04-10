@@ -8,8 +8,32 @@
 // View that you see when you click on a group on home page or profile page
 
 import UIKit
+
 class GroupOverviewView: UIView {
-    let label = UILabel()
+    
+    // MARK: - UI Elements
+    // Heatmap
+    // TODO: Add heatmap calendar
+    
+    // group categories
+    let groupCategoryLabel = UILabel()
+    let categoryBadgesView = CategoryBadgesView()
+    
+    // group member tasks that have the same categories as group
+    let memberHabitsLabel = UILabel()
+    let tableView = UITableView()  // TODO: Implement delegate functions and use/create new habit cell
+    
+    // MARK: - Properties
+    var categories: [CategoryModel] = [] {
+        didSet {
+            categoryBadgesView.categories = categories
+        }
+    }
+    var habits: [HabitModel] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -21,13 +45,23 @@ class GroupOverviewView: UIView {
     }
     
     private func setupUI() {
-        label.text = "Overview"
-        addSubview(label)
+        groupCategoryLabel.text = "Group Category"
 
-        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(groupCategoryLabel)
+        addSubview(categoryBadgesView)
+        
+        groupCategoryLabel.translatesAutoresizingMaskIntoConstraints = false
+        categoryBadgesView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+            groupCategoryLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            groupCategoryLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            groupCategoryLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            
+            categoryBadgesView.topAnchor.constraint(equalTo: groupCategoryLabel.bottomAnchor),
+            categoryBadgesView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            categoryBadgesView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            categoryBadgesView.heightAnchor.constraint(equalToConstant: 100)
         ])
     }
 }

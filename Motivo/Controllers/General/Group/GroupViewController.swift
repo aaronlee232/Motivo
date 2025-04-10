@@ -40,6 +40,8 @@ class GroupViewController: UIViewController {
     
     override func viewDidLoad() {
         fetchAndSetGroupName()
+//        fetchAndSetGroupMemberHabits()
+        fetchAndSetCategories()
         fetchAndSetProgressCells()
         
         setupTitleBar()
@@ -73,6 +75,18 @@ extension GroupViewController {
             } catch {
                 print("Error loading group progress cells: \(error.localizedDescription)")
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Group member progress couldn't be retrieved.")
+            }
+        }
+    }
+    
+    private func fetchAndSetCategories() {
+        Task {
+            do {
+                let categories = try await groupManager.fetchCategories(forGroupID: groupID)
+                groupOverviewView.categories = categories
+            } catch {
+                print("Error fetching group categories: \(error.localizedDescription)")
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Group categories couldn't be retrieved.")
             }
         }
     }

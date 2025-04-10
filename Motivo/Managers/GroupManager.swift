@@ -46,14 +46,13 @@ class GroupManager {
     
     func fetchGroupMetadataList(forUserUID: String) async throws -> [GroupMetadata] {
         let memberships = try await FirestoreService.shared.fetchGroupMemberships(forUserUID: forUserUID)
-        print(memberships)
-        
+
         if memberships.count == 0 {
             return []
         }
         
         let groupIDs = memberships.map { $0.groupID }
-        print(groupIDs)
+
         return try await fetchGroupMetadataList(withGroupIDs: groupIDs)
     }
     
@@ -112,5 +111,11 @@ class GroupManager {
             progressCells.append(ProgressCell(opened: false, name: user.username, habitEntries: activeHabitEntries))
         }
         return progressCells
+    }
+    
+    func fetchCategories(forGroupID groupID: String) async throws -> [CategoryModel] {
+        let group = try await FirestoreService.shared.fetchGroup(withGroupID: groupID)
+        let categories = try await FirestoreService.shared.fetchCategories(withCategoryIDs: group!.groupCategoryIDs)
+        return categories
     }
 }

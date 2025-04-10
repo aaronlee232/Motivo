@@ -7,17 +7,6 @@
 
 import UIKit
 
-// TODO: Replace with real habit model
-struct DummyHabit {
-    var name: String
-    var habitStatus: HabitStatus
-    
-    init(name: String, habitStatus: HabitStatus) {
-        self.name = name
-        self.habitStatus = habitStatus
-    }
-}
-
 class UserProgressCell: UITableViewCell {
     
     static let identifier = "HabitProgressCell"
