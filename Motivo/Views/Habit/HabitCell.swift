@@ -16,6 +16,7 @@ class HabitCell: UITableViewCell {
     private let progressLabel = UILabel()
     private let plusButton = UIButton(type: .system)
 
+    // TODO: If more actions are added to cell, possibly replace var onPlusTapped: (() -> Void)? with delegate/protocol
     var onPlusTapped: (() -> Void)?
     private var habit: HabitModel?
 
@@ -82,44 +83,18 @@ class HabitCell: UITableViewCell {
         ])
     }
 
-    func configure(with habit: HabitModel, progressText: String) {
+    func configureWith(habit: HabitModel, progressText: String, categoryNames: [String]) {
         self.habit = habit
 
         nameLabel.text = habit.name
         streakLabel.text = "🔥 \(habit.streak)" // Smaller streak label
 
-        categoryLabel.text = "Categories: \(habit.category.joined(separator: ", "))"
-        groupEmojiLabel.text = habit.isGroupHabit ? "👥" : ""
+        categoryLabel.text = "Categories: \(categoryNames.joined(separator: ", "))"
 
         progressLabel.text = progressText
     }
 
     @objc private func plusButtonTapped() {
-        Task {
-            do {
-                guard let habit = habit else { return }
-                
-                let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
-
-                // Task Verification Code added here -> This should add an unverified photo to the list, not directly increment completedCount
-                
-                if let existingRecord = existingRecords.first {
-                    var updatedRecord = existingRecord
-                    updatedRecord.completedCount += 1
-                    try FirestoreService.shared.updateHabitRecord(habitRecord: updatedRecord)
-                } else {
-                    let newHabitRecord = HabitRecord(habitID: habit.id,
-                                                     completedCount: 1,
-                                                     unverifiedPhotosList: [],
-                                                     timestamp: Date().formatted(),
-                                                     userID: habit.userID)
-                    try FirestoreService.shared.addHabitRecord(habitRecord: newHabitRecord)
-                }
-                
-                onPlusTapped?()
-            } catch {
-                print("Error updating habit record: \(error.localizedDescription)")
-            }
-        }
+        onPlusTapped?()
     }
 }

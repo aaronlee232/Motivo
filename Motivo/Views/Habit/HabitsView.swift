@@ -1,98 +1,84 @@
 import FirebaseFirestore
 
-class HabitsView {
-    private(set) var habits: [HabitModel] = []
-    private(set) var habitRecords: [String: HabitRecord] = [:] // Map habit ID to its record
-    let db = Firestore.firestore()
+protocol HabitViewDelegate: HabitViewController {
+    func plusButtonTapped(with habit: HabitModel)
+}
 
-    init() {
-        loadHabits()
-        observeSettingsChanges()
+class HabitsView: UIView, UITableViewDataSource, UITableViewDelegate {
+    
+    // MARK: UI Elements
+    private let tableView = UITableView()
+    
+    // MARK: Properties
+    private let habitManager = HabitManager()
+    var categoryIDToName: [String:String] = [:]
+    var categories: [CategoryModel] = [] {
+        didSet {
+            categoryIDToName = Dictionary(uniqueKeysWithValues: categories.map { ($0.id, $0.name) })
+            tableView.reloadData()
+        }
     }
-
-    private func observeSettingsChanges() {
-        NotificationCenter.default.addObserver(self, selector: #selector(loadHabits), name: .didUpdateCategories, object: nil)
+    private var habitRecords: [String: HabitRecord] = [:] // Map habit ID to its record
+    var habits: [HabitModel] = [] {
+        didSet {
+            tableView.reloadData()
+            loadHabitRecords()
+        }
     }
+    
+    // Added this here to properly load the records in, it was failing earlier - Feel free to move in a refactor
+    func loadHabitRecords() {
+        Task {
+            var newHabitRecords: [String: HabitRecord] = [:]
 
-    @objc func loadHabits() {
-        db.collection(FirestoreCollection.habit).getDocuments { snapshot, error in
-            if let error = error {
-                print("Error fetching habits: \(error.localizedDescription)")
-                return
+            for habit in habits {
+                do {
+                    let records = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+                    if let record = records.first {
+                        newHabitRecords[habit.id] = record
+                    }
+                } catch {
+//                    print("Failed to fetch habit record for \(habit.id): \(error)")
+                }
             }
 
-            self.habits = snapshot?.documents.compactMap { doc in
-                let data = doc.data()
-                return HabitModel(
-                    id: doc.documentID,
-                    name: data["name"] as? String ?? "",
-                    isGroupHabit: data["isGroupHabit"] as? Bool ?? false,
-                    category: data["category"] as! [String],
-                    streak: data["streak"] as? Int ?? 0,
-                    goal: data["goal"] as? Int ?? 0,
-                    unit: data["unit"] as? String ?? "",
-                    frequency: data["frequency"] as? String ?? "Daily",
-                    userID: AuthManager.shared.getCurrentUserAuthInstance()?.uid ?? ""
-                )
-            } ?? []
-
-            print("Loaded habits:", self.habits)
-
-            // Fetch habit records after habits are loaded
-            self.loadHabitRecords()
+            // Update UI on the main thread
+            DispatchQueue.main.async {
+                self.habitRecords = newHabitRecords
+                self.sortHabits()
+                self.tableView.reloadData()
+            }
         }
     }
 
     
-//    func testFetchHabits() {
-//        db.collection("habits").getDocuments { (snapshot, error) in
-//            if let error = error {
-//                print("Error fetching habits: \(error.localizedDescription)")
-//                return
-//            }
-//
-//            guard let documents = snapshot?.documents else {
-//                print("No documents found")
-//                return
-//            }
-//
-//            for doc in documents {
-//                print("Document ID: \(doc.documentID) - Data: \(doc.data())")
-//            }
-//        }
-//    }
-
-
-    private func loadHabitRecords() {
-        let habitIDs = habits.map { $0.id! }
-
-        guard !habitIDs.isEmpty else {
-            self.habitRecords = [:] // Clear records if no habits
-            return
-        }
-
-        db.collection("habitRecords")
-            .whereField("habitID", in: habitIDs)
-            .getDocuments { (snapshot, error) in
-                if let error = error {
-                    print("Error fetching habit records: \(error.localizedDescription)")
-                    return
-                }
-
-                self.habitRecords = snapshot?.documents.reduce(into: [:]) { (dict, doc) in
-                    if let record = try? doc.data(as: HabitRecord.self) {
-                        dict[record.habitID] = record
-                    }
-                } ?? [:]
-
-                DispatchQueue.main.async {
-                    self.sortHabits()
-                    NotificationCenter.default.post(name: .didUpdateHabitRecords, object: nil) // Notify the UI
-                }
-            }
+    var delegate: HabitViewDelegate?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
     }
+    
+    required init?(coder: NSCoder) {
+         fatalError("init(coder:) has not been implemented")
+     }
+    
+    private func setupUI() {
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(HabitCell.self, forCellReuseIdentifier: HabitCell.identifier)
+        tableView.tableFooterView = UIView()
 
+        addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
 
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor)
+        ])
+    }
 
     func sortHabits() {
         // Keep completed habits at the bottom
@@ -103,32 +89,67 @@ class HabitsView {
         }
     }
 
-    func numberOfHabits() -> Int {
-        return habits.count
-    }
-
-    func habit(at index: Int) -> HabitModel {
-        return habits[index]
-    }
-
     func habitRecord(for habitID: String) -> HabitRecord? {
         return habitRecords[habitID]
     }
 
-    func updateHabitRecord(for habitID: String) {
-        guard var record = habitRecords[habitID] else { return }
-        record.completedCount += 1
+//    func updateHabitRecord(for habitID: String) {
+//        guard var record = habitRecords[habitID] else { return }
+////        record.completedCount += 1
+//        // TODO: Check this commented out
+//
+//        // Update Firestore
+//        Task {
+//            do {
+//                habitManager.increaseHabitRecordCompletedCount(withHabitRecordID: record.id)
+//            } catch {
+//                
+//            }
+//        }
+//
+//        habitRecords[habitID] = record
+//        sortHabits()
+//    }
+}
 
-        // Update Firestore
-        db.collection("habitRecords").document(record.id).setData([
-            "completedCount": record.completedCount
-        ], merge: true) { error in
-            if let error = error {
-                print("Error updating habit record: \(error.localizedDescription)")
-            }
+extension HabitsView {
+    // MARK: - UITableView DataSource
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return habits.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: HabitCell.identifier, for: indexPath) as! HabitCell
+        let habit = habits[indexPath.row]
+        let record = habitRecord(for: habit.id)
+
+        let categoryNames = habit.categoryIDs.compactMap { categoryIDToName[$0] }
+        
+        let numCompleted = record?.completedCount ?? 0
+        let numPending = record?.pendingCount ?? 0
+        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)"
+        
+        let pendingPart = numPending > 0 ? " + (\(numPending))" : ""
+        let progressText: String
+
+        switch habit.frequency {
+        case "Daily":
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit) Today"
+        case "Weekly":
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit) This Week"
+        case "Monthly":
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit) This Month"
+        default:
+            progressText = "\(numCompleted)\(pendingPart) / \(habit.goal)\(unit)"
         }
 
-        habitRecords[habitID] = record
-        sortHabits()
+        cell.configureWith(habit: habit, progressText: progressText, categoryNames: categoryNames)
+
+        cell.onPlusTapped = { [weak delegate] in
+            delegate?.plusButtonTapped(with: habit)
+        }
+
+        return cell
     }
+
 }

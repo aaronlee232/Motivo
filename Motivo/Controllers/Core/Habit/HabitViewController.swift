@@ -1,48 +1,124 @@
 import UIKit
+import FirebaseStorage
 
-class HabitViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    private let tableView = UITableView()
+// MARK: - Setup MockImagePicker
+// Used for simulator without camera
+#if targetEnvironment(simulator)
+import MockImagePicker
+typealias UIImagePickerController = MockImagePicker
+typealias UIImagePickerControllerDelegate = MockImagePickerDelegate
+#endif
+
+class HabitViewController: UIViewController {
+    
+    // MARK: UI Elements
     private let habitsView = HabitsView()
+    
+    // MARK: - Properties
+    private let habitManager = HabitManager()
+    private var selectedCategoryIDs: [String] = []
+    
+    // Temp storage for the habit record during image upload flow.
+    var activeHabitRecord: HabitRecord?
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        habitsView.delegate = self
         setupUI()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadCategories()
+        loadHabitFilter()
+        loadHabits()
+    }
+}
+
+// MARK: - Load Data
+extension HabitViewController {
+    private func loadCategories() {
+        Task {
+            do {
+                let categories = try await habitManager.fetchCategories()
+                habitsView.categories = categories
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch categories")
+            }
+        }
+    }
+    
+    private func loadHabits() {
+        Task {
+            do {
+                guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
+                    AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
+                    return
+                }
+                
+                let habits = try await habitManager.fetchHabits(forUserUID: user.uid)
+                habitsView.habits = filterHabits(habits: habits)
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch habits")
+            }
+        }
+    }
+    
+    private func loadHabitFilter() {
+        if let selectedCategoryIDs = UserDefaults.standard.array(forKey: UserDefaultKeys.selectedCategoryIDs) as? [String] {
+            self.selectedCategoryIDs = selectedCategoryIDs
+        }
+    }
+    
+    private func filterHabits(habits: [HabitModel]) -> [HabitModel] {
+        var filteredHabits: [HabitModel] = []
+        
+        habits.forEach { habit in
+            // Filter by selected category IDs
+            let containsSelectedCategory = habit.categoryIDs.contains { categoryID in
+                selectedCategoryIDs.contains(categoryID)
+            }
+            
+            // TODO: Add additional filters conditions here
+            
+            if (containsSelectedCategory) {
+                filteredHabits.append(habit)
+            }
+        }
+        
+        return filteredHabits
+    }
+}
+
+
+// MARK: - UI Setup
+extension HabitViewController {
     private func setupUI() {
+        setupTitleBar()
+        
+        view.addSubview(habitsView)
+        
+        habitsView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            habitsView.topAnchor.constraint(equalTo: view.topAnchor),
+            habitsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            habitsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            habitsView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+    
+    private func setupTitleBar() {
         title = "Habits"
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
-
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(HabitCell.self, forCellReuseIdentifier: HabitCell.identifier)
-        tableView.tableFooterView = UIView()
-
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        habitsView.loadHabits()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(updateTableView), name: .didUpdateHabitRecords, object: nil)
-    }
-
-    @objc private func updateTableView() {
-        tableView.reloadData()
-    }
+}
 
 
+// MARK: - Actions
+extension HabitViewController {
     @objc private func addHabit() {
         // Navigate to Add Habit page
         let addHabitVC = AddHabitViewController()
@@ -54,40 +130,111 @@ class HabitViewController: UIViewController, UITableViewDataSource, UITableViewD
         let settingsVC = HabitSettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: true)
     }
+}
 
-    // MARK: - UITableView DataSource
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return habitsView.numberOfHabits()
+// MARK: - HabitViewDelegate
+extension HabitViewController: HabitViewDelegate {
+    // Handler for opening camera and uploading photo as proof of task completion. Will start as "unverified"
+    func plusButtonTapped(with habit: HabitModel) {
+        Task {
+            do {
+                let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+
+                // if an existing active habit record is found
+                if !existingRecords.isEmpty {
+                    // Defines the window for "active" habit records
+                    var startDate: Date
+                    var deadlineDate: Date
+                    switch habit.frequency {
+                    case FrequencyConstants.daily:
+                        deadlineDate = DateUtils.shared.getDeadlineDate(forDailyDeadline: habit.deadline)
+                        startDate = DateUtils.shared.getStartDate(forDailyDeadlineDate: deadlineDate)
+                    case FrequencyConstants.weekly:
+                        deadlineDate = DateUtils.shared.getDeadlineDate(forWeeklyDeadline: habit.deadline)
+                        startDate = DateUtils.shared.getStartDate(forWeeklyDeadlineDate: deadlineDate)
+                    case FrequencyConstants.monthly:
+                        deadlineDate = DateUtils.shared.getDeadlineDate(forMonthlyDeadline: habit.deadline)
+                        startDate = DateUtils.shared.getStartDate(forMonthlyDeadlineDate: deadlineDate)
+                    default:
+                        fatalError("This should not have happened. \"\(habit.frequency)\" is an invalid frequency.")
+                    }
+                    
+                    // Check if record timestamp is active
+                    let records = existingRecords.filter {
+                        ISO8601DateFormatter().date(from: $0.timestamp)! >= startDate &&
+                        ISO8601DateFormatter().date(from: $0.timestamp)! <= deadlineDate
+                    }
+                    
+                    // Sanity check: there should only be one active record
+                    guard records.count == 1,
+                          let activeRecord = records.first else {
+                        fatalError("This should not have happened. There should only be one active habit record per habit")
+                    }
+                    
+                    activeHabitRecord = activeRecord
+                    
+                } else {
+                    let newHabitRecord = HabitRecord(habitID: habit.id,
+                                              unverifiedPhotoURLs: [],
+                                              verifiedPhotoURLs: [],
+                                              timestamp: ISO8601DateFormatter().string(from: Date()),
+                                              userUID: habit.userUID)
+                    activeHabitRecord = try await habitManager.addHabitRecord(habitRecord: newHabitRecord)
+                }
+                
+                // Show camera and upload photo
+                showMockCamera()
+
+            } catch {
+                AlertUtils.shared.showAlert(
+                    self,
+                    title: "Something went wrong",
+                    message: "Unable to update habit progress"
+                )
+            }
+        }
+    }
+}
+
+
+// MARK: - Camera Setup
+extension HabitViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    // Function to present the UIImagePickerController
+    @objc func showMockCamera() {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        present(picker, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: HabitCell.identifier, for: indexPath) as! HabitCell
-        let habit = habitsView.habit(at: indexPath.row)
-        let record = habitsView.habitRecord(for: habit.id)
+    // Delegate method to handle the selected image
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        defer { dismiss(animated: true) }
 
-        let completedCount = record?.completedCount ?? 0
-        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)" // Ensure unit is used properly
-        let progressText: String
-
-        switch habit.frequency {
-        case "Daily":
-            progressText = "\(completedCount) / \(habit.goal)\(unit) Today"
-        case "Weekly":
-            progressText = "\(completedCount) / \(habit.goal)\(unit) This Week"
-        case "Monthly":
-            progressText = "\(completedCount) / \(habit.goal)\(unit) This Month"
-        default:
-            progressText = "\(completedCount) / \(habit.goal)\(unit)"
+        // No image selected
+        guard let image = info[.originalImage] as? UIImage else {
+            return
         }
 
-        cell.configure(with: habit, progressText: progressText)
-        cell.onPlusTapped = { [weak self] in
-            self?.habitsView.updateHabitRecord(for: habit.id)
-            self?.tableView.reloadData()
+        // Upload image to active habitRecord of habit
+        Task { [weak self] in
+            guard let self = self else { return }
+            
+            do {
+                // Add image into unverified photo list of activeHabitRecord
+                let url = try await habitManager.uploadHabitPhoto(image: image)
+                activeHabitRecord!.unverifiedPhotoURLs.append(url.absoluteString)
+                
+                // Update the active habit record
+                try await habitManager.updateHabitRecord(withHabitRecord: activeHabitRecord!)
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to upload image")
+            }
         }
-
-        return cell
     }
 
-
+    // Delegate method to handle cancellation of the picker
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true)
+    }
 }

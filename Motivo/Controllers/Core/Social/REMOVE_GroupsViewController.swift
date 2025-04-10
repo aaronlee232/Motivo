@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseStorage
 
 let dummyHabitList1: [DummyHabit] = [
     DummyHabit(name: "Charge phone", habitStatus: .incomplete),
@@ -21,85 +22,99 @@ let dummyHabitList2: [DummyHabit] = [
     DummyHabit(name: "Cook dinner", habitStatus: .complete)
 ]
 
-class ChatViewController: UIViewController {
+import UIKit
 
-    let progressOverviewBob = UserProgressOverviewCell(name: "Bob", profileImageURL: nil, habitList: dummyHabitList1)
-    let progressOverviewJane = UserProgressOverviewCell(name: "Jane", profileImageURL: nil, habitList: dummyHabitList2)
+class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    
+    let button = UIButton(type: .system)
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-        view.backgroundColor = .systemBackground
-        // TODO: for groupView testing
-        let testLabel = BoldTitleLabel(textLabel: "Test Group View Display")
-
-        view.addSubview(testLabel)
+        button.setTitle("Camera", for: .normal)
+        button.addTarget(self, action: #selector(showMockCamera), for: .touchUpInside)
         
-//        let groupView1 = GroupCell(
-//            groupId: "",
-//            image: UIImage(systemName: "person.3.fill")!,
-//            groupName: "Fitness 101 01",
-//            categories: ["Exercise", "Nutrition"],
-//            memberCount: 4,
-//            habitsCount: 3)
-//        view.addSubview(groupView1)
-//        
-//        let groupView2 = GroupCell(
-//            groupId: "",
-//            image: UIImage(systemName: "person.3.fill")!,
-//            groupName: "Outdoorsmen",
-//            categories: ["Exercise", "Social", "Productivity", "Hobby", "Finance"],
-//            memberCount: 4,
-//            habitsCount: 3)
-//        view.addSubview(groupView2)
+        view.addSubview(button)
         
-        testLabel.translatesAutoresizingMaskIntoConstraints = false
-//        groupView1.translatesAutoresizingMaskIntoConstraints = false
-//        groupView2.translatesAutoresizingMaskIntoConstraints = false
-        
-        let stack = UIStackView()
-        stack.axis = .vertical
-        view.addSubview(stack)
-        
-        let spacer = UIView()
-        spacer.setContentHuggingPriority(.defaultLow, for: .vertical)
-        spacer.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-
-        stack.addArrangedSubview(progressOverviewBob)
-        stack.addArrangedSubview(progressOverviewJane)
-        
-        stack.addArrangedSubview(spacer)
-        
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        
+        button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            testLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            testLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
-//            groupView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            groupView1.topAnchor.constraint(equalTo: testLabel.bottomAnchor, constant: 100),
-//            groupView1.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
-//            groupView1.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
-//            groupView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            groupView2.topAnchor.constraint(equalTo: groupView1.bottomAnchor, constant: 20),
-//            groupView2.widthAnchor.constraint(equalToConstant: GroupCell.groupViewWidth),
-//            groupView2.heightAnchor.constraint(equalToConstant: GroupCell.groupViewHeight),
-            stack.topAnchor.constraint(equalTo: testLabel.bottomAnchor, constant: 10),
-            stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    // Function to present the UIImagePickerController
+    @objc func showMockCamera() {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        present(picker, animated: true)
     }
-    */
 
+    // Delegate method to handle the selected image
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        if let image = info[.originalImage] as? UIImage {
+            print("Got image 🖼 with PNG size = " + (image.pngData()?.count.description ?? "unknown"))
+            uploadHabitPhoto(image)
+        } else {
+            print("No image 😕")
+        }
+        dismiss(animated: true)
+    }
+
+    // Delegate method to handle cancellation of the picker
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true)
+    }
+    
+    // TODO: Move into FirebaseStorageService.swift
+    func uploadHabitPhoto(_ image: UIImage) {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return }
+
+        let storageRef = Storage.storage().reference()
+        let imageRef = storageRef.child("habit_photos/\(UUID().uuidString).jpg")
+
+        // Upload the image
+        imageRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                print("Upload error: \(error.localizedDescription)")
+                return
+            }
+
+            // Get the download URL
+            imageRef.downloadURL { url, error in
+                guard let downloadURL = url else {
+                    print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
+                    return
+                }
+
+                print("Image uploaded successfully. URL: \(downloadURL.absoluteString)")
+                print("ImageURL: ", downloadURL)
+            }
+        }
+    }
 }
+
+
+/*
+ COMPLETE
+ Camera (Mocked)
+ Image uploads (to current HabitRecord)
+ Retrieve ImageURL of upload image
+ insert ImageURL into existing documents (
+    habitRecord.unverifiedPhotoUrls,
+ )
+ 
+ TODO
+ Image fetching (show image for verification)
+ UI for verification VC with controls
+    move habitRecord.unverifiedPhotoUrls to habitRecord.verifiedPhotoUrls
+ 
+ Adjust view of complete and pending tasks in habit
+ 
+ Completed: 1/3
+ Pending: 1
+ 
+ Completed: (1) + 1/3
+ 
+ */

@@ -2,42 +2,38 @@ import FirebaseFirestore
 //import FirebaseFirestoreSwift
 
 class HabitManager {
-    static let shared = HabitManager()
-    
-    private var db = Firestore.firestore()
-    private(set) var habits: [HabitModel] = []
-    
     // Fetch habits from Firestore
-    func loadHabits(completion: @escaping () -> Void) {
-        db.collection(FirestoreCollection.habit).getDocuments { snapshot, error in
-            guard let documents = snapshot?.documents, error == nil else {
-                print("Error fetching habits: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-            
-            self.habits = documents.compactMap { doc in
-                try? doc.data(as: HabitModel.self) // Assumes Habit conforms to Codable
-            }
-            
-            self.sortHabits()
-            completion() // Notify UI to refresh
-        }
+    func fetchCategories() async throws -> [CategoryModel] {
+        return try await FirestoreService.shared.fetchCategories()
     }
     
+    // Fetch habits of userUID
+    func fetchHabits(forUserUID: String) async throws -> [HabitModel] {
+        return try await FirestoreService.shared.fetchHabits(forUserUID: forUserUID)
+    }
+      
     // Add a new habit to Firestore
-    func addHabit(_ habit: HabitModel, completion: @escaping (Bool) -> Void) {
-        do {
-            let _ = try db.collection(FirestoreCollection.habit).addDocument(from: habit)
-            self.habits.append(habit)
-            self.sortHabits()
-            completion(true)
-        } catch {
-            print("Error adding habit: \(error.localizedDescription)")
-            completion(false)
-        }
+    func addHabit(_ habit: HabitModel) throws {
+        try FirestoreService.shared.addHabit(habit: habit)
     }
     
-    func sortHabits() {
-//        habits.sort { !$0.isCompleted && $1.isCompleted }
+    // Fetch habit records of habitID
+    func fetchHabitRecords(habitID: String) async throws -> [HabitRecord] {
+        return try await FirestoreService.shared.fetchHabitRecords(forHabitID: habitID)
+    }
+    
+    // Add a new habit record to Firestore
+    func addHabitRecord(habitRecord: HabitRecord) async throws -> HabitRecord {
+        return try await FirestoreService.shared.addHabitRecord(habitRecord: habitRecord)
+    }
+    
+    // Update an existing habit record
+    func updateHabitRecord(withHabitRecord: HabitRecord) async throws {
+        try FirestoreService.shared.updateHabitRecord(habitRecord: withHabitRecord)
+    }
+    
+    // Uploads habit image to Firebase Storage
+    func uploadHabitPhoto(image: UIImage) async throws -> URL {
+        return try await StorageService.shared.uploadPhoto(image)
     }
 }

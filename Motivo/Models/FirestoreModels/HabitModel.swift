@@ -11,30 +11,45 @@ import FirebaseFirestore
 struct HabitModel: Codable {
     @DocumentID var id: String!
     let name: String
-    let isGroupHabit: Bool
-    let category: [String]
+    let categoryIDs: [String]
     var streak: Int
     let goal: Int
     let unit: String
     let frequency: String
-    let userID: String
+    let deadline: String
+    let userUID: String
+    
+    // Deadline property
+    // "HH:mm" for daily (e.g. "23:00")
+    // "weekday" ("1" ... "7") for weekly
+    // "day of month" ("1"..."31") for monthly (e.g. "15" = 15th)
 }
 
 struct HabitRecord: Codable {
     @DocumentID var id: String!
     let habitID: String
-    var completedCount: Int
-    var unverifiedPhotosList: [String]
+    var unverifiedPhotoURLs: [String]
+    var verifiedPhotoURLs: [String]
     let timestamp: String
-    let userID: String
+    let userUID: String
     
+    var completedCount: Int {
+        return verifiedPhotoURLs.count
+    }
+    
+    var pendingCount: Int {
+        return unverifiedPhotoURLs.count
+    }
+
+    
+    // TODO: Replace with verifiedPhotoURLs count >= HabitModel.goal
     // Computed properties
     var isCompleted: Bool {
         return completedCount >= 3 // Fetch goal from HabitModel
     }
     
     var isPending: Bool {
-        return !unverifiedPhotosList.isEmpty
+        return !unverifiedPhotoURLs.isEmpty
     }
 }
 

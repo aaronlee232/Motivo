@@ -17,6 +17,7 @@ class FirestoreService {
     let groupMembershipCollectionRef:CollectionReference
     let categoryCollectionRef:CollectionReference
     let habitCollectionRef: CollectionReference
+    let habitRecordCollectionRef: CollectionReference
     
     init() {
         userCollectionRef = db.collection(FirestoreCollection.user)
@@ -24,7 +25,7 @@ class FirestoreService {
         groupMembershipCollectionRef = db.collection(FirestoreCollection.groupMembership)
         categoryCollectionRef = db.collection(FirestoreCollection.category)
         habitCollectionRef = db.collection(FirestoreCollection.habit)
-
+        habitRecordCollectionRef = db.collection(FirestoreCollection.habitRecord)
     }
     
     enum FirestoreError: Error {
@@ -203,11 +204,28 @@ extension FirestoreService {
 }
 
 
-// MARK: - habit collection
+// MARK: - Habit collection
 extension FirestoreService {
-    func fetchHabits(forUserUID userUID: String) async throws -> [HabitModel] {
+    func fetchHabits(forUserUID userUID: String, forCategoryIDs categoryIDs: [String]) async throws -> [HabitModel] {
         let snapshot = try await habitCollectionRef
             .whereField("userUID", isEqualTo: userUID)
+            .whereField("categoryIDs", arrayContainsAny: categoryIDs)
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: HabitModel.self)
+        }
+    }
+    
+    // Convenience: Fetch all habit documents of one userUID
+    func fetchHabits(forUserUID userUID: String) async throws -> [HabitModel] {
+        return try await fetchHabits(forUserUIDs: [userUID])
+    }
+    
+    // Fetch all habit documents of specified userUIDs
+    func fetchHabits(forUserUIDs userUIDs: [String]) async throws -> [HabitModel] {
+        let snapshot = try await habitCollectionRef
+            .whereField("userUID", in: userUIDs)
             .getDocuments()
         
         return try snapshot.documents.map { document in
@@ -230,9 +248,10 @@ extension FirestoreService {
     }
 }
 
+// MARK: - HabitRecord Collection
 extension FirestoreService {
     func fetchHabitRecords(forHabitID habitID: String) async throws -> [HabitRecord] {
-        let snapshot = try await db.collection("habitRecords")
+        let snapshot = try await habitRecordCollectionRef
             .whereField("habitID", isEqualTo: habitID)
             .getDocuments()
         
@@ -241,13 +260,14 @@ extension FirestoreService {
         }
     }
     
-    func addHabitRecord(habitRecord: HabitRecord) throws {
-        let recordDocument = db.collection("habitRecords").document()
-        try recordDocument.setData(from: habitRecord)
+    func addHabitRecord(habitRecord: HabitRecord) async throws -> HabitRecord {
+        let documentRef = try habitRecordCollectionRef.addDocument(from: habitRecord)
+        let snapshot = try await documentRef.getDocument()
+        return try snapshot.data(as: HabitRecord.self)
     }
     
     func updateHabitRecord(habitRecord: HabitRecord) throws {
-        let recordDocument = db.collection("habitRecords").document(habitRecord.id ?? "")
+        let recordDocument = habitRecordCollectionRef.document(habitRecord.id!)
         try recordDocument.setData(from: habitRecord, merge: true)
     }
 }
