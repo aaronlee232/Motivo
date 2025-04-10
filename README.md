@@ -8,45 +8,71 @@ Email: beta@gmail.com
 Password: 123456
 
 Features removed from initial design:
-- Placeholder
+- Group-Proposed Daily/Weekly Challenge
+- Chat
+- Chat-related Notifications (still keeping group invite notifications)
+- Chat Search
 
 
 **Contributions**  
-Aaron Lee & Arisyia Wong & Cooper Wilk (%)
-- Placeholder
-    - Driver: 
-    - Placeholder elements
-
 Aaron Lee & Arisyia Wong (%)
-- Placeholder
-    - Driver: 
-    - Placeholder elements
+- Implemented deadlines for Habits and designed logic for determining "active" habit records based on habit deadline
+- Integrated Group Cell data with Firestore
+- 
 
 Aaron Lee & Cooper Wilk (%)
-- Placeholder
-    - Driver: 
-    - Placeholder elements
+- Camera Functionality Research and Implementation
+    - Driver as Aaron Lee
+    - Configure MockImagePicker
+    - Set up test button for opening camera interface
+    - Upload photo taken into FirebaseStorage
 
 Aaron Lee (%)
-- Placeholder
-    - Placeholder elements
+- REFACTORING for most files
+- Added Camera functionality to HabitCell buttons
+    - Added logic to insert image url into habit records
+- Added Group View
+    - Integrated with Firestore
+    - Added Group Progress View tab and functionality
+    - Added Group Overview View tab and functionality
+
+
 
 Arisyia Wong (%)
 - UI
     - Custom UI components
-    - Screens: Group Entry, Create New, Home, Profile, Settings
+    - Screens: All
 - Set up Profile / Settings Page Functionality
-- Group Visual Component
+- Set up Picker view and functionality for add habit
+- Group Cell UI
 
 Cooper Wilk (%)
-- Placeholder
-    - Placeholder elements
+- Split Habit Model into HabitModel and HabitRecord
+- Connect habit views to firestore
+- Added pending photo display to habit cells 
 
 
 - - -
 **Deviations**  
-Placeholder:
-- Placeholder
+- Group Invite
+- Notification
+    - Show group invite notifications
+- Profile
+    - Currently using hardcoded user stats. Will replace with firestore data
+- Home
+    - Habit List Display
+- Connections
+    - View pending photos of other users and verify their photos and update HabitRecord accordingly
+- Group View
+    - Menu button implementations (Edit Group Name, Invite User, Leave Group)
+- Group View (Overview Tab)
+    - Heat map
+    - List of group member habits that fall under group categories
+- Group View (Progress Tab)
+    - Nudge
+- Other user profile
+    - Add segues to other user profiles
+    - (multiple places)
 
 
 - - -
