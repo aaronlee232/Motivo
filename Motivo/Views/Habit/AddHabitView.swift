@@ -6,6 +6,21 @@
 //
 import UIKit
 
+// Picker data
+// TODO: move to a constants file later
+let daysOfMonth = [Int](1...31)
+let daysOfWeek = [Int](1...7)
+let daysOfWeekFormatted = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+var timesOfTheDay: [String] = {
+    var list = [String]()
+    for hour in 0..<24 {
+        for minute in 0..<60 {
+            list.append(String(format: "%02d:%02d", hour, minute))
+        }
+    }
+    return list
+}()
+
 protocol AddHabitViewDelegate: AddHabitViewController {
     func didTapSaveHabit()
 }
@@ -13,15 +28,17 @@ protocol AddHabitViewDelegate: AddHabitViewController {
 class AddHabitView: UIView, CategorySelectionViewDelegate {
     
     // MARK: - UI Elements
-    let visibilityLabel = UILabel()
-    let visibilitySegmentedControl = UISegmentedControl(items: ["Public", "Private"])
+    private let titleLabel = BoldTitleLabel(textLabel: "Add Habit")
+    private let visibilityLabel = UILabel()
+    private let visibilitySegmentedControl = SegCtrl(items: ["Public", "Private"])
     let nameTextField = UITextField()
     let unitTextField = UITextField()
     let goalTextField = UITextField()
-    let frequencySegmentedControl = UISegmentedControl(items: FrequencyConstants.frequencies)
-    let categoryLabel = UILabel()
-    let saveButton = UIButton(type: .system)
+    let frequencySegmentedControl = SegCtrl(items: FrequencyConstants.frequencies)
+    private let categoryLabel = UILabel()
+    private let saveButton = UIButton(type: .system)
     let categorySelectionView = CategorySelectionView()
+    let picker = UIPickerView()
     
     // MARK: - Properties
     var selectedCategories = Set<CategoryModel>()
@@ -41,6 +58,8 @@ class AddHabitView: UIView, CategorySelectionViewDelegate {
 // MARK: - Setup UI
 extension AddHabitView {
     private func setupUI() {
+        titleLabel.textAlignment = .center
+        
         // Visibility Selector
         visibilityLabel.text = "Visibility"
         visibilitySegmentedControl.selectedSegmentIndex = 0
@@ -68,21 +87,39 @@ extension AddHabitView {
         stackView.axis = .vertical
         stackView.spacing = 10
         
+        addSubview(titleLabel)
         addSubview(stackView)
+        addSubview(picker)
         addSubview(saveButton)
         
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
+        picker.translatesAutoresizingMaskIntoConstraints = false
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         
+        stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        categorySelectionView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+//            categorySelectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
+//            categorySelectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            categorySelectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             categorySelectionView.heightAnchor.constraint(equalToConstant: 250),
+            picker.leadingAnchor.constraint(equalTo: leadingAnchor),
+            picker.trailingAnchor.constraint(equalTo: trailingAnchor),
+            picker.topAnchor.constraint(equalTo: categorySelectionView.bottomAnchor, constant: 20),
             
-            saveButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 50),
-            saveButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            saveButton.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor)
+            saveButton.topAnchor.constraint(equalTo: picker.bottomAnchor, constant: 20),
+            saveButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
+            saveButton.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
     

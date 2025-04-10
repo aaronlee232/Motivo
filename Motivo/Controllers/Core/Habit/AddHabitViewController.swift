@@ -8,30 +8,47 @@
 import UIKit
 import FirebaseFirestore
 
-class AddHabitViewController: UIViewController, AddHabitViewDelegate {
+class AddHabitViewController: UIViewController, AddHabitViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
     // MARK: - UI Elements
     private var addHabitView = AddHabitView()
+    private var addHabitScrollableView = UIScrollView()
+    
+    private var pickerData: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Add Habit"
+//        title = "Add Habit"
         view.backgroundColor = .systemBackground
         
         addHabitView.delegate = self
-        view.addSubview(addHabitView)
+        view.addSubview(addHabitScrollableView)
+        addHabitScrollableView.addSubview(addHabitView)
+//        view.addSubview(addHabitView)
+        addHabitView.picker.delegate = self
+        addHabitView.picker.dataSource = self
+        addHabitView.picker.isHidden = true
+        
+        addHabitView.frequencySegmentedControl.addTarget(self, action: #selector(didSelectFrequency), for: .valueChanged)
         
         loadCategoryOptions()
         setupConstraints()
     }
     
     private func setupConstraints() {
+        addHabitScrollableView.translatesAutoresizingMaskIntoConstraints = false
         addHabitView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            addHabitView.topAnchor.constraint(equalTo: view.topAnchor),
-            addHabitView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            addHabitView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            addHabitView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            addHabitScrollableView.topAnchor.constraint(equalTo: view.topAnchor),
+            addHabitScrollableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            addHabitScrollableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            addHabitScrollableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            addHabitView.topAnchor.constraint(equalTo: addHabitScrollableView.topAnchor),
+            addHabitView.leadingAnchor.constraint(equalTo: addHabitScrollableView.leadingAnchor),
+            addHabitView.trailingAnchor.constraint(equalTo: addHabitScrollableView.trailingAnchor),
+            addHabitView.bottomAnchor.constraint(equalTo: addHabitScrollableView.bottomAnchor),
+            addHabitView.widthAnchor.constraint(equalTo: addHabitScrollableView.widthAnchor)
         ])
     }
     
@@ -44,6 +61,40 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch categories")
             }
         }
+    }
+    
+    @objc private func didSelectFrequency() {
+        let selectedIndex = addHabitView.frequencySegmentedControl.selectedSegmentIndex
+        guard let selectedFrequency = addHabitView.frequencySegmentedControl.titleForSegment(at: selectedIndex) else {
+            return
+        }
+        addHabitView.picker.isHidden = true
+        addHabitView.picker.selectRow(0, inComponent: 0, animated: false) // resets to the first element in the picker
+        switch selectedFrequency {
+        case FrequencyConstants.daily:
+            pickerData = timesOfTheDay
+            addHabitView.picker.isHidden = false
+        case FrequencyConstants.weekly:
+            pickerData = daysOfWeekFormatted
+            addHabitView.picker.isHidden = false
+        case FrequencyConstants.monthly:
+            pickerData = daysOfMonth.map { "Day \($0)" }
+            addHabitView.picker.isHidden = false
+        default:
+            pickerData = []
+        }
+        addHabitView.picker.reloadAllComponents()
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerData.count
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return pickerData[row]
     }
 }
 
@@ -63,6 +114,19 @@ extension AddHabitViewController {
         
         let selectedFrequencyIdx = addHabitView.frequencySegmentedControl.selectedSegmentIndex
         let frequency = addHabitView.frequencySegmentedControl.titleForSegment(at: selectedFrequencyIdx) ?? FrequencyConstants.daily
+        
+        let pickerRow = addHabitView.picker.selectedRow(inComponent: 0)
+
+        guard pickerRow >= 0 && pickerRow < pickerData.count else {
+            AlertUtils.shared.showAlert(self, title: "Invalid deadline selected", message: "Please select a valid deadline")
+            return
+        }
+        let pickerValue:String
+        if frequency == FrequencyConstants.weekly {
+            pickerValue = String(daysOfWeek[pickerRow])
+        } else {
+            pickerValue = pickerData[pickerRow]
+        }
 
         let categoryIDs = addHabitView.selectedCategories.map { $0.id! }
         
@@ -73,7 +137,7 @@ extension AddHabitViewController {
             goal: goal,
             unit: unit,
             frequency: frequency,
-            deadline: "",  // TODO: Replace this with user selected deadline value from picker
+            deadline: pickerValue,  // TODO: Replace this with user selected deadline value from picker
             userUID: user.uid
         )
 
