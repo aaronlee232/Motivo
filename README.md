@@ -32,8 +32,11 @@ Aaron Lee (%)
     - Placeholder elements
 
 Arisyia Wong (%)
-- Placeholder
-    - Placeholder elements
+- UI
+    - Custom UI components
+    - Screens: Group Entry, Create New, Home, Profile, Settings
+- Set up Profile / Settings Page Functionality
+- Group Visual Component
 
 Cooper Wilk (%)
 - Placeholder
