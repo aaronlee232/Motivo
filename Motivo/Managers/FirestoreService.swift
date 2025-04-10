@@ -194,7 +194,7 @@ extension FirestoreService {
     // Retrieve a list of categories that are in the list of categoryIDs
     func fetchCategories(withCategoryIDs: [String]) async throws -> [CategoryModel] {
         let snapshot = try await categoryCollectionRef
-            .whereField("id", in: withCategoryIDs)
+            .whereField(FieldPath.documentID(), in: withCategoryIDs)
             .getDocuments()
         
         return try snapshot.documents.map { document in

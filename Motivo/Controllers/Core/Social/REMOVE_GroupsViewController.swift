@@ -8,20 +8,6 @@
 import UIKit
 import FirebaseStorage
 
-let dummyHabitList1: [DummyHabit] = [
-    DummyHabit(name: "Charge phone", habitStatus: .incomplete),
-    DummyHabit(name: "Wash dishes", habitStatus: .complete),
-    DummyHabit(name: "Run a mile", habitStatus: .pending),
-    DummyHabit(name: "Do homework", habitStatus: .incomplete),
-    DummyHabit(name: "Cook dinner", habitStatus: .complete)
-]
-
-
-let dummyHabitList2: [DummyHabit] = [
-    DummyHabit(name: "Wash dishes", habitStatus: .complete),
-    DummyHabit(name: "Cook dinner", habitStatus: .complete)
-]
-
 import UIKit
 
 class ChatViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {

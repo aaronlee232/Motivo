@@ -39,7 +39,7 @@ class CategorySelectionView: UIView, UITableViewDataSource, UITableViewDelegate 
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseIdentifier)
+        tableView.register(CategoryOptionCell.self, forCellReuseIdentifier: CategoryOptionCell.reuseIdentifier)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
@@ -55,7 +55,7 @@ class CategorySelectionView: UIView, UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryOptionCell.reuseIdentifier, for: indexPath) as? CategoryOptionCell else {
             return UITableViewCell()
         }
         let category = categories[indexPath.row]
