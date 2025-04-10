@@ -12,9 +12,9 @@ protocol JoinRandomGroupViewDelegate:JoinRandomGroupViewController {
 }
 
 class JoinRandomGroupView: UIView {
-    let titleLabel = UILabel()
-    let subtitleLabel = UILabel()
-    let confirmButton = UIButton()
+    let titleLabel = BoldTitleLabel(textLabel: "Match with a Group")
+    let subtitleLabel = SubtitleLabel(textLabel: "Join groups with these interests")
+    let confirmButton = ActionButton(title: "CONFIRM")
     let categorySelectionView = CategorySelectionView()
     
     var delegate:JoinRandomGroupViewDelegate?
@@ -30,20 +30,13 @@ class JoinRandomGroupView: UIView {
     
     private func setupUI() {
         titleLabel.textAlignment = .center
-        titleLabel.text = "Match with a Group"
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         subtitleLabel.textAlignment = .center
-        subtitleLabel.text = "Join groups with these interests"
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         categorySelectionView.translatesAutoresizingMaskIntoConstraints = false
-        
-        confirmButton.layer.borderColor = UIColor.blue.cgColor
-        confirmButton.layer.borderWidth = 2
-        confirmButton.layer.cornerRadius = 8.0
-        confirmButton.setTitleColor(.systemBlue, for: .normal)
-        confirmButton.setTitle("CONFIRM", for: .normal)
+
         confirmButton.addTarget(self, action: #selector(handleConfirmButton), for: .touchUpInside)
         confirmButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -55,7 +48,7 @@ class JoinRandomGroupView: UIView {
         NSLayoutConstraint.activate([
 
             // Title Label Constraints
-            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 50),
+            titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             

@@ -8,6 +8,7 @@ class HabitsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: UI Elements
     private let tableView = UITableView()
+    private let titleLabel = BoldTitleLabel(textLabel: "Habits")
     
     // MARK: Properties
     private let habitManager = HabitManager()
@@ -64,16 +65,24 @@ class HabitsView: UIView, UITableViewDataSource, UITableViewDelegate {
      }
     
     private func setupUI() {
+        titleLabel.textAlignment = .center
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(HabitCell.self, forCellReuseIdentifier: HabitCell.identifier)
         tableView.tableFooterView = UIView()
 
+        addSubview(titleLabel)
         addSubview(tableView)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 60),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor)

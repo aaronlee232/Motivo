@@ -12,10 +12,10 @@ protocol JoinInviteGroupViewDelegate:JoinInviteGroupViewController {
 }
 
 class JoinInviteGroupView: UIView {
-    let titleLabel = UILabel()
-    let inviteCodeLabel = UILabel()
-    let inviteCodeTextField = UITextField()
-    let confirmButton = UIButton()
+    let titleLabel = BoldTitleLabel(textLabel: "Join a Group")
+    let inviteCodeLabel = NormalLabel(textLabel: "Enter Group Invite Code")
+    let inviteCodeTextField = GreyTextField(placeholderText: "Enter group invite code here", isSecure: false)
+    let confirmButton = ActionButton(title: "CONFIRM")
     var delegate:JoinInviteGroupViewDelegate?
     
     override init(frame: CGRect) {
@@ -29,21 +29,14 @@ class JoinInviteGroupView: UIView {
     
     private func setupUI() {
         titleLabel.textAlignment = .center
-        titleLabel.text = "Join a Group"
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         inviteCodeLabel.textAlignment = .left
-        inviteCodeLabel.text = "Enter Group Invite Code"
         inviteCodeLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        inviteCodeTextField.placeholder = "Enter group invite code here"
+        inviteCodeTextField.textAlignment = .left
         inviteCodeTextField.translatesAutoresizingMaskIntoConstraints = false
-        
-        confirmButton.layer.borderColor = UIColor.blue.cgColor
-        confirmButton.layer.borderWidth = 2
-        confirmButton.layer.cornerRadius = 8.0
-        confirmButton.setTitleColor(.systemBlue, for: .normal)
-        confirmButton.setTitle("CONFIRM", for: .normal)
+
         confirmButton.addTarget(self, action: #selector(handleConfirmButton), for: .touchUpInside)
         confirmButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -64,7 +57,7 @@ class JoinInviteGroupView: UIView {
             viewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -40),
             
             // Title Label Constraints
-            titleLabel.topAnchor.constraint(equalTo: viewContainer.safeAreaLayoutGuide.topAnchor, constant: 50),
+            titleLabel.topAnchor.constraint(equalTo: viewContainer.safeAreaLayoutGuide.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor),
             

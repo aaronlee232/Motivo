@@ -95,7 +95,10 @@ extension HabitViewController {
 // MARK: - UI Setup
 extension HabitViewController {
     private func setupUI() {
-        setupTitleBar()
+//        setupTitleBar()
+        // TODO: move into view later
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
         
         view.addSubview(habitsView)
         
@@ -108,12 +111,12 @@ extension HabitViewController {
         ])
     }
     
-    private func setupTitleBar() {
-        title = "Habits"
-
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
-    }
+//    private func setupTitleBar() {
+//        title = "Habits"
+//
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
+//    }
 }
 
 
