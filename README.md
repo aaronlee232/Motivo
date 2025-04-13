@@ -1,7 +1,7 @@
 # Motivo
 ## Group number: 4 <br> Names: Aaron Lee, Cooper Wilk, Arisyia Wong
 ### Final Documentation
-#### Updated on 2025/04/09
+#### Updated on 2025/04/13
 #### Dependencies:
 - Xcode 16.2
 - Swift 5
@@ -19,6 +19,9 @@
     - [MockImagePicker](https://github.com/yonat/MockImagePicker?source=post_page-----e9e5b2acb0c1---------------------------------------)
 
 #### Special Instructions:
+- Placeholder
+
+#### Disclaimer:
 - Placeholder
 
 | Feature | Description | Release <br> Planned | Release Actual | Deviations | Who / Percentage worked on |
