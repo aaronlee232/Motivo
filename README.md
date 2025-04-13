@@ -1,5 +1,44 @@
 # Motivo
+## Group number: 4 <br> Names: Aaron Lee, Cooper Wilk, Arisyia Wong
+### Final Documentation
+#### Updated on 2025/04/09
+#### Dependencies:
+- Xcode 16.2
+- Swift 5
+- Frameworks / Packages:
+    - FirebaseAnalytics
+    - FirebaseAuth
+    - FirebaseAuthCombine-Community
+    - FirebaseCore
+    - FirebaseDatabase
+    - FirebaseFirestore
+    - FirebaseFirestoreCombine-Community
+    - FirebaseStorage
+    - FirebaseStorageCombine-Community
+    - [Kingfisher](https://github.com/onevcat/Kingfisher)
+    - [MockImagePicker](https://github.com/yonat/MockImagePicker?source=post_page-----e9e5b2acb0c1---------------------------------------)
 
+#### Special Instructions:
+- Placeholder
+
+| Feature | Description | Release <br> Planned | Release Actual | Deviations | Who / Percentage worked on |
+| :- | :- | :-: | :-: | :-: | :-: |
+| Authentication <br> (log in / out, account creation) | a | Alpha | Alpha | d | e |
+| UI | a | Final | c | d | e |
+| Homepage / Overview | a | Not Specified | c | d | e |
+| Habits | a | Alpha | c | d | e |
+| Group Matching | Creating a group, joining a group by invite, joining a random group | Alpha <br> (called pairing system before) | c | d | e |
+| Social / Chat | a | Beta | c | d | e |
+| Chat Search | a | Beta | c | d | e |
+| Connections | a | Alpha | c | d | e |
+| Habit Verification | a | Not Specified | c | d | e |
+| Accountability Nudges | a | Beta | c | d | e |
+| Notifications | Group Invitations | Final | c | d | e |
+| Profile | a | Final | c | d | e |
+| Settings | a | Final | c | d | e |
+| Additional Social Features of Habits | Daily Check-Ins, Group-Proposed Daily/Weekly Challenge | Alpha | c | d | e |
+| Gamification Features | Streaks, Leaderboards, Reward System | Beta | c | d | e |
+- - -
 ### Beta Documentation
 #### Updated on 2025/04/09
 #### Disclaimers:  
