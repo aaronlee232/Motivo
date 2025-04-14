@@ -104,6 +104,23 @@ extension FirestoreService {
     func addGroup(group: GroupModel) throws -> String {
         return try groupCollectionRef.addDocument(from: group).documentID
     }
+    
+    // Remove the group document with groupID
+    func deleteGroup(withGroupWithID groupID: String) async throws -> [GroupModel] {
+        let snapshot = try await groupCollectionRef
+            .whereField(FieldPath.documentID(), isEqualTo: groupID)
+            .getDocuments()
+        
+        var deletedGroups: [GroupModel] = []
+        
+        for document in snapshot.documents {
+            let group = try document.data(as: GroupModel.self)
+            try await document.reference.delete()
+            deletedGroups.append(group)
+        }
+        
+        return deletedGroups
+    }
 }
 
 // MARK: - groupMembership collection
@@ -164,6 +181,24 @@ extension FirestoreService {
         let groupMembershipDocument = groupMembershipCollectionRef.document()
         try groupMembershipDocument.setData(from: membership)
     }
+    
+    // Remove the group membership document that contains userUID and groupID
+    func deleteGroupMembership(withUserUID userUID: String, withGroupWithID groupID: String) async throws -> [GroupMembershipModel] {
+        let snapshot = try await groupMembershipCollectionRef
+            .whereField("userUID", isEqualTo: userUID)
+            .whereField("groupID", isEqualTo: groupID)
+            .getDocuments()
+        
+        var deletedMemberships: [GroupMembershipModel] = []
+        
+        for document in snapshot.documents {
+            let membership = try document.data(as: GroupMembershipModel.self)
+            try await document.reference.delete()
+            deletedMemberships.append(membership)
+        }
+        
+        return deletedMemberships
+    }
 }
 
 
@@ -199,9 +234,15 @@ extension FirestoreService {
 
 // MARK: - Habit collection
 extension FirestoreService {
+    // Convenience: Fetch habits that match at least one of the specified categories for a single user
     func fetchHabits(forUserUID userUID: String, forCategoryIDs categoryIDs: [String]) async throws -> [HabitModel] {
+        return try await fetchHabits(forUserUIDs: [userUID], forCategoryIDs: categoryIDs)
+    }
+    
+    // Fetch habits that match at least one of the specified categories for all users
+    func fetchHabits(forUserUIDs userUIDs: [String], forCategoryIDs categoryIDs: [String]) async throws -> [HabitModel] {
         let snapshot = try await habitCollectionRef
-            .whereField("userUID", isEqualTo: userUID)
+            .whereField("userUID", in: userUIDs)
             .whereField("categoryIDs", arrayContainsAny: categoryIDs)
             .getDocuments()
         

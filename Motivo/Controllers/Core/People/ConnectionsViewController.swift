@@ -40,7 +40,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         // Set up Table View
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UserCell.self, forCellReuseIdentifier: "UserCell")
+        tableView.register(UserCell.self, forCellReuseIdentifier: UserCell.identifier)
         tableView.frame = tableView.bounds
         view.addSubview(tableView)
         view.addSubview(titleLabel)
