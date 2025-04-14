@@ -131,4 +131,21 @@ class GroupManager {
         let categories = try await FirestoreService.shared.fetchCategories(withCategoryIDs: group!.groupCategoryIDs)
         return categories
     }
+    
+    func removeUserFromGroup(withUserUID userUID: String, withGroupWithID groupID: String) async throws -> [GroupMembershipModel] {
+        
+        
+        let deletedMemberships = try await FirestoreService.shared.deleteGroupMembership(
+            withUserUID: userUID,
+            withGroupWithID: groupID
+        )
+        
+        // Delete group if there are no members remaining
+        let remainingMembers = try await FirestoreService.shared.fetchGroupMemberships(forGroupID: groupID)
+        if remainingMembers.isEmpty {
+            let _ = try await FirestoreService.shared.deleteGroup(withGroupWithID: groupID)
+        }
+        
+        return deletedMemberships
+    }
 }

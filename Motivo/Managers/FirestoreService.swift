@@ -104,6 +104,23 @@ extension FirestoreService {
     func addGroup(group: GroupModel) throws -> String {
         return try groupCollectionRef.addDocument(from: group).documentID
     }
+    
+    // Remove the group document with groupID
+    func deleteGroup(withGroupWithID groupID: String) async throws -> [GroupModel] {
+        let snapshot = try await groupCollectionRef
+            .whereField(FieldPath.documentID(), isEqualTo: groupID)
+            .getDocuments()
+        
+        var deletedGroups: [GroupModel] = []
+        
+        for document in snapshot.documents {
+            let group = try document.data(as: GroupModel.self)
+            try await document.reference.delete()
+            deletedGroups.append(group)
+        }
+        
+        return deletedGroups
+    }
 }
 
 // MARK: - groupMembership collection
@@ -163,6 +180,24 @@ extension FirestoreService {
     func addGroupMembership(membership: GroupMembershipModel) throws {
         let groupMembershipDocument = groupMembershipCollectionRef.document()
         try groupMembershipDocument.setData(from: membership)
+    }
+    
+    // Remove the group membership document that contains userUID and groupID
+    func deleteGroupMembership(withUserUID userUID: String, withGroupWithID groupID: String) async throws -> [GroupMembershipModel] {
+        let snapshot = try await groupMembershipCollectionRef
+            .whereField("userUID", isEqualTo: userUID)
+            .whereField("groupID", isEqualTo: groupID)
+            .getDocuments()
+        
+        var deletedMemberships: [GroupMembershipModel] = []
+        
+        for document in snapshot.documents {
+            let membership = try document.data(as: GroupMembershipModel.self)
+            try await document.reference.delete()
+            deletedMemberships.append(membership)
+        }
+        
+        return deletedMemberships
     }
 }
 

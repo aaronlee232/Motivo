@@ -208,5 +208,37 @@ extension GroupViewController {
     
     @objc private func didTapLeaveGroupButton() {
         // TODO: Implement leave group confirmation alert and segue
+        let controller = UIAlertController(
+            title: "Leave Group?",
+            message: "Are you sure you want to leave this group?",
+            preferredStyle: .alert
+        )
+        
+        controller.addAction(UIAlertAction(title: "Leave", style: .destructive) {_ in
+            Task {
+                do {
+                    guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
+                        AlertUtils.shared.showAlert(self, title: "Somthing went wrong", message: "Current user session lost")
+                        return
+                    }
+                            
+                    let removedMemberships = try await self.groupManager.removeUserFromGroup(withUserUID: user.uid, withGroupWithID: self.groupID)
+                    
+                    // Check for possible empty removal
+                    if removedMemberships.isEmpty {
+                        AlertUtils.shared.showAlert(self, title: "Somthing went wrong", message: "Unable leave group")
+                        return
+                    }
+                    
+                    // Return to group screen
+                    self.navigationController?.popViewController(animated: true)
+                } catch {
+                    AlertUtils.shared.showAlert(self, title: "Somthing went wrong", message: "Unable to leave group")
+                }
+            }
+        })
+        
+        controller.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(controller, animated: true)
     }
 }
