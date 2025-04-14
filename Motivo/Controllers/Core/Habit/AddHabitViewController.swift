@@ -14,7 +14,7 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate, UIPickerVi
     private var addHabitView = AddHabitView()
     private var addHabitScrollableView = UIScrollView()
     
-    private var pickerData: [String] = []
+    private var pickerData: [[String]] = [] // list of lists to create multiple columns (hh:mm)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +29,7 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate, UIPickerVi
         addHabitView.picker.dataSource = self
         
         addHabitView.frequencySegmentedControl.addTarget(self, action: #selector(didSelectFrequency), for: .valueChanged)
-        pickerData = timesOfTheDay
+        pickerData = [hours.map { String(format: "%02d", $0) }, [":"], minutes.map { String(format: "%02d", $0) }]
         
         loadCategoryOptions()
         setupConstraints()
@@ -41,8 +41,8 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate, UIPickerVi
         NSLayoutConstraint.activate([
             addHabitScrollableView.topAnchor.constraint(equalTo: view.topAnchor),
             addHabitScrollableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            addHabitScrollableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            addHabitScrollableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            addHabitScrollableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            addHabitScrollableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
             addHabitView.topAnchor.constraint(equalTo: addHabitScrollableView.topAnchor),
             addHabitView.leadingAnchor.constraint(equalTo: addHabitScrollableView.leadingAnchor),
@@ -72,13 +72,18 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate, UIPickerVi
         addHabitView.picker.selectRow(0, inComponent: 0, animated: false) // resets to the first element in the picker
         switch selectedFrequency {
         case FrequencyConstants.daily:
-            pickerData = timesOfTheDay
+            pickerData = [hours.map { String(format: "%02d", $0) }, [":"], minutes.map { String(format: "%02d", $0) }]
             addHabitView.picker.isHidden = false
         case FrequencyConstants.weekly:
-            pickerData = daysOfWeekFormatted
+            pickerData = []
+            var data:[String] = []
+            for day in 1 ... daysOfWeek.count {
+                data.append(daysOfWeek[day]!)
+            }
+            pickerData.append(data)
             addHabitView.picker.isHidden = false
         case FrequencyConstants.monthly:
-            pickerData = daysOfMonth.map { "Day \($0)" }
+            pickerData = [daysOfMonth.map { "Day \($0)" }]
             addHabitView.picker.isHidden = false
         default:
             pickerData = []
@@ -87,15 +92,31 @@ class AddHabitViewController: UIViewController, AddHabitViewDelegate, UIPickerVi
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        return pickerData.count
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerData.count
+        return pickerData[component].count
     }
+    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return pickerData[row]
+        return pickerData[component][row]
     }
+    
+    func pickerView(_ pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
+        // for the ":"
+        if component == 1 {
+            return 30
+        } else {
+            return pickerView.frame.width / CGFloat(pickerData.count)
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int) -> UIView? {
+        let label = NormalLabel(textLabel: pickerData[component][row])
+        label.textAlignment = .center
+        return label
+   }
 }
 
 // MARK: - AddHabitViewDelegate
@@ -122,10 +143,12 @@ extension AddHabitViewController {
             return
         }
         let pickerValue:String
-        if frequency == FrequencyConstants.weekly {
-            pickerValue = String(daysOfWeek[pickerRow])
+        if frequency == FrequencyConstants.daily {
+            pickerValue = String(format: "%02d:%02d", pickerData[0][pickerRow], pickerData[1][pickerRow])
+        } else if frequency == FrequencyConstants.weekly {
+            pickerValue = String(daysOfWeek[pickerRow]!)
         } else {
-            pickerValue = pickerData[pickerRow]
+            pickerValue = String(daysOfMonth[pickerRow])
         }
 
         let categoryIDs = addHabitView.selectedCategories.map { $0.id! }
