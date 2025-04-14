@@ -40,7 +40,7 @@ class GroupViewController: UIViewController {
     
     override func viewDidLoad() {
         fetchAndSetGroupName()
-//        fetchAndSetGroupMemberHabits()
+        fetchAndSetGroupMemberHabitsAndUsers()
         fetchAndSetCategories()
         fetchAndSetProgressCells()
         
@@ -87,6 +87,28 @@ extension GroupViewController {
             } catch {
                 print("Error fetching group categories: \(error.localizedDescription)")
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Group categories couldn't be retrieved.")
+            }
+        }
+    }
+    
+    private func fetchAndSetGroupMemberHabitsAndUsers() {
+        Task {
+            do {
+                let categories = try await groupManager.fetchCategories(forGroupID: groupID)
+                let users = try await groupManager.fetchGroupUsers(forGroupID: groupID)
+                let usersByUID = Dictionary(uniqueKeysWithValues: users.map { ($0.id, $0) })
+                let memberHabits = try await groupManager.fetchUserHabits(
+                    forUserUID: users.map {$0.id},
+                    withCategoryIDs: categories.map{ $0.id }
+                )
+                
+                let userHabitPairs = memberHabits.map { ($0, usersByUID[$0.userUID]! ) }
+
+                groupOverviewView.categories = categories
+                groupOverviewView.userHabitPairs = userHabitPairs
+            } catch {
+                print("Error fetching group categories: \(error.localizedDescription)")
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Group member habits couldn't be retrieved.")
             }
         }
     }

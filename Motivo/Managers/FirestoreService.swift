@@ -199,9 +199,15 @@ extension FirestoreService {
 
 // MARK: - Habit collection
 extension FirestoreService {
+    // Convenience: Fetch habits that match at least one of the specified categories for a single user
     func fetchHabits(forUserUID userUID: String, forCategoryIDs categoryIDs: [String]) async throws -> [HabitModel] {
+        return try await fetchHabits(forUserUIDs: [userUID], forCategoryIDs: categoryIDs)
+    }
+    
+    // Fetch habits that match at least one of the specified categories for all users
+    func fetchHabits(forUserUIDs userUIDs: [String], forCategoryIDs categoryIDs: [String]) async throws -> [HabitModel] {
         let snapshot = try await habitCollectionRef
-            .whereField("userUID", isEqualTo: userUID)
+            .whereField("userUID", in: userUIDs)
             .whereField("categoryIDs", arrayContainsAny: categoryIDs)
             .getDocuments()
         
