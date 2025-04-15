@@ -20,6 +20,7 @@
 		A4B6CD642D7E454500BAC91C /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = A4B6CD632D7E454500BAC91C /* FirebaseFirestoreCombine-Community */; };
 		A4B6CD662D7E454500BAC91C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = A4B6CD652D7E454500BAC91C /* FirebaseStorage */; };
 		A4B6CD682D7E454500BAC91C /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = A4B6CD672D7E454500BAC91C /* FirebaseStorageCombine-Community */; };
+		A4CD1BED2DAE28E10001A3CF /* Shuffle in Frameworks */ = {isa = PBXBuildFile; productRef = A4CD1BEC2DAE28E10001A3CF /* Shuffle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4CD1BED2DAE28E10001A3CF /* Shuffle in Frameworks */,
 				A4B6CD602D7E454500BAC91C /* FirebaseDatabase in Frameworks */,
 				A4B6CD582D7E454500BAC91C /* FirebaseAnalytics in Frameworks */,
 				A4B6CD5C2D7E454500BAC91C /* FirebaseAuthCombine-Community in Frameworks */,
@@ -120,6 +122,7 @@
 				A4B6CD672D7E454500BAC91C /* FirebaseStorageCombine-Community */,
 				A4632FCA2DA475A9000B58D6 /* MockImagePicker */,
 				A4632FCD2DA475F5000B58D6 /* Kingfisher */,
+				A4CD1BEC2DAE28E10001A3CF /* Shuffle */,
 			);
 			productName = Motivo;
 			productReference = A45EF0582D768ED000497186 /* Motivo.app */;
@@ -153,6 +156,7 @@
 				A4B6CD562D7E454500BAC91C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				A4632FC92DA475A9000B58D6 /* XCRemoteSwiftPackageReference "MockImagePicker" */,
 				A4632FCC2DA475F5000B58D6 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				A4CD1BEB2DAE28E10001A3CF /* XCRemoteSwiftPackageReference "Shuffle" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A45EF0592D768ED000497186 /* Products */;
@@ -408,6 +412,14 @@
 				minimumVersion = 11.9.0;
 			};
 		};
+		A4CD1BEB2DAE28E10001A3CF /* XCRemoteSwiftPackageReference "Shuffle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mac-gallagher/Shuffle";
+			requirement = {
+				kind = exactVersion;
+				version = 0.4.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -465,6 +477,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A4B6CD562D7E454500BAC91C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseStorageCombine-Community";
+		};
+		A4CD1BEC2DAE28E10001A3CF /* Shuffle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A4CD1BEB2DAE28E10001A3CF /* XCRemoteSwiftPackageReference "Shuffle" */;
+			productName = Shuffle;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
