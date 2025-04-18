@@ -9,16 +9,16 @@ import UIKit
 
 // MARK: - ConnectionsViewController (Main Class)
 class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
-    // MARK: - Properties
-    private let connectionsManager = ConnectionsManager()
     
-//    private let headerView = HeaderView()
+    // MARK: - UI Elements
     private let tableView = UITableView()
     private var sections: [UserSection] = []
     private var buttonIndexMapping: [UIButton: IndexPath] = [:]
-    
     private let titleLabel = BoldTitleLabel(textLabel: "Connections")
+    
+    // MARK: - Properties
+    private let connectionsManager = ConnectionsManager()
+    var activeHabitWithRecordsByUserUID = Dictionary<String, [HabitWithRecord]>()
     
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -31,7 +31,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        navigationController?.setNavigationBarHidden(true, animated: false)
         loadConnections()
     }
     
@@ -48,11 +47,9 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         // Set up Header View
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-//        self.title = "Connections"
     }
     
     private func setupConstraints() {
-//        headerView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -60,11 +57,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            // Header Constraints
-//            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-//            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-//            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            headerView.heightAnchor.constraint(equalToConstant: 50),
             
             // Table Constraints
             tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
@@ -93,6 +85,13 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
                 
                 // Fetch the list of connected UserModels that are connected to the user through a group
                 let connections: [UserModel] = try await connectionsManager.fetchConnections(for: user.id)
+                
+                // Fetch active habit records for each user
+                for user in connections {
+                    let activeHabitWithRecords = try await connectionsManager.fetchActiveHabitWithRecords(forUserUID: user.id)
+                    activeHabitWithRecordsByUserUID[user.id] = activeHabitWithRecords
+                }
+                
                 self.sections = organizeUsers(connections, favoriteUIDs: user.favoriteUsers)
                 self.tableView.reloadData()
             } catch {
@@ -144,7 +143,11 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         
         print("Tapped on \(user.username)'s counter button")
 
-        // TODO: Add segue to camera for photo proof of completion
+        // Navigate to Settings page
+        let verificationVC = VerificationViewController()
+        verificationVC.user = user
+        verificationVC.habitWithRecords = activeHabitWithRecordsByUserUID[user.id] ?? []
+        navigationController?.pushViewController(verificationVC, animated: true)
     }
     
     // TODO: Add an action to the UserCell so that tapping on it will bring the current user to a profile screen of the tapped user
@@ -163,26 +166,15 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath) as! UserCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: UserCell.identifier, for: indexPath) as! UserCell
         let user = sections[indexPath.section].users[indexPath.row]
 
-        cell.configure(with: user)
+        cell.configure(withUser: user, withHabitWithRecords: activeHabitWithRecordsByUserUID[user.id] ?? [])
         buttonIndexMapping[cell.counterButton] = indexPath
         cell.counterButton.addTarget(self, action: #selector(counterTapped(_:)), for: .touchUpInside)
 
         return cell
     }
-    
-    // MARK: - HeaderViewDelegate
-    // Implement delegate methods for the HeaderView Buttons
-//    func didTapHeaderButton(_ button: HeaderButtonType) {
-//        switch button {
-//        case .menu:
-//            // TODO: Add dropdown menu for "Hide People", "View Hidden"
-//            print("Menu Tapped")
-//            break
-//        }
-//    }
 
 }
 

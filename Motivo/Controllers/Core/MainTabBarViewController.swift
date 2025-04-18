@@ -17,7 +17,7 @@ class MainTabBarViewController: UITabBarController {
         
         // Configure Tab Navigation for core view controllers
         let habitVC = UINavigationController(rootViewController: HabitViewController())
-        let chatVC = UINavigationController(rootViewController: ChatViewController())
+        let chatVC = UINavigationController(rootViewController: VerificationViewController())
         let homeVC = UINavigationController(rootViewController: HomeViewController())
         let peopleVC = UINavigationController(rootViewController: ConnectionsViewController())
         let profileVC = UINavigationController(rootViewController: ProfileViewController())

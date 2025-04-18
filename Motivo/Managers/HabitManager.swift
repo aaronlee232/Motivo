@@ -18,8 +18,8 @@ class HabitManager {
     }
     
     // Fetch habit records of habitID
-    func fetchHabitRecords(habitID: String) async throws -> [HabitRecord] {
-        return try await FirestoreService.shared.fetchHabitRecords(forHabitID: habitID)
+    func fetchHabitRecords(forHabitID: String) async throws -> [HabitRecord] {
+        return try await FirestoreService.shared.fetchHabitRecords(forHabitID: forHabitID)
     }
     
     // Add a new habit record to Firestore
