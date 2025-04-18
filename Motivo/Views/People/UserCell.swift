@@ -10,8 +10,6 @@ import UIKit
 class UserCell: UITableViewCell {
     static let identifier = "UserCell"
     
-    static let identifier = "UserCell"
-    
     let nameLabel = UILabel()
     let counterButton = UIButton(type: .system)  // Tracks number of photos waiting verification
     var habitWithRecords: [HabitWithRecord]?
