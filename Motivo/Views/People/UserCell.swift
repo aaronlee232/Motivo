@@ -9,8 +9,11 @@ import UIKit
 
 class UserCell: UITableViewCell {
     
+    static let identifier = "UserCell"
+    
     let nameLabel = UILabel()
     let counterButton = UIButton(type: .system)  // Tracks number of photos waiting verification
+    var habitWithRecords: [HabitWithRecord]?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -34,9 +37,16 @@ class UserCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with user: UserModel) {
+    func configure(withUser user: UserModel, withHabitWithRecords habitWithRecords: [HabitWithRecord]) {
         nameLabel.text = user.username
-        counterButton.setTitle("\(user.unverifiedPhotos)", for: .normal)
+        self.habitWithRecords = habitWithRecords
+        
+        var unverifiedPhotoCount = 0
+        habitWithRecords.forEach { entry in
+            unverifiedPhotoCount += entry.record.unverifiedPhotoURLs.count
+        }
+        
+        counterButton.setTitle("\(unverifiedPhotoCount)", for: .normal)
     }
 }
 

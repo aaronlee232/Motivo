@@ -5,6 +5,8 @@
 //  Created by Aaron Lee on 3/11/25.
 //
 
+import Foundation
+
 // TODO: one screen for hiding / showing contacts, having local data and updating in firebase
 
 class ConnectionsManager {
@@ -49,5 +51,40 @@ class ConnectionsManager {
         }
 
         return userUIDs
+    }
+    
+    func fetchActiveHabitWithRecords(forUserUID userUID: String) async throws -> [HabitWithRecord] {
+        var activeHabitEntries: [HabitWithRecord] = []
+        print("UID: \(userUID)")
+        // Fetch list of habits from user
+        let habits = try await FirestoreService.shared.fetchHabits(forUserUID: userUID)
+        print("habits: \(habits)")
+        // Get the active habit record for each habit of the user
+        for habit in habits {
+            // contains inactive and active record
+            let records = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+            print("records: \(records)")
+            let rawHabitEntries: [HabitWithRecord] = records.map {HabitWithRecord(habit: habit, record: $0) }
+            print("Raw Habit Entries \(rawHabitEntries)")
+            let filteredHabitEntries = rawHabitEntries.filter { $0.isActive }
+            
+            
+            print("Filtered Habit Entries \(filteredHabitEntries)")
+            
+            // Sanity Check: there should only be one active record per habit
+            if filteredHabitEntries.count > 1 {
+                fatalError("This should not have happened. There should only be one active record per habit")
+            }
+            
+            // If there is an active record, add it to the list of active habit records
+            if !filteredHabitEntries.isEmpty {
+                let activeHabitEntry = filteredHabitEntries.first!
+                activeHabitEntries.append(activeHabitEntry)
+            }
+            
+            print("Active Habit Entries \(activeHabitEntries)")
+        }
+        
+        return activeHabitEntries
     }
 }
