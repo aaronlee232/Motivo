@@ -21,13 +21,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        // Check if user is logged in. Redirect to main page if logged in, login if otherwise.
-        if Auth.auth().currentUser != nil {
-            window?.rootViewController = MainTabBarViewController()
-        } else {
-            window?.rootViewController = AuthFlowViewController()
-        }
-        
+//        // Check if user is logged in. Redirect to main page if logged in, login if otherwise.
+//        if Auth.auth().currentUser != nil {
+//            window?.rootViewController = MainTabBarViewController()
+//        } else {
+//            window?.rootViewController = AuthFlowViewController()
+//        }
+        let tempVC = UIViewController()
+        tempVC.view.backgroundColor = .systemBackground
+        window?.rootViewController = tempVC
         window?.makeKeyAndVisible()
         
         observeAuthState()
@@ -38,7 +40,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         authListenerHandle = Auth.auth().addStateDidChangeListener() {
             [weak self]  (auth,user) in
             guard let self = self else { return } // Avoid memory leaks
-            
+            print("addStateDidChangeListener")
             if let user = user {
                 // Login or Register Logic
                 Task {

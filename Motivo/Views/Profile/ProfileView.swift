@@ -24,11 +24,11 @@ class ProfileView: UIView {
     private let titleLabel = BoldTitleLabel(textLabel: "My Profile")
     private let profileImageView = UIImageView(image: UIImage(systemName: "person.circle.fill"))
     var username = NormalLabel()
-    private let myHabitsCountLabel = NormalLabel(textLabel: "0")
+    var myHabitsCountLabel = NormalLabel(textLabel: "0")
     private let myHabitsLabel = SubtitleLabel(textLabel: "Habits")
-    private let myGroupsCountLabel = NormalLabel(textLabel: "0")
+    var myGroupsCountLabel = NormalLabel(textLabel: "0")
     private let myGroupsLabel = SubtitleLabel(textLabel: "Groups")
-    private let myDaysCountLabel = NormalLabel(textLabel: "0")
+    var myDaysCountLabel = NormalLabel(textLabel: "0")
     private let myDaysLabel = SubtitleLabel(textLabel: "Days")
     private let groupsLabel = NormalLabel(textLabel: "Groups")
     
@@ -43,7 +43,7 @@ class ProfileView: UIView {
         didSet {
             groupTableView.updateTableData(givenList: groupList)
             tableView.reloadData()
-            setupData()
+//            setupData()
         }
     }
     
@@ -58,7 +58,7 @@ class ProfileView: UIView {
     }
     
     private func setupData() {
-        myGroupsCountLabel.text = String(groupList.count)
+//        myGroupsCountLabel.text = String(groupList.count)
         // TODO: a bit slow loading time, but not sure how to fix it yet
         // TODO: Habits and Days are static right now
     }

@@ -9,17 +9,19 @@ import UIKit
 // Picker data
 // TODO: move to a constants file later
 let daysOfMonth = [Int](1...31)
-let daysOfWeek = [Int](1...7)
-let daysOfWeekFormatted = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-var timesOfTheDay: [String] = {
-    var list = [String]()
-    for hour in 0..<24 {
-        for minute in 0..<60 {
-            list.append(String(format: "%02d:%02d", hour, minute))
-        }
-    }
-    return list
-}()
+//let daysOfWeek = [Int](1...7)
+let daysOfWeek = [1: "Sunday", 2: "Monday", 3: "Tuesday", 4: "Wednesday", 5: "Thursday", 6: "Friday", 7: "Saturday"]
+//var timesOfTheDay: [String] = {
+//    var list = [String]()
+//    for hour in 0..<24 {
+//        for minute in 0..<60 {
+//            list.append(String(format: "%02d:%02d", hour, minute))
+//        }
+//    }
+//    return list
+//}()
+let hours = [Int](0..<24)
+let minutes = [Int](0..<60)
 
 protocol AddHabitViewDelegate: AddHabitViewController {
     func didTapSaveHabit()
@@ -29,16 +31,17 @@ class AddHabitView: UIView, CategorySelectionViewDelegate {
     
     // MARK: - UI Elements
     private let titleLabel = BoldTitleLabel(textLabel: "Add Habit")
-    private let visibilityLabel = UILabel()
+    private let visibilityLabel = NormalLabel(textLabel: "Visibility")
     private let visibilitySegmentedControl = SegCtrl(items: ["Public", "Private"])
-    let nameTextField = UITextField()
-    let unitTextField = UITextField()
-    let goalTextField = UITextField()
+    let nameTextField = GreyTextField(placeholderText: "Enter habit name", isSecure: false)
+    let unitTextField = GreyTextField(placeholderText: "Enter unit (e.g., Times, Glasses)", isSecure: false)
+    let goalTextField = GreyTextField(placeholderText: "Enter goal number", isSecure: false)
     let frequencySegmentedControl = SegCtrl(items: FrequencyConstants.frequencies)
-    private let categoryLabel = UILabel()
-    private let saveButton = UIButton(type: .system)
-    let categorySelectionView = CategorySelectionView()
+    private let deadlineLabel = NormalLabel(textLabel: "Deadline")
     let picker = UIPickerView()
+    private let categoryLabel = NormalLabel(textLabel: "Select Categories:")
+    private let saveButton = ActionButton(title: "SAVE HABIT")
+    let categorySelectionView = CategorySelectionView()
     
     // MARK: - Properties
     var selectedCategories = Set<CategoryModel>()
@@ -61,23 +64,27 @@ extension AddHabitView {
         titleLabel.textAlignment = .center
         
         // Visibility Selector
-        visibilityLabel.text = "Visibility"
+//        visibilityLabel.text = "Visibility"
+        visibilityLabel.textAlignment = .left
         visibilitySegmentedControl.selectedSegmentIndex = 0
         
         // Text Fields
-        nameTextField.placeholder = "Enter habit name"
-        unitTextField.placeholder = "Enter unit (e.g., Times, Glasses)"
-        goalTextField.placeholder = "Enter goal number"
+//        nameTextField.placeholder = "Enter habit name"
+//        unitTextField.placeholder = "Enter unit (e.g., Times, Glasses)"
+//        goalTextField.placeholder = "Enter goal number"
         goalTextField.keyboardType = .numberPad
         
         // Frequency Selector
         frequencySegmentedControl.selectedSegmentIndex = 0
         
         // Category Checkboxes
-        categoryLabel.text = "Select Categories:"
+//        categoryLabel.text = "Select Categories:"
+        categoryLabel.textAlignment = .left
+        
+        deadlineLabel.textAlignment = .left
         
         // Save Button
-        saveButton.setTitle("Save Habit", for: .normal)
+//        saveButton.setTitle("Save Habit", for: .normal)
         saveButton.addTarget(self, action: #selector(handleDidTapSaveHabit), for: .touchUpInside)
         
         // Layout
@@ -85,7 +92,7 @@ extension AddHabitView {
             visibilityLabel, visibilitySegmentedControl,
             nameTextField, unitTextField,
             goalTextField, frequencySegmentedControl,
-            picker,
+            deadlineLabel, picker,
             categoryLabel, categorySelectionView,
         ])
         stackView.axis = .vertical
@@ -107,12 +114,13 @@ extension AddHabitView {
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            picker.heightAnchor.constraint(equalToConstant: 150),
 //            categorySelectionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
 //            categorySelectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
 //            categorySelectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -120,7 +128,10 @@ extension AddHabitView {
             
             saveButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
             saveButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -50),
-            saveButton.centerXAnchor.constraint(equalTo: centerXAnchor)
+            saveButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            saveButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            saveButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            saveButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
