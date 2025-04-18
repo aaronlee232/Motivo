@@ -1,5 +1,5 @@
 {
-  "originHash" : "7a14d30b369ab914858269a9a740363dccb2c0521fa073d990a7b69e3e72a234",
+  "originHash" : "5d4fa9c838c7d4b6da25721c3c166d2f623155807e75d5637db337143d5e3da5",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
         "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "shuffle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mac-gallagher/Shuffle",
+      "state" : {
+        "revision" : "6182c78f1d99801a9e0fbac06b30717f4c79fc2f",
+        "version" : "0.4.2"
       }
     },
     {
