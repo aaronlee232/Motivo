@@ -7,15 +7,32 @@
 
 import UIKit
 import Shuffle
+import Kingfisher
 
 class VerificationViewController: UIViewController {
+    // MARK: - UI Elements
     let cardStack = SwipeCardStack()
     
-    private let cardImages: [UIImage] = [
-        UIImage(named: "cardImage1")!,
-        UIImage(named: "cardImage2")!,
-        UIImage(named: "cardImage3")!
-    ]
+    // MARK: - Properties
+    var user: UserModel?
+    var cardImages: [UIImage] = []
+    var habitWithRecords: [HabitWithRecord] = [] {
+        didSet {
+            Task {
+                do {
+                    for entry in habitWithRecords {
+                        for url in entry.record.unverifiedPhotoURLs {
+                            let image = try await ImageDownloader.fetchImage(from: url)
+                            cardImages.append(image)
+                        }
+                    }
+                } catch {
+                    print("Failed to fetch image: \(error)")
+                }
+                cardStack.reloadData()
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
