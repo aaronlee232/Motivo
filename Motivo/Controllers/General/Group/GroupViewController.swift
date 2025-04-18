@@ -40,7 +40,7 @@ class GroupViewController: UIViewController {
     
     override func viewDidLoad() {
         fetchAndSetGroupName()
-//        fetchAndSetGroupMemberHabits()
+        fetchAndSetGroupMemberHabitsAndUsers()
         fetchAndSetCategories()
         fetchAndSetProgressCells()
         
@@ -87,6 +87,28 @@ extension GroupViewController {
             } catch {
                 print("Error fetching group categories: \(error.localizedDescription)")
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Group categories couldn't be retrieved.")
+            }
+        }
+    }
+    
+    private func fetchAndSetGroupMemberHabitsAndUsers() {
+        Task {
+            do {
+                let categories = try await groupManager.fetchCategories(forGroupID: groupID)
+                let users = try await groupManager.fetchGroupUsers(forGroupID: groupID)
+                let usersByUID = Dictionary(uniqueKeysWithValues: users.map { ($0.id, $0) })
+                let memberHabits = try await groupManager.fetchUserHabits(
+                    forUserUID: users.map {$0.id},
+                    withCategoryIDs: categories.map{ $0.id }
+                )
+                
+                let userHabitPairs = memberHabits.map { ($0, usersByUID[$0.userUID]! ) }
+
+                groupOverviewView.categories = categories
+                groupOverviewView.userHabitPairs = userHabitPairs
+            } catch {
+                print("Error fetching group categories: \(error.localizedDescription)")
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Group member habits couldn't be retrieved.")
             }
         }
     }
@@ -186,5 +208,37 @@ extension GroupViewController {
     
     @objc private func didTapLeaveGroupButton() {
         // TODO: Implement leave group confirmation alert and segue
+        let controller = UIAlertController(
+            title: "Leave Group?",
+            message: "Are you sure you want to leave this group?",
+            preferredStyle: .alert
+        )
+        
+        controller.addAction(UIAlertAction(title: "Leave", style: .destructive) {_ in
+            Task {
+                do {
+                    guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
+                        AlertUtils.shared.showAlert(self, title: "Somthing went wrong", message: "Current user session lost")
+                        return
+                    }
+                            
+                    let removedMemberships = try await self.groupManager.removeUserFromGroup(withUserUID: user.uid, withGroupWithID: self.groupID)
+                    
+                    // Check for possible empty removal
+                    if removedMemberships.isEmpty {
+                        AlertUtils.shared.showAlert(self, title: "Somthing went wrong", message: "Unable leave group")
+                        return
+                    }
+                    
+                    // Return to group screen
+                    self.navigationController?.popViewController(animated: true)
+                } catch {
+                    AlertUtils.shared.showAlert(self, title: "Somthing went wrong", message: "Unable to leave group")
+                }
+            }
+        })
+        
+        controller.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(controller, animated: true)
     }
 }

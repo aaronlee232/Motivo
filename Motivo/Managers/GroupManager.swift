@@ -56,6 +56,19 @@ class GroupManager {
         return try await fetchGroupMetadataList(withGroupIDs: groupIDs)
     }
     
+    func fetchGroupUsers(forGroupID groupID: String) async throws -> [UserModel] {
+        let group = try await FirestoreService.shared.fetchGroup(withGroupID: groupID)
+        let memberships = try await FirestoreService.shared.fetchGroupMemberships(forGroupID: groupID)
+        let userUIDs = memberships.map { $0.userUID }
+        let users = try await FirestoreService.shared.fetchUsers(forUserUIDs: userUIDs)
+        
+        return users
+    }
+    
+    func fetchUserHabits(forUserUID userUIDs: [String], withCategoryIDs categoryIDs: [String]) async throws -> [HabitModel] {
+        return try await FirestoreService.shared.fetchHabits(forUserUIDs: userUIDs, forCategoryIDs: categoryIDs)
+    }
+    
     func fetchProgressCells(forGroupID groupID: String) async throws -> [ProgressCell] {
         let group = try await FirestoreService.shared.fetchGroup(withGroupID: groupID)
         let memberships = try await FirestoreService.shared.fetchGroupMemberships(forGroupID: groupID)
@@ -117,5 +130,22 @@ class GroupManager {
         let group = try await FirestoreService.shared.fetchGroup(withGroupID: groupID)
         let categories = try await FirestoreService.shared.fetchCategories(withCategoryIDs: group!.groupCategoryIDs)
         return categories
+    }
+    
+    func removeUserFromGroup(withUserUID userUID: String, withGroupWithID groupID: String) async throws -> [GroupMembershipModel] {
+        
+        
+        let deletedMemberships = try await FirestoreService.shared.deleteGroupMembership(
+            withUserUID: userUID,
+            withGroupWithID: groupID
+        )
+        
+        // Delete group if there are no members remaining
+        let remainingMembers = try await FirestoreService.shared.fetchGroupMemberships(forGroupID: groupID)
+        if remainingMembers.isEmpty {
+            let _ = try await FirestoreService.shared.deleteGroup(withGroupWithID: groupID)
+        }
+        
+        return deletedMemberships
     }
 }
