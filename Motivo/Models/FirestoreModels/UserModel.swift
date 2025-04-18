@@ -10,7 +10,7 @@ struct UserModel: Codable {
     @DocumentID var id: String!  // Firebase Authentication UID
     var username: String
     var email: String
-    var unverifiedPhotos: Int = 0
+//    var unverifiedPhotos: Int = 0
     var favoriteUsers: [String] = []
     var hiddenUsers: [String] = []
 }

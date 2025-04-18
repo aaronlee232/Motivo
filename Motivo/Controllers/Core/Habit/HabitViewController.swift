@@ -141,53 +141,35 @@ extension HabitViewController: HabitViewDelegate {
     func plusButtonTapped(with habit: HabitModel) {
         Task {
             do {
-                let existingRecords = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
-
-                // if an existing active habit record is found
-                if !existingRecords.isEmpty {
-                    // Defines the window for "active" habit records
-                    var startDate: Date
-                    var deadlineDate: Date
-                    switch habit.frequency {
-                    case FrequencyConstants.daily:
-                        deadlineDate = DateUtils.shared.getDeadlineDate(forDailyDeadline: habit.deadline)
-                        startDate = DateUtils.shared.getStartDate(forDailyDeadlineDate: deadlineDate)
-                    case FrequencyConstants.weekly:
-                        deadlineDate = DateUtils.shared.getDeadlineDate(forWeeklyDeadline: habit.deadline)
-                        startDate = DateUtils.shared.getStartDate(forWeeklyDeadlineDate: deadlineDate)
-                    case FrequencyConstants.monthly:
-                        deadlineDate = DateUtils.shared.getDeadlineDate(forMonthlyDeadline: habit.deadline)
-                        startDate = DateUtils.shared.getStartDate(forMonthlyDeadlineDate: deadlineDate)
-                    default:
-                        fatalError("This should not have happened. \"\(habit.frequency)\" is an invalid frequency.")
-                    }
-                    
-                    // Check if record timestamp is active
-                    let records = existingRecords.filter {
-                        ISO8601DateFormatter().date(from: $0.timestamp)! >= startDate &&
-                        ISO8601DateFormatter().date(from: $0.timestamp)! <= deadlineDate
-                    }
-                    
-                    // Sanity check: there should only be one active record
-                    guard records.count == 1,
-                          let activeRecord = records.first else {
-                        fatalError("This should not have happened. There should only be one active habit record per habit")
-                    }
-                    
-                    activeHabitRecord = activeRecord
-                    
+                var rawHabitWithRecords: [HabitWithRecord] = []
+                let records = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+                for record in records {
+                    rawHabitWithRecords.append(HabitWithRecord(habit: habit, record: record))
+                }
+                print("rawHabitWithRecords: ", rawHabitWithRecords)
+                let activeHabitWithRecords = rawHabitWithRecords.filter { $0.isActive }
+                print("activeHabitWithRecords: ", activeHabitWithRecords)
+                // Sanity Check - There should only be one active record for a given habit
+                if activeHabitWithRecords.count > 1 {
+                    fatalError("This should not have happened. There are more than 1 active records for a given habit")
+                }
+                
+                if !activeHabitWithRecords.isEmpty {
+                    // Use existing active habit record if available
+                    activeHabitRecord = activeHabitWithRecords.first!.record
                 } else {
-                    let newHabitRecord = HabitRecord(habitID: habit.id,
-                                              unverifiedPhotoURLs: [],
-                                              verifiedPhotoURLs: [],
-                                              timestamp: ISO8601DateFormatter().string(from: Date()),
-                                              userUID: habit.userUID)
+                    // Create a new record if there are no active habit records
+                    let newHabitRecord = HabitRecord(
+                        habitID: habit.id,
+                        unverifiedPhotoURLs: [],
+                        verifiedPhotoURLs: [],
+                        timestamp: ISO8601DateFormatter().string(from: Date()),
+                        userUID: habit.userUID)
                     activeHabitRecord = try await habitManager.addHabitRecord(habitRecord: newHabitRecord)
                 }
                 
                 // Show camera and upload photo
                 showMockCamera()
-
             } catch {
                 AlertUtils.shared.showAlert(
                     self,
