@@ -15,24 +15,8 @@ class VerificationViewController: UIViewController {
     
     // MARK: - Properties
     var user: UserModel?
+    var habitWithRecordsByUserUID: Dictionary<String, [HabitWithRecord]>?
     var cardImages: [UIImage] = []
-    var habitWithRecords: [HabitWithRecord] = [] {
-        didSet {
-            Task {
-                do {
-                    for entry in habitWithRecords {
-                        for url in entry.record.unverifiedPhotoURLs {
-                            let image = try await ImageDownloader.fetchImage(from: url)
-                            cardImages.append(image)
-                        }
-                    }
-                } catch {
-                    print("Failed to fetch image: \(error)")
-                }
-                cardStack.reloadData()
-            }
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +33,23 @@ class VerificationViewController: UIViewController {
         cardStack.dataSource = self
         cardStack.delegate = self
         cardStack.reloadData()
+    }
+    
+    func configureWith(user: UserModel, habitWithRecordsByUserUID: Dictionary<String, [HabitWithRecord]>) {
+        Task {
+            do {
+                let habitWithRecords = habitWithRecordsByUserUID[user.id] ?? []
+                for entry in habitWithRecords {
+                    for url in entry.record.unverifiedPhotoURLs {
+                        let image = try await ImageDownloader.fetchImage(from: url)
+                        cardImages.append(image)
+                    }
+                }
+            } catch {
+                print("Failed to fetch image: \(error)")
+            }
+            cardStack.reloadData()
+        }
     }
     
     func card(fromImage image: UIImage) -> SwipeCard {
