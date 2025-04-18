@@ -55,8 +55,8 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
         
     }
     
-    // Loading in username
-    // TODO: might need to move code for calculating groups and days in here too
+    // Loading in username, habits, and days
+    // Same as in HomeViewController.swift
     func loadUserStats() {
         Task {
             do {
@@ -66,7 +66,11 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
                 guard let username = try await statsManager.fetchCurrentUsername(forUserUID: userUID) else {
                     fatalError("Error: Failed to fetch user.")
                 }
+                let habits = try await statsManager.fetchCurrentNumberOfHabits(forUserUID: userUID) // default will be 0
                 self.profileView.username.text = username
+                self.profileView.myHabitsCountLabel.text = String(habits)
+                // Notes for days:
+                // aggregated completed habits, but can tap it to show a popup of daily, weekly, monthly completion
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Error loading in user stats.")
                 print("Error loading in user stats: \(error.localizedDescription)")
@@ -85,6 +89,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
                 
                 groupMetadataList = try await groupManager.fetchGroupMetadataList(forUserUID: user.uid)
                 profileView.groupList = groupMetadataList
+                self.profileView.myGroupsCountLabel.text = String(groupMetadataList.count)
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to retrieve user's group metadata list")
             }

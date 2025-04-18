@@ -11,4 +11,9 @@ class StatsManager {
         let user = try await FirestoreService.shared.fetchUser(forUserUID: userUID)
         return user?.username ?? "Unknown Username"
     }
+    
+    func fetchCurrentNumberOfHabits(forUserUID userUID: String) async throws -> Int {
+        let numberOfHabits = try await FirestoreService.shared.fetchHabits(forUserUID: userUID)
+        return numberOfHabits.count
+    }
 }
