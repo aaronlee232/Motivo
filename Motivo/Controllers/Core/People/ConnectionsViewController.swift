@@ -92,8 +92,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
                     activeHabitWithRecordsByUserUID[user.id] = activeHabitWithRecords
                 }
                 
-                print(activeHabitWithRecordsByUserUID)
-                
                 self.sections = organizeUsers(connections, favoriteUIDs: user.favoriteUsers)
                 self.tableView.reloadData()
             } catch {
@@ -145,7 +143,10 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         
         print("Tapped on \(user.username)'s counter button")
 
-        // TODO: Add segue to camera for photo proof of completion
+        // Navigate to Settings page
+        let verificationVC = VerificationViewController()
+        verificationVC.habitWithRecords = activeHabitWithRecordsByUserUID[user.id] ?? []
+        navigationController?.pushViewController(verificationVC, animated: true)
     }
     
     // TODO: Add an action to the UserCell so that tapping on it will bring the current user to a profile screen of the tapped user
