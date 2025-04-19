@@ -43,7 +43,6 @@ class ProfileView: UIView {
         didSet {
             groupTableView.updateTableData(givenList: groupList)
             tableView.reloadData()
-//            setupData()
         }
     }
     
@@ -55,12 +54,6 @@ class ProfileView: UIView {
     
     required init?(coder: NSCoder) {
          fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupData() {
-//        myGroupsCountLabel.text = String(groupList.count)
-        // TODO: a bit slow loading time, but not sure how to fix it yet
-        // TODO: Habits and Days are static right now
     }
     
     private func setupUI() {

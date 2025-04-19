@@ -69,7 +69,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
                 let habits = try await statsManager.fetchCurrentNumberOfHabits(forUserUID: userUID) // default will be 0
                 self.profileView.username.text = username
                 self.profileView.myHabitsCountLabel.text = String(habits)
-                // Notes for days:
+                // TODO: Notes for days:
                 // aggregated completed habits, but can tap it to show a popup of daily, weekly, monthly completion
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Error loading in user stats.")

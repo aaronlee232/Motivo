@@ -51,27 +51,32 @@ class VerificationViewController: UIViewController {
         cardStack.reloadData()
     }
     
-    func card(fromImage image: UIImage) -> SwipeCard {
-        let card = SwipeCard()
-        card.swipeDirections = [.left, .right]
-        card.content = UIImageView(image: image)
-        card.content?.contentMode = .scaleAspectFit
-
-        let leftOverlay = UIView()
-        leftOverlay.backgroundColor = .systemRed
-
-        let rightOverlay = UIView()
-        rightOverlay.backgroundColor = .systemGreen
-
-        card.setOverlays([.left: leftOverlay, .right: rightOverlay])
-
-        return card
-    }
+//    func card(fromImage image: UIImage) -> SwipeCard {
+//        let card = SwipeCard()
+//        card.backgroundColor = .systemBlue
+//        card.swipeDirections = [.left, .right]
+//        card.content = UIImageView(image: image)
+//        card.content?.contentMode = .scaleAspectFit
+//
+//        let leftOverlay = UIView()
+//        leftOverlay.backgroundColor = .systemRed
+//
+//        let rightOverlay = UIView()
+//        rightOverlay.backgroundColor = .systemGreen
+//
+//        card.setOverlays([.left: leftOverlay, .right: rightOverlay])
+//
+//        return card
+//    }
 }
 
 extension VerificationViewController: SwipeCardStackDataSource, SwipeCardStackDelegate {
     func cardStack(_ cardStack: SwipeCardStack, cardForIndexAt index: Int) -> SwipeCard {
-        return card(fromImage: cardImages[index])
+        // TODO: create a view that makes the card with description of the user and habit, maybe date
+        // Create a footer with arrow keys and x and check mark to do the same things that swiping does
+        // Another footer if want to skip someone and go to next connection
+        let verificationCard = VerificationCard()
+        return verificationCard.card(fromUser: "user", fromHabit: "habit", fromImage: cardImages[index])
     }
 
     func numberOfCards(in cardStack: SwipeCardStack) -> Int {

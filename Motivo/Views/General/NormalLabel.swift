@@ -37,6 +37,10 @@ class NormalLabel: UILabel {
         font = UIFont(name: currentFont, size: fontSize)
     }
     
+//    func setText(textLabel: String) {
+//        text = textLabel
+//    }
+    
     func changeFontSize(fontSize: Int) {
         self.fontSize = CGFloat(fontSize)
         font = UIFont(name: currentFont, size: self.fontSize)
