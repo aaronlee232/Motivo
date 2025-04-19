@@ -18,6 +18,7 @@ class FirestoreService {
     let categoryCollectionRef:CollectionReference
     let habitCollectionRef: CollectionReference
     let habitRecordCollectionRef: CollectionReference
+    let voteCollectionRef: CollectionReference
     
     init() {
         userCollectionRef = db.collection(FirestoreCollection.user)
@@ -26,6 +27,7 @@ class FirestoreService {
         categoryCollectionRef = db.collection(FirestoreCollection.category)
         habitCollectionRef = db.collection(FirestoreCollection.habit)
         habitRecordCollectionRef = db.collection(FirestoreCollection.habitRecord)
+        voteCollectionRef = db.collection(FirestoreCollection.vote)
     }
     
     enum FirestoreError: Error {
@@ -284,6 +286,24 @@ extension FirestoreService {
 
 // MARK: - HabitRecord Collection
 extension FirestoreService {
+    // Convenience: Fetch habit record document with specified habit record id
+    func fetchHabitRecord(forHabitRecordID habitRecordID: String) async throws -> HabitRecord? {
+        let habitRecord = try await fetchHabitRecords(forHabitRecordIDs: [habitRecordID]).first
+        return habitRecord
+    }
+    
+    // Fetch all habit records documents of specified habit record ids
+    func fetchHabitRecords(forHabitRecordIDs habitRecordIDs: [String]) async throws -> [HabitRecord] {
+        let snapshot = try await habitRecordCollectionRef
+            .whereField(FieldPath.documentID(), in: habitRecordIDs)
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: HabitRecord.self)
+        }
+    }
+    
+    // Fetch all habit records for a given habit with the given habit id
     func fetchHabitRecords(forHabitID habitID: String) async throws -> [HabitRecord] {
         let snapshot = try await habitRecordCollectionRef
             .whereField("habitID", isEqualTo: habitID)
@@ -294,14 +314,34 @@ extension FirestoreService {
         }
     }
     
+    // Add new habit record
     func addHabitRecord(habitRecord: HabitRecord) async throws -> HabitRecord {
         let documentRef = try habitRecordCollectionRef.addDocument(from: habitRecord)
         let snapshot = try await documentRef.getDocument()
         return try snapshot.data(as: HabitRecord.self)
     }
     
-    func updateHabitRecord(habitRecord: HabitRecord) throws {
+    // Update habitRecord with given habit record
+    func updateHabitRecord(withHabitRecord habitRecord: HabitRecord) throws {
         let recordDocument = habitRecordCollectionRef.document(habitRecord.id!)
         try recordDocument.setData(from: habitRecord, merge: true)
+    }
+}
+
+// MARK: - Vote Collection
+extension FirestoreService {
+    func fetchVotes(forUserUID userUID: String) async throws -> [VoteModel] {
+        let snapshot = try await voteCollectionRef
+            .whereField("voterUID", isEqualTo: userUID)
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: VoteModel.self)
+        }
+    }
+    
+    func addVote(vote: VoteModel) throws {
+        let voteDocument = voteCollectionRef.document()
+        try voteDocument.setData(from: vote)
     }
 }
