@@ -81,4 +81,8 @@ class ConnectionsManager {
         
         return activeHabitEntries
     }
+    
+    func fetchVotes(forUserUID userUID: String) async throws -> [VoteModel] {
+        return try await FirestoreService.shared.fetchVotes(forUserUID: userUID)
+    }
 }

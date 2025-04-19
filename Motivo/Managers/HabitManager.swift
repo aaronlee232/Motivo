@@ -29,7 +29,7 @@ class HabitManager {
     
     // Update an existing habit record
     func updateHabitRecord(withHabitRecord: HabitRecord) async throws {
-        try FirestoreService.shared.updateHabitRecord(habitRecord: withHabitRecord)
+        try FirestoreService.shared.updateHabitRecord(withHabitRecord: withHabitRecord)
     }
     
     // Uploads habit image to Firebase Storage

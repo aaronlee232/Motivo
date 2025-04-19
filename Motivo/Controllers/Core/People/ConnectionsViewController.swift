@@ -7,6 +7,11 @@
 
 import UIKit
 
+struct VotedPhoto: Hashable {
+    let habitRecordID: String
+    let photoURL: String
+}
+
 // MARK: - ConnectionsViewController (Main Class)
 class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -18,7 +23,8 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     
     // MARK: - Properties
     private let connectionsManager = ConnectionsManager()
-    var activeHabitWithRecordsByUserUID = Dictionary<String, [HabitWithRecord]>()
+    private var activeHabitWithRecordsByUserUID = Dictionary<String, [HabitWithRecord]>()
+    private var votedPhotoSet: Set<VotedPhoto> = Set()
     
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -31,6 +37,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        loadVotes()
         loadConnections()
     }
     
@@ -68,6 +75,22 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     
     // MARK: - Data Handling
     // Retrieve the current user's connections and organize them into table UserSections
+    func loadVotes() {
+        Task {
+            do {
+                // Retrieve logged in user's auth instance
+                guard let userAuthInstance = AuthManager.shared.getCurrentUserAuthInstance() else {
+                    print("Error: No authenticated user.")
+                    return
+                }
+                
+                let votes = try await connectionsManager.fetchVotes(forUserUID: userAuthInstance.uid)
+                votedPhotoSet = Set(votes.map { VotedPhoto(habitRecordID: $0.habitRecordID, photoURL: $0.photoURL) })
+                tableView.reloadData()
+            }
+        }
+    }
+    
     func loadConnections() {
         Task {
             do {
@@ -138,14 +161,16 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     // MARK: - Actions
     @objc func counterTapped(_ sender: UIButton) {
         guard let indexPath = buttonIndexMapping[sender] else { return }
-        
         let user = sections[indexPath.section].users[indexPath.row]
-        
-        print("Tapped on \(user.username)'s counter button")
 
         // Navigate to Settings page
         let verificationVC = VerificationViewController()
-        verificationVC.configureWith(user: user, habitWithRecordsByUserUID: activeHabitWithRecordsByUserUID)
+        verificationVC.configureWith(
+            user: user,
+            habitWithRecordsByUserUID: activeHabitWithRecordsByUserUID,
+            votedPhotoSet: votedPhotoSet
+        )
+        
         navigationController?.pushViewController(verificationVC, animated: true)
     }
     
@@ -168,7 +193,11 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         let cell = tableView.dequeueReusableCell(withIdentifier: UserCell.identifier, for: indexPath) as! UserCell
         let user = sections[indexPath.section].users[indexPath.row]
 
-        cell.configure(withUser: user, withHabitWithRecords: activeHabitWithRecordsByUserUID[user.id] ?? [])
+        cell.configure(
+            withUser: user,
+            withHabitWithRecords: activeHabitWithRecordsByUserUID[user.id] ?? [],
+            withVotedPhotoSet: votedPhotoSet
+        )
         buttonIndexMapping[cell.counterButton] = indexPath
         cell.counterButton.addTarget(self, action: #selector(counterTapped(_:)), for: .touchUpInside)
 

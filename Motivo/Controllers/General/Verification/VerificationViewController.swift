@@ -9,14 +9,24 @@ import UIKit
 import Shuffle
 import Kingfisher
 
+struct CardData {
+    let image: UIImage
+    let photoURL: String
+    let habit: HabitModel
+    let record: HabitRecord
+    
+    // TODO: ...Other info to display on card
+}
+
 class VerificationViewController: UIViewController {
     // MARK: - UI Elements
     let cardStack = SwipeCardStack()
     
     // MARK: - Properties
-    var user: UserModel?
+    let verificationManager = VerificationManager()
+    var user: UserModel!
     var habitWithRecordsByUserUID: Dictionary<String, [HabitWithRecord]>?
-    var cardImages: [UIImage] = []
+    var cardData: [CardData] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,14 +45,30 @@ class VerificationViewController: UIViewController {
         cardStack.reloadData()
     }
     
-    func configureWith(user: UserModel, habitWithRecordsByUserUID: Dictionary<String, [HabitWithRecord]>) {
+    func configureWith(user: UserModel, habitWithRecordsByUserUID: Dictionary<String, [HabitWithRecord]>, votedPhotoSet: Set<VotedPhoto>) {
         Task {
             do {
-                let habitWithRecords = habitWithRecordsByUserUID[user.id] ?? []
+                self.user = user
+                guard let habitWithRecords = habitWithRecordsByUserUID[user.id] else {
+                    return
+                }
+                
                 for entry in habitWithRecords {
                     for url in entry.record.unverifiedPhotoURLs {
+                        // Skip photos that have already been seen by the current user
+                        if (votedPhotoSet.contains(VotedPhoto(habitRecordID: entry.record.id, photoURL: url))) {
+                            continue
+                        }
+                        
                         let image = try await ImageDownloader.fetchImage(from: url)
-                        cardImages.append(image)
+                        cardData.append(
+                            CardData(
+                                image: image,
+                                photoURL: url,
+                                habit: entry.habit,
+                                record: entry.record
+                            )
+                        )
                     }
                 }
             } catch {
@@ -72,15 +98,56 @@ class VerificationViewController: UIViewController {
 
 extension VerificationViewController: SwipeCardStackDataSource, SwipeCardStackDelegate {
     func cardStack(_ cardStack: SwipeCardStack, cardForIndexAt index: Int) -> SwipeCard {
-        return card(fromImage: cardImages[index])
+        return card(fromImage: cardData[index].image)
     }
 
     func numberOfCards(in cardStack: SwipeCardStack) -> Int {
-        return cardImages.count
+        return cardData.count
     }
 
     func cardStack(_ cardStack: SwipeCardStack, didSwipeCardAt index: Int, with direction: SwipeDirection) {
-        print("swiped: \(direction.description)")
+        Task {
+            do {
+                // Retrieve logged in user's auth instance
+                guard let userAuthInstance = AuthManager.shared.getCurrentUserAuthInstance() else {
+                    print("Error: No authenticated user.")
+                    return
+                }
+                
+                switch direction {
+                case .left:
+                    // Create reject vote for userID and photoURL at index
+                    let vote = VoteModel(
+                        voterUID: userAuthInstance.uid,
+                        habitRecordID: cardData[index].record.id,
+                        photoURL: cardData[index].photoURL,
+                        voteType: VoteType.reject,
+                        timestamp: ISO8601DateFormatter().string(from: Date())
+                    )
+                    try verificationManager.addVote(vote)
+                case .right:
+                    // Create accept vote for userID and photoURL at index
+                    let vote = VoteModel(
+                        voterUID: userAuthInstance.uid,
+                        habitRecordID: cardData[index].record.id,
+                        photoURL: cardData[index].photoURL,
+                        voteType: VoteType.accept,
+                        timestamp: ISO8601DateFormatter().string(from: Date())
+                    )
+                    try verificationManager.addVote(vote)
+                    
+                    // Move photoURL from unverified list to verified list in active habit record
+                    try await verificationManager.approvePhoto(
+                        withPhotoURL: cardData[index].photoURL,
+                        forHabitRecordID: cardData[index].record.id
+                    )
+                default:
+                    break
+                }
+            } catch {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to verify photo")
+            }
+        }
     }
     
     func cardStack(_ cardStack: SwipeCardStack, didUndoCardAt index: Int, from direction: SwipeDirection) {
@@ -88,6 +155,6 @@ extension VerificationViewController: SwipeCardStackDataSource, SwipeCardStackDe
     }
     
     func didSwipeAllCards(_ cardStack: SwipeCardStack) {
-        // TODO: Let user know all photos have been reviewed and pop navigation controller to connections page
+        // TODO: Let user know all photos for the current user have been reviewed
     }
 }

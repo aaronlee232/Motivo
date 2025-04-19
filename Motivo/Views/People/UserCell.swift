@@ -36,13 +36,17 @@ class UserCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(withUser user: UserModel, withHabitWithRecords habitWithRecords: [HabitWithRecord]) {
+    func configure(withUser user: UserModel, withHabitWithRecords habitWithRecords: [HabitWithRecord], withVotedPhotoSet votedPhotoSet: Set<VotedPhoto>) {
         nameLabel.text = user.username
         self.habitWithRecords = habitWithRecords
         
         var unverifiedPhotoCount = 0
         habitWithRecords.forEach { entry in
-            unverifiedPhotoCount += entry.record.unverifiedPhotoURLs.count
+            // Ignore photos that have been seen and voted on
+            let unseenPhotoURLs = entry.record.unverifiedPhotoURLs.filter {
+                !votedPhotoSet.contains(VotedPhoto(habitRecordID: entry.record.id, photoURL: $0))
+            }
+            unverifiedPhotoCount += unseenPhotoURLs.count
         }
         
         counterButton.setTitle("\(unverifiedPhotoCount)", for: .normal)
