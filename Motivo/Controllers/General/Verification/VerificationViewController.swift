@@ -15,24 +15,8 @@ class VerificationViewController: UIViewController {
     
     // MARK: - Properties
     var user: UserModel?
+    var habitWithRecordsByUserUID: Dictionary<String, [HabitWithRecord]>?
     var cardImages: [UIImage] = []
-    var habitWithRecords: [HabitWithRecord] = [] {
-        didSet {
-            Task {
-                do {
-                    for entry in habitWithRecords {
-                        for url in entry.record.unverifiedPhotoURLs {
-                            let image = try await ImageDownloader.fetchImage(from: url)
-                            cardImages.append(image)
-                        }
-                    }
-                } catch {
-                    print("Failed to fetch image: \(error)")
-                }
-                cardStack.reloadData()
-            }
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,23 +35,39 @@ class VerificationViewController: UIViewController {
         cardStack.reloadData()
     }
     
-//    func card(fromImage image: UIImage) -> SwipeCard {
-//        let card = SwipeCard()
-//        card.backgroundColor = .systemBlue
-//        card.swipeDirections = [.left, .right]
-//        card.content = UIImageView(image: image)
-//        card.content?.contentMode = .scaleAspectFit
-//
-//        let leftOverlay = UIView()
-//        leftOverlay.backgroundColor = .systemRed
-//
-//        let rightOverlay = UIView()
-//        rightOverlay.backgroundColor = .systemGreen
-//
-//        card.setOverlays([.left: leftOverlay, .right: rightOverlay])
-//
-//        return card
-//    }
+    func configureWith(user: UserModel, habitWithRecordsByUserUID: Dictionary<String, [HabitWithRecord]>) {
+        Task {
+            do {
+                let habitWithRecords = habitWithRecordsByUserUID[user.id] ?? []
+                for entry in habitWithRecords {
+                    for url in entry.record.unverifiedPhotoURLs {
+                        let image = try await ImageDownloader.fetchImage(from: url)
+                        cardImages.append(image)
+                    }
+                }
+            } catch {
+                print("Failed to fetch image: \(error)")
+            }
+            cardStack.reloadData()
+        }
+    }
+    
+    func card(fromImage image: UIImage) -> SwipeCard {
+        let card = SwipeCard()
+        card.swipeDirections = [.left, .right]
+        card.content = UIImageView(image: image)
+        card.content?.contentMode = .scaleAspectFit
+
+        let leftOverlay = UIView()
+        leftOverlay.backgroundColor = .systemRed
+
+        let rightOverlay = UIView()
+        rightOverlay.backgroundColor = .systemGreen
+
+        card.setOverlays([.left: leftOverlay, .right: rightOverlay])
+
+        return card
+    }
 }
 
 extension VerificationViewController: SwipeCardStackDataSource, SwipeCardStackDelegate {

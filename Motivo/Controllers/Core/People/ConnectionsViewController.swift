@@ -145,8 +145,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
 
         // Navigate to Settings page
         let verificationVC = VerificationViewController()
-        verificationVC.user = user
-        verificationVC.habitWithRecords = activeHabitWithRecordsByUserUID[user.id] ?? []
+        verificationVC.configureWith(user: user, habitWithRecordsByUserUID: activeHabitWithRecordsByUserUID)
         navigationController?.pushViewController(verificationVC, animated: true)
     }
     
