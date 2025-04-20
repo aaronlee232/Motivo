@@ -18,7 +18,12 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     
     private let titleLabel = BoldTitleLabel(textLabel: "Verify")
     let cardStack = SwipeCardStack()
-    var verificationViewCardData:[CardData] = []
+    var verificationViewCardData:[CardData] = [] // {
+//        didSet {
+//            cardStack.reloadData()
+//            
+//        }
+//    }
     
     private let previousButton = IconButton(image: UIImage(systemName: "arrow.left")!, barType: false)
     private let nextButton = IconButton(image: UIImage(systemName: "arrow.right")!, barType: false)
@@ -62,6 +67,8 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
         
         rejectButton.addTarget(self, action: #selector(handleRejectButton), for: .touchUpInside)
         acceptButton.addTarget(self, action: #selector(handleAcceptButton), for: .touchUpInside)
+        previousButton.addTarget(self, action: #selector(handlePreviousPhotoButton), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(handleNextPhotoButton), for: .touchUpInside)
         
         rejectAcceptButtonsStackView = UIStackView(arrangedSubviews: [rejectButton, acceptButton])
         rejectAcceptButtonsStackView.axis = .horizontal
@@ -135,13 +142,45 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     }
     
     @objc func handleRejectButton() {
-//        print("index inside handleRejectButton: \(index)")
         delegate?.didTouchRejectButton(direction: .left)
     }
     
     @objc func handleAcceptButton() {
-//        print("index inside handleAcceptButton: \(index)")
         delegate?.didTouchAcceptButton(direction: .right)
+    }
+    
+    @objc func handlePreviousPhotoButton() {
+//        if numberOfCards(in: cardStack) > 1 {
+//            print(numberOfCards(in: cardStack))
+//            let currentTopCard = cardStack(cardStack, cardForIndexAt: cardStack.topCardIndex!)
+//            let nextCard = cardStack(cardStack, cardForIndexAt: cardStack.topCardIndex! + 1)
+//            cardStack.insertCard(atIndex: 0, position: numberOfCards(in: cardStack) - 1)
+//            cardStack.deleteCards(atPositions: [0])
+//            cardStack.remove
+            
+//        }
+        print("first time")
+        for v in verificationViewCardData {
+            print("habit: \(v.habit.name) and timestamp: \(v.record.timestamp)")
+        }
+        print("end of verificationViewCardData ------------")
+//        let currentTopCard = verificationViewCardData[0]
+        verificationViewCardData.insert(verificationViewCardData[verificationViewCardData.count - 1], at: 1)
+        cardStack.insertCard(atIndex: 1, position: verificationViewCardData.count - 1)
+        verificationViewCardData.remove(at: verificationViewCardData.count - 2)
+        print("second time")
+        for v in verificationViewCardData {
+            print("habit: \(v.habit.name) and timestamp: \(v.record.timestamp)")
+        }
+        print("end of verificationViewCardData ------------")
+        cardStack.swipe(.down, animated: true)
+//        verificationViewCardData.insert(currentTopCard, at: 1)
+    }
+    
+    @objc func handleNextPhotoButton() {
+        let currentTopCard = verificationViewCardData[0]
+        cardStack.swipe(.up, animated: true)
+        verificationViewCardData.append(currentTopCard)
     }
     
     func cardStack(_ cardStack: SwipeCardStack, cardForIndexAt index: Int) -> SwipeCard {

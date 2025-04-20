@@ -150,7 +150,6 @@ class VerificationViewController: UIViewController, VerificationViewDelegate {
         guard let index = verificationView.cardStack.topCardIndex else {
             return
         }
-        print("reject button touched inside vc")
         didSwipeCardAt(index: index, direction: direction)
         verificationView.cardStack.swipe(.left, animated: true)
     }
@@ -159,7 +158,6 @@ class VerificationViewController: UIViewController, VerificationViewDelegate {
         guard let index = verificationView.cardStack.topCardIndex else {
             return
         }
-        print("accept button touched inside vc")
         didSwipeCardAt(index: index, direction: direction)
         verificationView.cardStack.swipe(.right, animated: true)
     }
