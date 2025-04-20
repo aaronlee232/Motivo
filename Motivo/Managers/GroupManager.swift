@@ -9,6 +9,11 @@ import Foundation
 
 class GroupManager {
     
+    func fetchGroup(groupID: String) async throws -> GroupModel? {
+        let group = try await FirestoreService.shared.fetchGroup(withGroupID: groupID)
+        return group
+    }
+    
     // Fetch group name using groupID
     func fetchGroupName(groupID: String) async throws -> String {
         let group = try await FirestoreService.shared.fetchGroup(withGroupID: groupID)
@@ -147,5 +152,17 @@ class GroupManager {
         }
         
         return deletedMemberships
+    }
+    
+    func updateGroupName(ofGroupWithID groupID: String, withName name: String) async throws {
+        // Check if group exists before updating name
+        guard var group = try await FirestoreService.shared.fetchGroup(withGroupID: groupID) else {
+            enum FetchError: Error {
+                case runtimeError(String)
+            }
+            throw FetchError.runtimeError("Group with ID \(groupID) not found")
+        }
+        group.groupName = name
+        try FirestoreService.shared.updateGroup(withGroup: group)
     }
 }

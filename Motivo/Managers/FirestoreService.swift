@@ -123,6 +123,12 @@ extension FirestoreService {
         
         return deletedGroups
     }
+    
+    func updateGroup(withGroup group: GroupModel) throws {
+        let recordDocument = groupCollectionRef.document(group.id!)
+        try recordDocument.setData(from: group, merge: true)
+    }
+
 }
 
 // MARK: - groupMembership collection
