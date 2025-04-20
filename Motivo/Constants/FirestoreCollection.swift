@@ -12,4 +12,5 @@ struct FirestoreCollection {
     static let category = "beta_category"
     static let habit = "final_habit"
     static let habitRecord = "final_habit_record"
+    static let vote = "final_vote"
 }
