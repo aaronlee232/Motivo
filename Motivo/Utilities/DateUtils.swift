@@ -9,12 +9,17 @@ import Foundation
 
 class DateUtils {
     static let shared = DateUtils()
+    let calendar: Calendar = {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        calendar.firstWeekday = 1 // Sunday = 1
+        return calendar
+    }()
+    
     private init() {}
 
     // MARK: - Daily deadline — "HH:mm"
     func getDeadlineDate(forDailyDeadline dailyDeadline: String, relativeTo date: Date = Date()) -> Date {
-        let calendar = Calendar.current
-
         let timeParts = dailyDeadline.split(separator: ":")
         guard timeParts.count == 2,
               let hour = Int(timeParts[0]),
@@ -32,8 +37,6 @@ class DateUtils {
 
     // MARK: - Weekly deadline — "1" (Sunday) to "7" (Saturday)
     func getDeadlineDate(forWeeklyDeadline weeklyDeadline: String, relativeTo date: Date = Date()) -> Date {
-        let calendar = Calendar.current
-
         guard let targetWeekday = Int(weeklyDeadline), (1...7).contains(targetWeekday) else {
             fatalError("Invalid weekday value of \(weeklyDeadline). Must be between 1 (Sunday) and 7 (Saturday)")
         }
@@ -54,8 +57,6 @@ class DateUtils {
 
     // MARK: - Monthly deadline — "1" to "31"
     func getDeadlineDate(forMonthlyDeadline monthlyDeadline: String, relativeTo date: Date = Date()) -> Date {
-        let calendar = Calendar.current
-
         guard let habitDay = Int(monthlyDeadline) else {
             fatalError("Invalid day string passed: \(monthlyDeadline)")
         }
@@ -75,22 +76,21 @@ class DateUtils {
 
     // MARK: - Period Anchors
     func getStartOfWeek(for date: Date) -> Date {
-        let calendar = Calendar.current
-        let weekday = calendar.component(.weekday, from: date)
-        let daysToSubtract = weekday - 2 // Assuming Monday = 2
-        let startOfWeek = calendar.date(byAdding: .day, value: -daysToSubtract, to: date)!
+        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+        guard let startOfWeek = calendar.date(from: components) else {
+            fatalError("Unable to calculate start of week")
+        }
+
         return calendar.startOfDay(for: startOfWeek)
     }
 
     func getStartOfMonth(for date: Date) -> Date {
-        let calendar = Calendar.current
         var components = calendar.dateComponents([.year, .month], from: date)
         components.day = 1
         return calendar.date(from: components)!
     }
 
     func getEndOfMonth(for date: Date) -> Date {
-        let calendar = Calendar.current
         let range = calendar.range(of: .day, in: .month, for: date)!
         var components = calendar.dateComponents([.year, .month], from: date)
         components.day = range.count
