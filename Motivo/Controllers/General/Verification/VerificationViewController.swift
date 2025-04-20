@@ -146,6 +146,24 @@ class VerificationViewController: UIViewController, VerificationViewDelegate {
         }
     }
     
+    func didTouchRejectButton(direction: SwipeDirection) {
+        guard let index = verificationView.cardStack.topCardIndex else {
+            return
+        }
+        print("reject button touched inside vc")
+        didSwipeCardAt(index: index, direction: direction)
+        verificationView.cardStack.swipe(.left, animated: true)
+    }
+    
+    func didTouchAcceptButton(direction: SwipeDirection) {
+        guard let index = verificationView.cardStack.topCardIndex else {
+            return
+        }
+        print("accept button touched inside vc")
+        didSwipeCardAt(index: index, direction: direction)
+        verificationView.cardStack.swipe(.right, animated: true)
+    }
+    
 //    func card(fromImage image: UIImage) -> SwipeCard {
 //        let card = SwipeCard()
 //        card.swipeDirections = [.left, .right]
