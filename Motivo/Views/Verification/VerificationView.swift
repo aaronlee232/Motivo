@@ -18,8 +18,19 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     let cardStack = SwipeCardStack()
     var verificationViewCardData:[CardData] = []
     
+    private let previousButton = IconButton(image: UIImage(systemName: "arrow.left")!, barType: true)
+    private let nextButton = IconButton(image: UIImage(systemName: "arrow.right")!, barType: true)
+    private let rejectButton = VerifyButton(type: .reject)
+    private let acceptButton = VerifyButton(type: .accept)
+    
+    private let nextConnectionLabel = NormalLabel()
+    private let nextConnectionButton = IconButton(image: UIImage(systemName: "arrow.right")!, barType: false)
+    
+    private var previousNextButtonsStackView:UIStackView!
+    private var rejectAcceptButtonsStackView:UIStackView!
+    
     // buttons stack - includes next image toggles, x and check buttons
-    private var buttonsStackView:UIStackView!
+    private var buttonsMainStackView:UIStackView!
     
     // next connection view - shows next connection with button or doesn't show if there are no more photos to verify
     private var nextConnectionStackView:UIStackView!
@@ -39,6 +50,27 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     
     private func setupUI() {
         titleLabel.textAlignment = .center
+        
+        previousNextButtonsStackView = UIStackView(arrangedSubviews: [previousButton, nextButton])
+        previousNextButtonsStackView.axis = .horizontal
+        previousNextButtonsStackView.alignment = .center
+        previousNextButtonsStackView.spacing = 0
+        previousNextButtonsStackView.distribution = .equalSpacing
+        
+        rejectAcceptButtonsStackView = UIStackView(arrangedSubviews: [rejectButton, acceptButton])
+        rejectAcceptButtonsStackView.axis = .horizontal
+        rejectAcceptButtonsStackView.alignment = .center
+        rejectAcceptButtonsStackView.spacing = 0
+        rejectAcceptButtonsStackView.distribution = .equalSpacing
+        
+        buttonsMainStackView = UIStackView(arrangedSubviews: [previousNextButtonsStackView, rejectAcceptButtonsStackView])
+        buttonsMainStackView.axis = .vertical
+        buttonsMainStackView.alignment = .center
+        buttonsMainStackView.spacing = 10
+        
+        nextConnectionLabel.text = "Next Connection: "
+        
+        nextConnectionStackView = UIStackView(arrangedSubviews: [nextConnectionLabel, nextConnectionButton])
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardStack.translatesAutoresizingMaskIntoConstraints = false

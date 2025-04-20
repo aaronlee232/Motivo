@@ -136,19 +136,29 @@ extension AddHabitViewController {
         let selectedFrequencyIdx = addHabitView.frequencySegmentedControl.selectedSegmentIndex
         let frequency = addHabitView.frequencySegmentedControl.titleForSegment(at: selectedFrequencyIdx)
         
-        let pickerRow = addHabitView.picker.selectedRow(inComponent: 0)
-
-        guard pickerRow >= 0 && pickerRow < pickerData.count else {
-            AlertUtils.shared.showAlert(self, title: "Invalid deadline selected", message: "Please select a valid deadline")
-            return
+        let pickerRow0 = addHabitView.picker.selectedRow(inComponent: 0)
+        var pickerRow2 = 0
+        if pickerData.count > 1 {
+            // checking within bounds for days
+            pickerRow2 = addHabitView.picker.selectedRow(inComponent: 2)
+            guard pickerRow0 >= 0 && pickerRow0 < pickerData[0].count && pickerRow2 < pickerData[2].count else {
+                AlertUtils.shared.showAlert(self, title: "Invalid deadline selected", message: "Please select a valid deadline")
+                return
+            }
+        } else {
+            // assuming pickerData is 1 column, checking within bounds for week and month
+            guard pickerRow0 >= 0 && pickerRow0 < pickerData[0].count else {
+                AlertUtils.shared.showAlert(self, title: "Invalid deadline selected", message: "Please select a valid deadline")
+                return
+            }
         }
         let pickerValue:String
         if frequency == FrequencyConstants.daily {
-            pickerValue = String(format: "%02d:%02d", pickerData[0][pickerRow], pickerData[1][pickerRow])
+            pickerValue = String(format: "%02d:%02d", pickerData[0][pickerRow0], pickerData[2][pickerRow2])
         } else if frequency == FrequencyConstants.weekly {
-            pickerValue = String(daysOfWeek[pickerRow]!)
+            pickerValue = String(daysOfWeek[pickerRow0]!)
         } else {
-            pickerValue = String(daysOfMonth[pickerRow])
+            pickerValue = String(daysOfMonth[pickerRow0])
         }
 
         let categoryIDs = addHabitView.selectedCategories.map { $0.id! }

@@ -15,6 +15,8 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
     
     private var groupMetadataList: [GroupMetadata] = []
     
+    var currentHomeViewStatus:HomeViewStatusOptions = .showDefault
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -28,6 +30,7 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
         super.viewWillAppear(animated)
         loadUserStats()
         loadGroupMetadataList()
+        homeView.homeViewStatus = currentHomeViewStatus
     }
     
     private func setupHomepage() {
@@ -70,9 +73,20 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
                     AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
                     return
                 }
+                let habits = try await statsManager.fetchCurrentNumberOfHabits(forUserUID: user.uid)
                 
                 groupMetadataList = try await groupManager.fetchGroupMetadataList(forUserUID: user.uid)
                 homeView.groupList = groupMetadataList
+                if groupMetadataList.count > 0 && habits > 0 {
+                    currentHomeViewStatus = .showData
+                } else if groupMetadataList.count > 0 {
+                    currentHomeViewStatus = .noHabits
+                } else if habits > 0 {
+                    currentHomeViewStatus = .noGroups
+                } else {
+                    currentHomeViewStatus = .showDefault
+                }
+                print("homeViewStatus: \(currentHomeViewStatus)")
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to retrieve user's group metadata list")
             }

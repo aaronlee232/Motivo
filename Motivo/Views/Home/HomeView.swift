@@ -7,6 +7,13 @@
 
 import UIKit
 
+enum HomeViewStatusOptions {
+    case noGroups
+    case noHabits
+    case showDefault
+    case showData
+}
+
 protocol HomeViewDelegate:HomeViewController {
     func didTouchAddGroupPlusButton()
     func didTouchAddHabitPlusButton()
@@ -27,6 +34,8 @@ class HomeView: UIView {
     
     private var groupsStackView: UIStackView!
     private var habitsStackView: UIStackView!
+    
+    var homeViewStatus:HomeViewStatusOptions!
     
     var delegate:HomeViewDelegate?
     var groupList:[GroupMetadata] = [] {
@@ -82,12 +91,21 @@ class HomeView: UIView {
         addSubview(defaultMessageHabits)
         addSubview(tableView)
         
-        // TODO: for UI testing purposes only, need to implement checking if user already has groups
-        var hasGroups = true
-        if hasGroups {
+        if homeViewStatus == .showData {
             defaultMessageGroups.isHidden = true
             defaultMessageHabits.isHidden = true
-        } else {
+            tableView.isHidden = false
+        } else if homeViewStatus == .noGroups {
+            defaultMessageGroups.isHidden = false
+            defaultMessageHabits.isHidden = true
+            tableView.isHidden = true
+        } else if homeViewStatus == .noHabits {
+            defaultMessageGroups.isHidden = true
+            defaultMessageHabits.isHidden = false
+            tableView.isHidden = false
+        } else if homeViewStatus == .showDefault {
+            defaultMessageGroups.isHidden = false
+            defaultMessageHabits.isHidden = false
             tableView.isHidden = true
         }
         
