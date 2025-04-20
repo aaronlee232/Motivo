@@ -13,6 +13,8 @@ class VerificationCard: SwipeCard {
     
     private let username = NormalLabel()
     private let habitName = NormalLabel()
+    var usernameView:UIStackView!
+    var habitNameView:UIStackView!
     private var imageView:UIImageView!
     private var cardInfoStackView:UIStackView!
     
@@ -22,20 +24,37 @@ class VerificationCard: SwipeCard {
         card.backgroundColor = .systemBlue
         card.swipeDirections = [.left, .right]
         imageView = UIImageView(image: image)
-//        imageView.backgroundColor = .systemYellow
-//        card.content = UIImageView(image: image)
         
         // Adding user and habit information
-        username.text = user
-        habitName.text = habit
+        username.text = "Connection: \(user)"
+        habitName.text = "Habit: \(habit)"
+        
+        username.textColor = .white
+        habitName.textColor = .white
         
         username.textAlignment = .left
         habitName.textAlignment = .left
         
-        cardInfoStackView = UIStackView(arrangedSubviews: [username, habitName])
+        usernameView = UIStackView(arrangedSubviews: [username])
+        habitNameView = UIStackView(arrangedSubviews: [habitName])
+        
+        usernameView.backgroundColor = colorMainPrimary
+        habitNameView.backgroundColor = colorMainPrimary
+        
+        usernameView.layer.cornerRadius = username.fontSize / 2
+        habitNameView.layer.cornerRadius = habitName.fontSize / 2
+        
+        usernameView.layoutMargins = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
+        habitNameView.layoutMargins = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
+        usernameView.isLayoutMarginsRelativeArrangement = true
+        habitNameView.isLayoutMarginsRelativeArrangement = true
+        
+        cardInfoStackView = UIStackView(arrangedSubviews: [usernameView, habitNameView])
         cardInfoStackView.axis = .vertical
         cardInfoStackView.alignment = .leading
-        cardInfoStackView.spacing = 2
+        cardInfoStackView.spacing = 4
+
+        cardInfoStackView.layer.masksToBounds = true
         
         imageView.addSubview(cardInfoStackView)
         
@@ -49,19 +68,13 @@ class VerificationCard: SwipeCard {
         rightOverlay.backgroundColor = .systemGreen
 
         card.setOverlays([.left: leftOverlay, .right: rightOverlay])
-        
-        
-//        cardInfoStackView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-        
-//        card.addSubview(cardInfoStackView)
 
         cardInfoStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-//            cardInfoStackView.topAnchor.constraint(equalTo: card.bottomAnchor),
-            cardInfoStackView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
+            cardInfoStackView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: 8),
             cardInfoStackView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
-            cardInfoStackView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor)
+            cardInfoStackView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -4)
         ])
         return card
     }

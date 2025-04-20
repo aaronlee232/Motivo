@@ -20,6 +20,7 @@ struct CardData {
 
 class VerificationViewController: UIViewController {
     // MARK: - UI Elements
+    private var verificationView = VerificationView()
     let cardStack = SwipeCardStack()
     
     // MARK: - Properties
@@ -37,7 +38,8 @@ class VerificationViewController: UIViewController {
             cardStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             cardStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             cardStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            cardStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            cardStack.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor)
+//            cardStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
         cardStack.dataSource = self
