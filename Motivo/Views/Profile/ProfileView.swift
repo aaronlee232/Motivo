@@ -131,7 +131,7 @@ class ProfileHeaderView: UIView {
     private let myHabitsLabel = SubtitleLabel(textLabel: "Habits")
     var myGroupsCountLabel = NormalLabel(textLabel: "0")
     private let myGroupsLabel = SubtitleLabel(textLabel: "Groups")
-    var myCompletedCountLabel = NormalLabel(textLabel: "0")
+    var myCompletedCountButton = UIButton(type: .system)
     private let myCompletedLabel = SubtitleLabel(textLabel: "Completed")
     
     private var userInfoStackView: UIStackView!
@@ -155,7 +155,16 @@ class ProfileHeaderView: UIView {
         usernameLabel.text = username
         myHabitsCountLabel.text = String(userStats.habitCount)
         myGroupsCountLabel.text = String(userStats.groupCount)
-        myCompletedCountLabel.text = String(userStats.completed.total)
+        
+        let menu = UIMenu(title: "Completed Habits", children: [
+            UIAction(title: "Daily: \(userStats.completed.daily)", attributes: .disabled, handler: { _ in }),
+            UIAction(title: "Weekly: \(userStats.completed.weekly)", attributes: .disabled, handler: { _ in }),
+            UIAction(title: "Monthly: \(userStats.completed.monthly)", attributes: .disabled, handler: { _ in })
+        ])
+
+        myCompletedCountButton.setTitle("\(userStats.completed.total)", for: .normal) // total count
+        myCompletedCountButton.showsMenuAsPrimaryAction = true
+        myCompletedCountButton.menu = menu
     }
 
     private func setupUI() {
@@ -201,10 +210,10 @@ class ProfileHeaderView: UIView {
         groupsStackView.alignment = .center
         groupsStackView.distribution = .equalSpacing
         
-        // Days Active Count Stat
-        myCompletedCountLabel.setBoldText(status: true)
+        // Completed Count Stat
+//        myCompletedCountLabel.setBoldText(status: true)
         myCompletedLabel.changeFontSize(fontSize: 16)
-        daysStackView = UIStackView(arrangedSubviews: [myCompletedCountLabel, myCompletedLabel])
+        daysStackView = UIStackView(arrangedSubviews: [myCompletedCountButton, myCompletedLabel])
         daysStackView.axis = .vertical
         daysStackView.alignment = .center
         daysStackView.distribution = .equalSpacing
