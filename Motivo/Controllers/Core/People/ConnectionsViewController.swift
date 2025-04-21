@@ -174,8 +174,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         navigationController?.pushViewController(verificationVC, animated: true)
     }
     
-    // TODO: Add an action to the UserCell so that tapping on it will bring the current user to a profile screen of the tapped user
-    
     // MARK: - UITableViewDelegate & UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
@@ -203,7 +201,13 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
 
         return cell
     }
-
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // Segue to other user's profile
+        let user = sections[indexPath.section].users[indexPath.row]
+        let profileVC = ProfileViewController(isViewingOtherUser: true, userUID: user.id)
+        navigationController?.pushViewController(profileVC, animated: true)
+    }
 }
 
 
