@@ -17,7 +17,8 @@ class HabitViewController: UIViewController {
     // MARK: - Properties
     private let habitManager = HabitManager()
     
-    // Temp storage for the habit record during image upload flow. objc_getAssociatedObject could work as replacement for future refinements
+    // Temp storage for the habit record during image upload flow.
+    // objc_getAssociatedObject could work as replacement for future refinements
     var activeHabitRecord: HabitRecord?
 
     // MARK: - Lifecycle
@@ -37,7 +38,7 @@ class HabitViewController: UIViewController {
 
 // MARK: - Load Data
 extension HabitViewController {
-    private func loadHabitFilter() -> [String] {
+    private func getStoredSelectedCategoryIDs() -> [String] {
         if let selectedCategoryIDs =
             UserDefaults.standard.array(forKey: UserDefaultKeys.selectedCategoryIDs) as? [String] {
             return selectedCategoryIDs
@@ -52,7 +53,9 @@ extension HabitViewController {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
                 return
             }
-            let selectedCategoryIDs = loadHabitFilter()
+            
+            // Retrieve category filter froom userDefaults
+            let selectedCategoryIDs = getStoredSelectedCategoryIDs()
             
             // Concurrently fetch independent data
             async let categoriesTask = try await habitManager.fetchCategories()
