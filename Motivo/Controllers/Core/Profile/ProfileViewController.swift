@@ -13,11 +13,40 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
     private var profileView = ProfileView()
     
     // MARK: - Properties
+    private let isViewingOtherUser: Bool
+    private var userUID: String
+    
     private let profileManager = ProfileManager()
     private var username: String!
     private var groupMetadataList: [GroupMetadata] = []
     private var habits: [HabitModel] = []
     private var habitsWithImages: [HabitPhotoData] = []
+    
+    // MARK: - Initializers
+    convenience init() {
+        self.init(isViewingOtherUser: false)
+    }
+
+    init(isViewingOtherUser: Bool, userUID: String? = nil) {
+        self.isViewingOtherUser = isViewingOtherUser
+        
+        if isViewingOtherUser {
+            guard let uid = userUID else {
+                fatalError("userUID must be provided when viewing another user's profile")
+            }
+            self.userUID = uid
+        } else if let user = AuthManager.shared.getCurrentUserAuthInstance() {
+            self.userUID = user.uid
+        } else {
+            self.userUID = "unknown_user"
+        }
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -63,6 +92,11 @@ extension ProfileViewController {
     }
     
     func didSelectGroupCell(groupIdx: Int) {
+        // Read only cells when viewing other users
+        if isViewingOtherUser {
+            return
+        }
+        
         let groupVC = GroupViewController(groupID: groupMetadataList[groupIdx].groupID)
         navigationController?.pushViewController(groupVC, animated: true)
     }
@@ -72,15 +106,10 @@ extension ProfileViewController {
 extension ProfileViewController {
     private func loadProfileData() async {
         do {
-            guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
-                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
-                return
-            }
-            
-            async let usernameTask = profileManager.fetchCurrentUsername(forUserUID: user.uid)
-            async let habitsTask = profileManager.fetchHabits(forUserUID: user.uid)
-            async let groupsTask = profileManager.fetchGroupMetadataList(forUserUID: user.uid)
-            async let galleryTask = profileManager.fetchHabitsWithVerifiedImageURLs(forUserUID: user.uid)
+            async let usernameTask = profileManager.fetchCurrentUsername(forUserUID: userUID)
+            async let habitsTask = profileManager.fetchHabits(forUserUID: userUID)
+            async let groupsTask = profileManager.fetchGroupMetadataList(forUserUID: userUID)
+            async let galleryTask = profileManager.fetchHabitsWithVerifiedImageURLs(forUserUID: userUID)
 
             // Await results
             let (fetchedUsername, fetchedHabits, fetchedGroups, fetchedGallery) = try await (

@@ -36,6 +36,7 @@ class ProfileView: UIView {
         headerView.configure(withUsername: username, withHabitCount: habits.count, withGroupCount: groupMetadataList.count)
         
         // Group list
+        groupTableView.delegate = delegate
         groupTableView.configure(withGroupMetadataList: groupMetadataList)
         
         // Gallery
