@@ -17,10 +17,8 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, GroupTableVi
     private var userUID: String
     
     private let profileManager = ProfileManager()
-    private var username: String!
     private var groupMetadataList: [GroupMetadata] = []
-    private var habits: [HabitModel] = []
-    private var habitsWithImages: [HabitPhotoData] = []
+
     
     // MARK: - Initializers
     convenience init() {
@@ -78,7 +76,7 @@ extension ProfileViewController {
         ])
     }
     
-    // TODO: Why do we need this? Is it possible to move into profile view?
+    // Set up title bar button
     private func setupMenuButtons() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: profileView.headerView.settingsButton)
     }
@@ -108,20 +106,45 @@ extension ProfileViewController {
         do {
             async let usernameTask = profileManager.fetchCurrentUsername(forUserUID: userUID)
             async let habitsTask = profileManager.fetchHabits(forUserUID: userUID)
+            async let completedRecordsTask = profileManager.fetchCompletedHabitWithRecords(forUserUID: userUID)
             async let groupsTask = profileManager.fetchGroupMetadataList(forUserUID: userUID)
             async let galleryTask = profileManager.fetchHabitsWithVerifiedImageURLs(forUserUID: userUID)
 
             // Await results
-            let (fetchedUsername, fetchedHabits, fetchedGroups, fetchedGallery) = try await (
-                usernameTask, habitsTask, groupsTask, galleryTask
+            let (fetchedUsername, fetchedHabits, fetchedGroups, fetchedGallery, fetchedCompletedRecords) = try await (
+                usernameTask, habitsTask, groupsTask, galleryTask, completedRecordsTask
             )
 
             // Assign values
-            username = fetchedUsername
-            habits = fetchedHabits
             groupMetadataList = fetchedGroups
-            habitsWithImages = fetchedGallery
+            let username = fetchedUsername
+            let habits = fetchedHabits
+            let completedRecords = fetchedCompletedRecords
+            var habitsWithImages = fetchedGallery
 
+            
+            var completedStats = CompletedStats(daily: 0, weekly: 0, monthly: 0, total: 0)
+            completedRecords.forEach { entry in
+                switch entry.habit.frequency {
+                case FrequencyConstants.daily:
+                    completedStats.daily += 1
+                case FrequencyConstants.weekly:
+                    completedStats.weekly += 1
+                case FrequencyConstants.monthly:
+                    completedStats.monthly += 1
+                default:
+                    break
+                }
+            }
+            completedStats.total = completedStats.daily + completedStats.weekly + completedStats.monthly
+            
+            // aggregate user stats
+            let userStats = UserStats(
+                habitCount: habits.count,
+                groupCount: groupMetadataList.count,
+                completed: completedStats
+            )
+            
             // Select habits with images to display
             habitsWithImages = habitsWithImages.filter { !$0.imageURLs.isEmpty }
             
@@ -129,7 +152,7 @@ extension ProfileViewController {
             profileView.configure(
                 delegate: self,
                 withUsername: username,
-                withHabits: habits,
+                withUserStats: userStats,
                 withGroupMetadataList: groupMetadataList,
                 withHabitsWithImages: habitsWithImages
             )

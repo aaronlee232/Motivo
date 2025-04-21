@@ -11,6 +11,19 @@ protocol ProfileViewDelegate:ProfileViewController {
     func didTouchSettingsButton()
 }
 
+struct CompletedStats {
+    var daily: Int
+    var weekly: Int
+    var monthly: Int
+    var total: Int
+}
+
+struct UserStats {
+    let habitCount: Int
+    let groupCount: Int
+    let completed: CompletedStats
+}
+
 class ProfileView: UIView {
     
     // MARK: - UI Elements
@@ -29,11 +42,17 @@ class ProfileView: UIView {
          fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(delegate: ProfileViewDelegate, withUsername username: String, withHabits habits: [HabitModel], withGroupMetadataList groupMetadataList: [GroupMetadata], withHabitsWithImages habitsWithImages: [HabitPhotoData]) {
+    func configure(
+        delegate: ProfileViewDelegate,
+        withUsername username: String,
+        withUserStats userStats: UserStats,
+        withGroupMetadataList groupMetadataList: [GroupMetadata],
+        withHabitsWithImages habitsWithImages: [HabitPhotoData]
+    ) {
         
         // Profile header
         headerView.delegate = delegate
-        headerView.configure(withUsername: username, withHabitCount: habits.count, withGroupCount: groupMetadataList.count)
+        headerView.configure(withUsername: username, withUserStats: userStats)
         
         // Group list
         groupTableView.delegate = delegate
@@ -112,8 +131,8 @@ class ProfileHeaderView: UIView {
     private let myHabitsLabel = SubtitleLabel(textLabel: "Habits")
     var myGroupsCountLabel = NormalLabel(textLabel: "0")
     private let myGroupsLabel = SubtitleLabel(textLabel: "Groups")
-    var myDaysCountLabel = NormalLabel(textLabel: "0")
-    private let myDaysLabel = SubtitleLabel(textLabel: "Days")
+    var myCompletedCountLabel = NormalLabel(textLabel: "0")
+    private let myCompletedLabel = SubtitleLabel(textLabel: "Completed")
     
     private var userInfoStackView: UIStackView!
     private var habitsStackView: UIStackView!
@@ -132,10 +151,11 @@ class ProfileHeaderView: UIView {
          fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(withUsername username: String, withHabitCount habitCount: Int, withGroupCount groupCount: Int) {
+    func configure(withUsername username: String, withUserStats userStats: UserStats) {
         usernameLabel.text = username
-        myHabitsCountLabel.text = String(habitCount)
-        myGroupsCountLabel.text = String(groupCount)
+        myHabitsCountLabel.text = String(userStats.habitCount)
+        myGroupsCountLabel.text = String(userStats.groupCount)
+        myCompletedCountLabel.text = String(userStats.completed.total)
     }
 
     private func setupUI() {
@@ -182,9 +202,9 @@ class ProfileHeaderView: UIView {
         groupsStackView.distribution = .equalSpacing
         
         // Days Active Count Stat
-        myDaysCountLabel.setBoldText(status: true)
-        myDaysLabel.changeFontSize(fontSize: 16)
-        daysStackView = UIStackView(arrangedSubviews: [myDaysCountLabel, myDaysLabel])
+        myCompletedCountLabel.setBoldText(status: true)
+        myCompletedLabel.changeFontSize(fontSize: 16)
+        daysStackView = UIStackView(arrangedSubviews: [myCompletedCountLabel, myCompletedLabel])
         daysStackView.axis = .vertical
         daysStackView.alignment = .center
         daysStackView.distribution = .equalSpacing

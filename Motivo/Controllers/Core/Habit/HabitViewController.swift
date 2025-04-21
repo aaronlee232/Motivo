@@ -12,82 +12,85 @@ typealias UIImagePickerControllerDelegate = MockImagePickerDelegate
 class HabitViewController: UIViewController {
     
     // MARK: UI Elements
-    private let habitsView = HabitsView()
+    private let habitView = HabitView()
     
     // MARK: - Properties
     private let habitManager = HabitManager()
-    private var selectedCategoryIDs: [String] = []
     
-    // Temp storage for the habit record during image upload flow.
+    // Temp storage for the habit record during image upload flow. objc_getAssociatedObject could work as replacement for future refinements
     var activeHabitRecord: HabitRecord?
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        habitsView.delegate = self
+        habitView.delegate = self
         setupUI()
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        loadCategories()
-        loadHabitFilter()
-        loadHabits()
+        super.viewWillAppear(animated)        
+        Task {
+            await loadHabitData()
+        }
     }
 }
 
 // MARK: - Load Data
 extension HabitViewController {
-    private func loadCategories() {
-        Task {
-            do {
-                let categories = try await habitManager.fetchCategories()
-                habitsView.categories = categories
-            } catch {
-                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch categories")
-            }
-        }
-    }
-    
-    private func loadHabits() {
-        Task {
-            do {
-                guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
-                    AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
-                    return
-                }
-                
-                let habits = try await habitManager.fetchHabits(forUserUID: user.uid)
-                habitsView.habits = filterHabits(habits: habits)
-            } catch {
-                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to fetch habits")
-            }
-        }
-    }
-    
-    private func loadHabitFilter() {
-        if let selectedCategoryIDs = UserDefaults.standard.array(forKey: UserDefaultKeys.selectedCategoryIDs) as? [String] {
-            self.selectedCategoryIDs = selectedCategoryIDs
-        }
-    }
-    
-    private func filterHabits(habits: [HabitModel]) -> [HabitModel] {
-        var filteredHabits: [HabitModel] = []
-        
-        habits.forEach { habit in
-            // Filter by selected category IDs
-            let containsSelectedCategory = habit.categoryIDs.contains { categoryID in
-                selectedCategoryIDs.contains(categoryID)
-            }
-            
-            // TODO: Add additional filters conditions here
-            
-            if (containsSelectedCategory) {
-                filteredHabits.append(habit)
-            }
+    private func loadHabitFilter() -> [String] {
+        if let selectedCategoryIDs =
+            UserDefaults.standard.array(forKey: UserDefaultKeys.selectedCategoryIDs) as? [String] {
+            return selectedCategoryIDs
         }
         
-        return filteredHabits
+        return []
+    }
+    
+    private func loadHabitData() async {
+        do {
+            guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
+                AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
+                return
+            }
+            let selectedCategoryIDs = loadHabitFilter()
+            
+            // Concurrently fetch independent data
+            async let categoriesTask = try await habitManager.fetchCategories()
+            async let activeHabitWithRecordsTask = try await habitManager.fetchActiveHabitWithRecords(forUserUID: user.uid)
+
+            let (fetchedCategories, fetchedActiveHabitWithRecords) = try await (
+                categoriesTask, activeHabitWithRecordsTask
+            )
+            
+            let categories = fetchedCategories
+            var habitWithRecordList = fetchedActiveHabitWithRecords
+            
+            // Filter habits to only be selected habits
+            habitWithRecordList = filter(habitWithRecordList, withCategoryIDs: selectedCategoryIDs)
+
+            // Configure habit view
+            habitView.configure(withCategories: categories, withHabitWithRecordList: habitWithRecordList)
+            
+        } catch {
+            AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to load habit data")
+            print("Error: \(error.localizedDescription)")
+        }
+    }
+    
+    private func filter(
+        _ habitWithRecordList: [HabitWithRecord],
+        withCategoryIDs categoryIDs: [String]
+    ) -> [HabitWithRecord] {
+        let filteredHabitWithRecordList = habitWithRecordList.filter {
+            // Check if habit contains any of the selected category ids
+            let containsAnySelectedCategory = $0.habit.categoryIDs.contains { habitCategoryID in
+                categoryIDs.contains(habitCategoryID)
+            }
+            // Add habitWithRecord if it contains one of the category ids
+            return containsAnySelectedCategory
+        }
+
+        return filteredHabitWithRecordList
     }
 }
 
@@ -95,28 +98,22 @@ extension HabitViewController {
 // MARK: - UI Setup
 extension HabitViewController {
     private func setupUI() {
-//        setupTitleBar()
-        // TODO: move into view later
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
+        setupNavigationBarButtons()
+        view.addSubview(habitView)
         
-        view.addSubview(habitsView)
-        
-        habitsView.translatesAutoresizingMaskIntoConstraints = false
+        habitView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            habitsView.topAnchor.constraint(equalTo: view.topAnchor),
-            habitsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            habitsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            habitsView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            habitView.topAnchor.constraint(equalTo: view.topAnchor),
+            habitView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            habitView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            habitView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
-//    private func setupTitleBar() {
-//        title = "Habits"
-//
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
-//    }
+    private func setupNavigationBarButtons() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(openSettings))
+    }
 }
 
 
@@ -138,49 +135,13 @@ extension HabitViewController {
 // MARK: - HabitViewDelegate
 extension HabitViewController: HabitViewDelegate {
     // Handler for opening camera and uploading photo as proof of task completion. Will start as "unverified"
-    func plusButtonTapped(with habit: HabitModel) {
-        Task {
-            do {
-                var rawHabitWithRecords: [HabitWithRecord] = []
-                let records = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
-                for record in records {
-                    rawHabitWithRecords.append(HabitWithRecord(habit: habit, record: record))
-                }
-                print("rawHabitWithRecords: ", rawHabitWithRecords)
-                let activeHabitWithRecords = rawHabitWithRecords.filter { $0.isActive }
-                print("activeHabitWithRecords: ", activeHabitWithRecords)
-                // Sanity Check - There should only be one active record for a given habit
-                if activeHabitWithRecords.count > 1 {
-                    fatalError("This should not have happened. There are more than 1 active records for a given habit")
-                }
-                
-                if !activeHabitWithRecords.isEmpty {
-                    // Use existing active habit record if available
-                    activeHabitRecord = activeHabitWithRecords.first!.record
-                } else {
-                    // Create a new record if there are no active habit records
-                    let newHabitRecord = HabitRecord(
-                        habitID: habit.id,
-                        unverifiedPhotoURLs: [],
-                        verifiedPhotoURLs: [],
-                        timestamp: ISO8601DateFormatter().string(from: Date()),
-                        userUID: habit.userUID)
-                    activeHabitRecord = try await habitManager.addHabitRecord(habitRecord: newHabitRecord)
-                }
-                
-                // Show camera and upload photo
-                showMockCamera()
-            } catch {
-                AlertUtils.shared.showAlert(
-                    self,
-                    title: "Something went wrong",
-                    message: "Unable to update habit progress"
-                )
-            }
-        }
+    func plusButtonTapped(on habitWithRecord: HabitWithRecord) {
+        activeHabitRecord = habitWithRecord.record
+            
+        // Show camera and upload photo
+        showMockCamera()
     }
 }
-
 
 // MARK: - Camera Setup
 extension HabitViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
@@ -212,6 +173,9 @@ extension HabitViewController: UIImagePickerControllerDelegate & UINavigationCon
                 
                 // Update the active habit record
                 try await habitManager.updateHabitRecord(withHabitRecord: activeHabitRecord!)
+                
+                // Reload habit view data
+                await loadHabitData()
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to upload image")
             }

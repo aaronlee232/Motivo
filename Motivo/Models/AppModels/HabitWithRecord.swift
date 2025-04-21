@@ -11,6 +11,10 @@ struct HabitWithRecord {
     var habit: HabitModel
     var record: HabitRecord
     
+    var isCompleted: Bool {
+        let completedCount = record.completedCount
+        return completedCount >= habit.goal
+    }
 
     var status: HabitStatus {
         if (record.verifiedPhotoURLs.count >= habit.goal) {

@@ -45,4 +45,22 @@ class ProfileManager {
         
         return habitsWithImages
     }
+    
+    func fetchCompletedHabitWithRecords(forUserUID userUID: String) async throws -> [HabitWithRecord] {
+        let habits = try await FirestoreService.shared.fetchHabits(forUserUID: userUID)
+        
+        var completedHabitWithRecords: [HabitWithRecord] = []
+        for habit in habits {
+            let records = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+            
+            for record in records {
+                let habitWithRecord = HabitWithRecord(habit: habit, record: record)
+                if habitWithRecord.isCompleted {
+                    completedHabitWithRecords.append(habitWithRecord)
+                }
+            }
+        }
+        
+        return completedHabitWithRecords
+    }
 }
