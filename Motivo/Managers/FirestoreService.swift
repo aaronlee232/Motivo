@@ -7,6 +7,10 @@
 
 import FirebaseFirestore
 
+enum FetchError: Error {
+    case runtimeError(String)
+}
+
 class FirestoreService {
     // Singleton AuthManager
     static let shared = FirestoreService()

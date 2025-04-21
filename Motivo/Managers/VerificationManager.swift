@@ -15,9 +15,6 @@ class VerificationManager {
     func approvePhoto(withPhotoURL photoURL: String, forHabitRecordID habitRecordID: String) async throws {
         guard var habitRecord = try await FirestoreService.shared.fetchHabitRecord(forHabitRecordID: habitRecordID)
         else {
-            enum FetchError: Error {
-                case runtimeError(String)
-            }
             throw FetchError.runtimeError("HabitRecord with ID \(habitRecordID) not found")
         }
                 

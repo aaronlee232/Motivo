@@ -66,7 +66,7 @@ class ConnectionsManager {
             let rawHabitEntries: [HabitWithRecord] = records.map {HabitWithRecord(habit: habit, record: $0) }
             
             let filteredHabitEntries = rawHabitEntries.filter { $0.isActive }
-            
+
             // Sanity Check: there should only be one active record per habit
             if filteredHabitEntries.count > 1 {
                 fatalError("This should not have happened. There should only be one active record per habit")
