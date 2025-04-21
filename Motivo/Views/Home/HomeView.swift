@@ -38,12 +38,6 @@ class HomeView: UIView {
     var homeViewStatus:HomeViewStatusOptions!
     
     var delegate:HomeViewDelegate?
-    var groupList:[GroupMetadata] = [] {
-        didSet {
-            groupTableView.updateTableData(givenList: groupList)
-            tableView.reloadData()
-        }
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -54,6 +48,10 @@ class HomeView: UIView {
     
     required init?(coder: NSCoder) {
          fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(withGroupMetadataList groupMetadataList: [GroupMetadata]) {
+        groupTableView.configure(withGroupMetadataList: groupMetadataList)
     }
     
     private func setupUI() {

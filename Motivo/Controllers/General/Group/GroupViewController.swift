@@ -38,18 +38,22 @@ class GroupViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Lifecycle
     override func viewDidLoad() {
-        fetchAndSetGroupName()
-        fetchAndSetGroupMemberHabitsAndUsers()
-        fetchAndSetCategories()
-        fetchAndSetProgressCells()
-        
         setupTitleBar()
         setupSegmentedControl()
         setupTabViews()
         
         // Manually switch screen
         switchScreen(screen: currentScreen)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchAndSetGroupName()
+        fetchAndSetGroupMemberHabitsAndUsers()
+        fetchAndSetCategories()
+        fetchAndSetProgressCells()
     }
 }
 
@@ -199,7 +203,9 @@ extension GroupViewController {
     }
     
     @objc private func didTapEditGroupNameButton() {
-        // TODO: Implement edit group segue/view
+        let renameGroupVC = RenameGroupViewController()
+        renameGroupVC.groupID = groupID
+        navigationController?.pushViewController(renameGroupVC, animated: true)
     }
     
     @objc private func didTapInviteUserButton() {

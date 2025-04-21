@@ -12,24 +12,16 @@ protocol GroupTableViewDelegate:AnyObject {
     func didSelectGroupCell(groupIdx: Int)
 }
 
-class GroupTableView: UIView, UITableViewDelegate, UITableViewDataSource {
+class GroupTableView: UIView {
     
     var tableView = UITableView()
-    private var list:[GroupMetadata] = [] {
-        didSet {
-            tableView.reloadData()
-        }
-    }
+    private var groupMetadataList:[GroupMetadata] = []
     
     var delegate:GroupTableViewDelegate?
     
-    init(givenList: [GroupMetadata]) {
-        super.init(frame: .zero)
-        self.list = givenList
-    }
-    
     override init(frame: CGRect) {
-        super.init(frame: .zero)
+        super.init(frame: frame)
+        setupUI()
         tableView.register(GroupCell.self, forCellReuseIdentifier: GroupCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -39,21 +31,40 @@ class GroupTableView: UIView, UITableViewDelegate, UITableViewDataSource {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateTableData(givenList: [GroupMetadata]) {
-        list = givenList
+    private func setupUI() {
+        tableView.separatorStyle = .singleLine
+        
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(tableView)
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+    
+    func configure(withGroupMetadataList groupMetadataList: [GroupMetadata]) {
+        self.groupMetadataList = groupMetadataList
+        tableView.reloadData()
     }
     
     @objc func handleDidSelectGroupCell(groupIdx: Int) {
         delegate?.didSelectGroupCell(groupIdx: groupIdx)
     }
-    
+}
+
+// MARK: - TableView Delegate Methods
+extension GroupTableView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.identifier, for: indexPath) as? GroupCell else {
             return UITableViewCell()
         }
 
-        let group = list[indexPath.section]
+        let group = groupMetadataList[indexPath.section]
         cell.configureWith(groupID: group.groupID, image: group.image ?? UIImage(systemName: "person.3.fill")!, groupName: group.groupName, categories: group.categoryNames, memberCount: group.memberCount, habitsCount: group.habitsCount)
+
         return cell
     }
 
@@ -72,22 +83,15 @@ class GroupTableView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return list.count
+        return groupMetadataList.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1  // 1 row per section
+        return 1
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         handleDidSelectGroupCell(groupIdx: indexPath.section)
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    private func setupUI() {
-        tableView.separatorStyle = .singleLine
-        
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(tableView)
     }
 }
