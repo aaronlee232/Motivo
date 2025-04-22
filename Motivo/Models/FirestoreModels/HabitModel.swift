@@ -40,13 +40,6 @@ struct HabitRecord: Codable {
     var pendingCount: Int {
         return unverifiedPhotoURLs.count
     }
-
-    
-    // TODO: Replace with verifiedPhotoURLs count >= HabitModel.goal
-    // Computed properties
-    var isCompleted: Bool {
-        return completedCount >= 3 // Fetch goal from HabitModel
-    }
     
     var isPending: Bool {
         return !unverifiedPhotoURLs.isEmpty
