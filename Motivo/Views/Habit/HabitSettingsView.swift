@@ -18,7 +18,8 @@ class HabitSettingsView: UIView, CategorySelectionViewDelegate {
     // UI Elements
     let notificationsToggle = UISwitch()
     let notificationsLabel = UILabel()
-    let viewModeToggle = UISegmentedControl(items: [FrequencyConstants.weekly, FrequencyConstants.monthly])
+    
+    var frequencySelectionSegCtrl: UISegmentedControl
     let viewModeLabel = UILabel()
     let categoryLabel = UILabel()
     let categorySelectionView = CategorySelectionView()
@@ -29,6 +30,7 @@ class HabitSettingsView: UIView, CategorySelectionViewDelegate {
     var delegate: HabitSettingsViewDelegate?
     
     override init(frame: CGRect) {
+        frequencySelectionSegCtrl = UISegmentedControl(items: FrequencyConstants.frequencyFilterOptions)
         super.init(frame: frame)
         categorySelectionView.delegate = self
         setupUI()
@@ -36,6 +38,18 @@ class HabitSettingsView: UIView, CategorySelectionViewDelegate {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(
+        withCategories categories: [CategoryModel],
+        withSelectedCategories selectedCategories: [CategoryModel],
+        withFrequencyIndex freqencyIndex: Int
+    ) {
+        let selectedCategoriesSet = Set(selectedCategories)
+        self.categorySelectionView.categories = categories
+        self.selectedCategories = selectedCategoriesSet
+        self.categorySelectionView.selectedCategories = selectedCategoriesSet
+        self.frequencySelectionSegCtrl.selectedSegmentIndex = freqencyIndex
     }
 }
 
@@ -46,8 +60,8 @@ extension HabitSettingsView {
         notificationsToggle.isOn = false
         
         // View Mode Toggle (Weekly/Monthly)
-        viewModeLabel.text = "View Mode"
-        viewModeToggle.selectedSegmentIndex = 0
+        viewModeLabel.text = "View Frequency"
+        frequencySelectionSegCtrl.selectedSegmentIndex = 0
         
         // Category Checkboxes
         categoryLabel.text = "Select Categories:"
@@ -59,7 +73,7 @@ extension HabitSettingsView {
         // Layout
         let stackView = UIStackView(arrangedSubviews: [
             notificationsLabel, notificationsToggle,
-            viewModeLabel, viewModeToggle,
+            viewModeLabel, frequencySelectionSegCtrl,
             categoryLabel,
             categorySelectionView,
         ])

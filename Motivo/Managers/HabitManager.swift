@@ -75,4 +75,53 @@ class HabitManager {
         }
         return activeHabitEntries
     }
+    
+    func getStoredSelectedCategoryIDs(fromCategories categories: [CategoryModel]) -> [String] {
+        // Retrieve selected category ids from user defaults. return full category selection if not found
+        guard let storedSelectedCategoryIDs =
+            UserDefaults.standard.array(forKey: UserDefaultKeys.selectedCategoryIDs) as? [String] else {
+            return categories.map { $0.id }
+        }
+        
+        // Create dictionary entries for category by id for quick lookup
+        let categoriesByID = Dictionary(uniqueKeysWithValues: categories.map { ($0.id, $0) })
+        
+        // Verify if all stored category IDs are valid.
+        for storedCategoryID in storedSelectedCategoryIDs {
+            if !categoriesByID.keys.contains(storedCategoryID) {
+                // Wipe from userdefault and return full category list if not valid
+                UserDefaults.standard.removeObject(forKey: UserDefaultKeys.selectedCategoryIDs)
+                return categories.map { $0.id }
+            }
+        }
+        return storedSelectedCategoryIDs
+    }
+    
+    func getStoredSelectedCategories(fromCategories categories: [CategoryModel]) -> [CategoryModel] {
+        let storedSelectedCategoryIDs = getStoredSelectedCategoryIDs(fromCategories: categories)
+        
+        // Create dictionary entries for category by id for quick lookup
+        let categoriesByID = Dictionary(uniqueKeysWithValues: categories.map { ($0.id, $0) })
+        
+        // Get the category model from ID
+        let storedCategories = storedSelectedCategoryIDs.map { categoriesByID[$0]! }
+        return storedCategories
+    }
+    
+    func getStoredSelectedFrequencyIndex() -> Int {
+        // Retrieve selected frequency from user defaults. return index of 0 for "all" frequencies if not found
+        guard let storedFrequency = UserDefaults.standard.string(forKey: UserDefaultKeys.selectedFrequency),
+              FrequencyConstants.frequencies.contains(storedFrequency) else {
+            return 0
+        }
+        
+        let frequencyIndex = FrequencyConstants.frequencyFilterOptions.firstIndex(of: storedFrequency)!
+        return frequencyIndex
+    }
+    
+    func getStoredSelectedFrequency() -> String {
+        let storedSelectedFrequencyIndex = getStoredSelectedFrequencyIndex()
+        let frequency = FrequencyConstants.frequencyFilterOptions[storedSelectedFrequencyIndex]
+        return frequency
+    }
 }

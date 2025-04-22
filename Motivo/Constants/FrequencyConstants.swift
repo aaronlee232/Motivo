@@ -9,8 +9,8 @@ struct FrequencyConstants {
     static let daily = "Daily"
     static let weekly = "Weekly"
     static let monthly = "Monthly"
+    static let noFrequencyFilter = "All"
     
-    static var frequencies: [String] {
-        return [FrequencyConstants.daily, FrequencyConstants.weekly, FrequencyConstants.monthly]
-    }
+    static let frequencies = [daily, weekly, monthly]
+    static let frequencyFilterOptions = [noFrequencyFilter] + frequencies
 }

@@ -38,15 +38,6 @@ class HabitViewController: UIViewController {
 
 // MARK: - Load Data
 extension HabitViewController {
-    private func getStoredSelectedCategoryIDs() -> [String] {
-        if let selectedCategoryIDs =
-            UserDefaults.standard.array(forKey: UserDefaultKeys.selectedCategoryIDs) as? [String] {
-            return selectedCategoryIDs
-        }
-        
-        return []
-    }
-    
     private func loadHabitData() async {
         do {
             guard let user = AuthManager.shared.getCurrentUserAuthInstance() else {
@@ -54,22 +45,29 @@ extension HabitViewController {
                 return
             }
             
-            // Retrieve category filter froom userDefaults
-            let selectedCategoryIDs = getStoredSelectedCategoryIDs()
-            
             // Concurrently fetch independent data
             async let categoriesTask = try await habitManager.fetchCategories()
             async let activeHabitWithRecordsTask = try await habitManager.fetchActiveHabitWithRecords(forUserUID: user.uid)
-
+            
+            // Wait for results of all fetch tasks
             let (fetchedCategories, fetchedActiveHabitWithRecords) = try await (
                 categoriesTask, activeHabitWithRecordsTask
             )
             
+            // rename for convenience
             let categories = fetchedCategories
             var habitWithRecordList = fetchedActiveHabitWithRecords
             
+            // Retrieve stored selections userDefaults
+            let selectedCategoryIDs = habitManager.getStoredSelectedCategoryIDs(fromCategories: categories)
+            let selectedFrequency = habitManager.getStoredSelectedFrequency()
+
             // Filter habits to only be selected habits
-            habitWithRecordList = filter(habitWithRecordList, withCategoryIDs: selectedCategoryIDs)
+            habitWithRecordList = filter(
+                habitWithRecordList,
+                withCategoryIDs: selectedCategoryIDs,
+                withFrequency: selectedFrequency
+            )
 
             // Configure habit view
             habitView.configure(withCategories: categories, withHabitWithRecordList: habitWithRecordList)
@@ -82,15 +80,20 @@ extension HabitViewController {
     
     private func filter(
         _ habitWithRecordList: [HabitWithRecord],
-        withCategoryIDs categoryIDs: [String]
+        withCategoryIDs categoryIDs: [String],
+        withFrequency frequency: String
     ) -> [HabitWithRecord] {
         let filteredHabitWithRecordList = habitWithRecordList.filter {
             // Check if habit contains any of the selected category ids
             let containsAnySelectedCategory = $0.habit.categoryIDs.contains { habitCategoryID in
                 categoryIDs.contains(habitCategoryID)
             }
-            // Add habitWithRecord if it contains one of the category ids
-            return containsAnySelectedCategory
+            
+            // Check if there is a frequency selection, and filter by frequency if present
+            let isSelectedFrequency = frequency == FrequencyConstants.noFrequencyFilter || $0.habit.frequency == frequency
+            
+            // Add habitWithRecord if it contains one of the category ids and is correct frequency
+            return containsAnySelectedCategory && isSelectedFrequency
         }
 
         return filteredHabitWithRecordList

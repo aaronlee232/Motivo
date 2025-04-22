@@ -12,8 +12,8 @@ class HabitView: UIView {
     
     // MARK: Properties
     private let habitManager = HabitManager()
-    var categoryIDToName: Dictionary<String, String> = Dictionary()
-    var habitWithRecordList: [HabitWithRecord] = []
+    private var categoryIDToName: Dictionary<String, String> = Dictionary()
+    private var habitWithRecordList: [HabitWithRecord] = []
     
     var delegate: HabitViewDelegate?
     
