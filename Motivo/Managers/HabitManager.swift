@@ -36,4 +36,43 @@ class HabitManager {
     func uploadHabitPhoto(image: UIImage) async throws -> URL {
         return try await StorageService.shared.uploadPhoto(image)
     }
+    
+    // Fetches the active habit record for each habit of the user. If a habit does not have an active record, one will be created for it.
+    func fetchActiveHabitWithRecords(forUserUID userUID: String) async throws -> [HabitWithRecord] {
+        var activeHabitEntries: [HabitWithRecord] = []
+        
+        // Fetch list of habits from user
+        let habits = try await FirestoreService.shared.fetchHabits(forUserUID: userUID)
+        
+        // Get the active habit record for each habit of the user
+        for habit in habits {
+            // contains inactive and active record
+            let records = try await FirestoreService.shared.fetchHabitRecords(forHabitID: habit.id)
+            let rawHabitEntries: [HabitWithRecord] = records.map {HabitWithRecord(habit: habit, record: $0) }
+            
+            let filteredHabitEntries = rawHabitEntries.filter { $0.isActive }
+            
+            // Sanity Check: there should only be one active record per habit
+            if filteredHabitEntries.count > 1 {
+                fatalError("This should not have happened. There should only be one active record per habit")
+            }
+            
+            // If there is an active record, add it to the list of active habit records
+            if !filteredHabitEntries.isEmpty {
+                let activeHabitEntry = filteredHabitEntries.first!
+                activeHabitEntries.append(activeHabitEntry)
+            } else {
+                // if there are no active habit records, create a new record in firestore and add it to list
+                let newHabitRecord = HabitRecord(
+                    habitID: habit.id,
+                    unverifiedPhotoURLs: [],
+                    verifiedPhotoURLs: [],
+                    timestamp: ISO8601DateFormatter().string(from: Date()),
+                    userUID: habit.userUID)
+                let newActiveHabitRecord = try await addHabitRecord(habitRecord: newHabitRecord)
+                activeHabitEntries.append(HabitWithRecord(habit: habit, record: newActiveHabitRecord))
+            }
+        }
+        return activeHabitEntries
+    }
 }
