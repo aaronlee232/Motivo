@@ -70,8 +70,8 @@ extension ProfileViewController {
         profileView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             profileView.topAnchor.constraint(equalTo: view.topAnchor),
-            profileView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            profileView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            profileView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            profileView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             profileView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
@@ -154,7 +154,8 @@ extension ProfileViewController {
                 withUsername: username,
                 withUserStats: userStats,
                 withGroupMetadataList: groupMetadataList,
-                withHabitsWithImages: habitsWithImages
+                withHabitsWithImages: habitsWithImages,
+                isViewingOtherProfile: isViewingOtherUser
             )
 
         } catch {

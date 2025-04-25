@@ -85,6 +85,7 @@ class VerificationViewController: UIViewController, VerificationViewDelegate {
                 print("Failed to fetch image: \(error)")
             }
             verificationView.cardStack.reloadData()
+            verificationView.updateUI()
         }
     }
     

@@ -47,12 +47,13 @@ class ProfileView: UIView {
         withUsername username: String,
         withUserStats userStats: UserStats,
         withGroupMetadataList groupMetadataList: [GroupMetadata],
-        withHabitsWithImages habitsWithImages: [HabitPhotoData]
+        withHabitsWithImages habitsWithImages: [HabitPhotoData],
+        isViewingOtherProfile isOtherProfile: Bool
     ) {
         
         // Profile header
         headerView.delegate = delegate
-        headerView.configure(withUsername: username, withUserStats: userStats)
+        headerView.configure(withUsername: username, withUserStats: userStats, isOtherProfile: isOtherProfile)
         
         // Group list
         groupTableView.delegate = delegate
@@ -72,9 +73,10 @@ class ProfileView: UIView {
             headerView.topAnchor.constraint(equalTo: topAnchor, constant: 60),
             headerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             headerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            headerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             groupsLabel.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 24),
-            groupsLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            groupsLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
 //             TODO: change NormalLabel alignment to be adjustable. Add trailing constraint once done
             groupTableView.topAnchor.constraint(equalTo: groupsLabel.bottomAnchor, constant: 10),
             groupTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -82,7 +84,7 @@ class ProfileView: UIView {
             groupTableView.heightAnchor.constraint(equalToConstant: 200),
 
             galleryLabel.topAnchor.constraint(equalTo: groupTableView.bottomAnchor),
-            galleryLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            galleryLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             // TODO: change NormalLabel alignment to be adjustable. Add trailing constraint once done
             galleryTableView.topAnchor.constraint(equalTo: galleryLabel.bottomAnchor, constant: 10),
             galleryTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -124,7 +126,7 @@ class ProfileHeaderView: UIView {
     // bar button
     let settingsButton = IconButton(image: UIImage(systemName: "gear")!, barType: true)
     
-    private let titleLabel = BoldTitleLabel(textLabel: "My Profile")
+    let titleLabel = BoldTitleLabel(textLabel: "My Profile")
     private let profileImageView = UIImageView(image: UIImage(systemName: "person.circle.fill"))
     var usernameLabel = NormalLabel()
     var myHabitsCountLabel = NormalLabel(textLabel: "0")
@@ -132,12 +134,13 @@ class ProfileHeaderView: UIView {
     var myGroupsCountLabel = NormalLabel(textLabel: "0")
     private let myGroupsLabel = SubtitleLabel(textLabel: "Groups")
     var myCompletedCountButton = UIButton(type: .system)
+    private var myCompletedCountButtonLabel = NormalLabel(textLabel: "0") // completed count number
     private let myCompletedLabel = SubtitleLabel(textLabel: "Completed")
     
     private var userInfoStackView: UIStackView!
     private var habitsStackView: UIStackView!
     private var groupsStackView: UIStackView!
-    private var daysStackView: UIStackView!
+    private var completedStackView: UIStackView!
     private var statsStackView: UIStackView!
     
     var delegate:ProfileViewDelegate?
@@ -151,7 +154,10 @@ class ProfileHeaderView: UIView {
          fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(withUsername username: String, withUserStats userStats: UserStats) {
+    func configure(withUsername username: String, withUserStats userStats: UserStats, isOtherProfile: Bool) {
+        if isOtherProfile {
+            titleLabel.text = "\(username)'s Profile"
+        }
         usernameLabel.text = username
         myHabitsCountLabel.text = String(userStats.habitCount)
         myGroupsCountLabel.text = String(userStats.groupCount)
@@ -162,9 +168,17 @@ class ProfileHeaderView: UIView {
             UIAction(title: "Monthly: \(userStats.completed.monthly)", attributes: .disabled, handler: { _ in })
         ])
 
-        myCompletedCountButton.setTitle("\(userStats.completed.total)", for: .normal) // total count
+        myCompletedCountButtonLabel.text = String(userStats.completed.total)
+        myCompletedCountButtonLabel.setBoldText(status: true)
+
+        myCompletedCountButton.addSubview(myCompletedCountButtonLabel)
+        myCompletedCountButtonLabel.frame = myCompletedCountButton.bounds
+        myCompletedCountButtonLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         myCompletedCountButton.showsMenuAsPrimaryAction = true
         myCompletedCountButton.menu = menu
+        NSLayoutConstraint.activate([
+            myCompletedCountButton.heightAnchor.constraint(equalToConstant: myHabitsCountLabel.frame.height)
+        ])
     }
 
     private func setupUI() {
@@ -178,8 +192,8 @@ class ProfileHeaderView: UIView {
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             
             statsStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-            statsStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            statsStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            statsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            statsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             statsStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
@@ -213,10 +227,10 @@ class ProfileHeaderView: UIView {
         // Completed Count Stat
 //        myCompletedCountLabel.setBoldText(status: true)
         myCompletedLabel.changeFontSize(fontSize: 16)
-        daysStackView = UIStackView(arrangedSubviews: [myCompletedCountButton, myCompletedLabel])
-        daysStackView.axis = .vertical
-        daysStackView.alignment = .center
-        daysStackView.distribution = .equalSpacing
+        completedStackView = UIStackView(arrangedSubviews: [myCompletedCountButton, myCompletedLabel])
+        completedStackView.axis = .vertical
+        completedStackView.alignment = .center
+        completedStackView.distribution = .equalSpacing
         
         // User Info
         // TODO: Change this so profile is next to title. tile is username
@@ -226,7 +240,7 @@ class ProfileHeaderView: UIView {
         userInfoStackView.spacing = 1
         
         // Combined User Stat Display
-        statsStackView = UIStackView(arrangedSubviews: [userInfoStackView, habitsStackView, groupsStackView, daysStackView])
+        statsStackView = UIStackView(arrangedSubviews: [userInfoStackView, habitsStackView, groupsStackView, completedStackView])
         statsStackView.axis = .horizontal
         statsStackView.alignment = .center
         statsStackView.spacing = 2
