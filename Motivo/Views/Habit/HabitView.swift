@@ -1,9 +1,5 @@
 import FirebaseFirestore
 
-protocol HabitViewDelegate: HabitViewController {
-    func plusButtonTapped(on habitWithRecord: HabitWithRecord)
-}
-
 class HabitView: UIView {
     
     // MARK: UI Elements
@@ -14,8 +10,9 @@ class HabitView: UIView {
     private let habitManager = HabitManager()
     private var categoryIDToName: Dictionary<String, String> = Dictionary()
     private var habitWithRecordList: [HabitWithRecord] = []
+    private var openedSections: Set<Int> = Set()
     
-    var delegate: HabitViewDelegate?
+    var delegate: HabitCellViewCameraDelegate!
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -55,8 +52,12 @@ extension HabitView {
         titleLabel.textAlignment = .center
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(HabitCell.self, forCellReuseIdentifier: HabitCell.identifier)
+        tableView.register(HabitMainCell.self, forCellReuseIdentifier: HabitMainCell.identifier)
+        tableView.register(HabitExpandableCell.self, forCellReuseIdentifier: HabitExpandableCell.identifier)
         tableView.tableFooterView = UIView()
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = UITableView.automaticDimension
 
         addSubview(titleLabel)
         addSubview(tableView)
@@ -78,46 +79,92 @@ extension HabitView {
 }
 
 
-// MARK: - UITableView DataSource
+// MARK: - Table delegate methods
 extension HabitView: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.row == 0 {
+            // Main View Cells
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: HabitMainCell.identifier, for: indexPath) as? HabitMainCell else {
+                return UITableViewCell()
+            }
+            
+            let habitWithRecord = habitWithRecordList[indexPath.section]
+            cell.configure(
+                cameraDelegate: delegate,
+                expandDelegate: self,
+                withHabitWithRecord: habitWithRecord,
+                withRejectVotes: [],
+                isExpanded: openedSections.contains(indexPath.section)
+            )
+
+            return cell
+        } else {
+            // Expanded habit cells
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: HabitExpandableCell.identifier, for: indexPath) as? HabitExpandableCell else {
+                return UITableViewCell()
+            }
+            
+            let habitWithRecord = habitWithRecordList[indexPath.section]
+            cell.configure(
+                withHabitWithRecord: habitWithRecord,
+                withRejectVotes: []
+            )
+
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        return footerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 12 // Adjust the space between sections
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         return habitWithRecordList.count
     }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // TODO: Redo cell to be more informative
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: HabitCell.identifier, for: indexPath) as? HabitCell else {
-            return UITableViewCell()
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if openedSections.contains(section) {
+            // Main Cell View + Expanded Cell View
+            return 2
+        } else {
+            // Main Cell View
+            return 1
         }
-        
-        let habitWithRecord = habitWithRecordList[indexPath.row]
-        let habit = habitWithRecord.habit
-        let record = habitWithRecord.record
-        
-        let categoryNames = habit.categoryIDs.compactMap { categoryIDToName[$0] }
-        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)"
-        
-        let pendingPart = record.pendingCount > 0 ? " + (\(record.pendingCount))" : ""
-        let progressText: String
-
-        switch habit.frequency {
-        case "Daily":
-            progressText = "\(record.completedCount)\(pendingPart) / \(habit.goal)\(unit) Today"
-        case "Weekly":
-            progressText = "\(record.completedCount)\(pendingPart) / \(habit.goal)\(unit) This Week"
-        case "Monthly":
-            progressText = "\(record.completedCount)\(pendingPart) / \(habit.goal)\(unit) This Month"
-        default:
-            progressText = "\(record.completedCount)\(pendingPart) / \(habit.goal)\(unit)"
-        }
-
-        cell.configureWith(habit: habit, progressText: progressText, categoryNames: categoryNames)
-
-        cell.onPlusTapped = { [weak delegate] in
-            delegate?.plusButtonTapped(on: habitWithRecord)
-        }
-
-        return cell
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
+    
+//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 30
+//    }
+}
 
+// MARK: -
+extension HabitView: HabitCellViewExpansionDelegate {
+    func onCellExpandButtonTapped(selectedHabitID: String) {
+        // Find clicked index based on habit id
+        var sectionIndex: Int!
+        for (index, habitWithRecord) in habitWithRecordList.enumerated() {
+            if (habitWithRecord.habit.id == selectedHabitID) {
+                sectionIndex = index
+            }
+        }
+        
+        // Toggle open status of cell at clicked index
+        if (openedSections.contains(sectionIndex)) {
+            openedSections.remove(sectionIndex)
+        } else {
+            openedSections.insert(sectionIndex)
+        }
+        
+        tableView.reloadData()
+    }
 }

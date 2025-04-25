@@ -10,7 +10,6 @@ typealias UIImagePickerControllerDelegate = MockImagePickerDelegate
 #endif
 
 class HabitViewController: UIViewController {
-    
     // MARK: UI Elements
     private let habitView = HabitView()
     
@@ -138,10 +137,10 @@ extension HabitViewController {
     }
 }
 
-// MARK: - HabitViewDelegate
-extension HabitViewController: HabitViewDelegate {
+// MARK: - HabitCellRevisedDelegate
+extension HabitViewController: HabitCellViewCameraDelegate {
     // Handler for opening camera and uploading photo as proof of task completion. Will start as "unverified"
-    func plusButtonTapped(on habitWithRecord: HabitWithRecord) {
+    func onCellCameraButtonTapped(habitWithRecord: HabitWithRecord) {
         activeHabitRecord = habitWithRecord.record
             
         // Show camera and upload photo
