@@ -81,6 +81,9 @@ class VerificationViewController: UIViewController, VerificationViewDelegate {
                         verificationView.verificationViewCardData = cardData
                     }
                 }
+//                for entry in habitWithRecordsByUserUID {
+//                    
+//                }
             } catch {
                 print("Failed to fetch image: \(error)")
             }

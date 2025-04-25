@@ -137,12 +137,14 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
         buttonsMainStackView.translatesAutoresizingMaskIntoConstraints = false
         switchConnectionsStackView.translatesAutoresizingMaskIntoConstraints = false
         noCardsMessage.translatesAutoresizingMaskIntoConstraints = false
+        noCardsLeftMessage.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(titleLabel)
         addSubview(cardStack)
         addSubview(buttonsMainStackView)
         addSubview(switchConnectionsStackView)
         addSubview(noCardsMessage)
+        addSubview(noCardsLeftMessage)
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -157,9 +159,13 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
             
             noCardsMessage.centerXAnchor.constraint(equalTo: centerXAnchor),
             noCardsMessage.centerYAnchor.constraint(equalTo: centerYAnchor),
-//            noCardsMessage.topAnchor.constraint(equalTo: cardStack.bottomAnchor, constant: -(cardStack.frame.height / 2)),
             noCardsMessage.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             noCardsMessage.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            noCardsLeftMessage.centerXAnchor.constraint(equalTo: centerXAnchor),
+            noCardsLeftMessage.centerYAnchor.constraint(equalTo: centerYAnchor),
+            noCardsLeftMessage.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            noCardsLeftMessage.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
 //            previousNextButtonsStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
 //            previousNextButtonsStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
@@ -186,6 +192,7 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
         ])
         
         noCardsMessage.isHidden = true
+        noCardsLeftMessage.isHidden = true
     }
     
     func updateUI() {
@@ -258,5 +265,7 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     
     func didSwipeAllCards(_ cardStack: SwipeCardStack) {
         // TODO: Let user know all photos for the current user have been reviewed
+        print("inside of didSwipeAllCards")
+        noCardsLeftMessage.isHidden = false
     }
 }
