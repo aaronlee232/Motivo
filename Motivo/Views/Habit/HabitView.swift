@@ -94,6 +94,7 @@ extension HabitView: UITableViewDataSource, UITableViewDelegate {
                 expandDelegate: self,
                 withHabitWithRecord: habitWithRecord,
                 withRejectVotes: [],
+                categoryIDToName: categoryIDToName,
                 isExpanded: openedSections.contains(indexPath.section)
             )
 

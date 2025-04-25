@@ -18,33 +18,44 @@ protocol HabitCellViewExpansionDelegate {
 
 
 class HabitCellMainView: UIView {
+    
+    // MARK: - UI Elements
+    // Habit, Frequency, and Streak
     private let frequencyAndStreakStackView = UIStackView()
     private let frequencyLabel = UILabel()
     private let streakCountLabel = UILabel()
     private let streakSymbol = UIImageView()
-    
     private let habitHeaderStackView = UIStackView()
     private let habitNameLabel = UILabel()
-    
+    // Progress and Unit
     private let progressStackView = UIStackView()
     private let progressCountLabel = UILabel()
     private let unitLabel = UILabel()
-    
+    // Photo reject and pending stats
     private let photoStatStackView = UIStackView()
     private let pendingCountLabel = UILabel()
     private let rejectCountLabel = UILabel()
-    
+    // Camera and expand buttons
     private let buttonStackView = UIStackView()
     private let expansionButton = UIButton()
     private let cameraButton = UIButton()
+        
+    // Aggregation of all above views
+    private let summaryContainerView: UIView = UIView()
+
+    // Cateogry tag collection
+    private lazy var categoryTagCollectionView: UICollectionView = self.makeCollectionView()
 
     // MARK: - Properties
     private var cameraDelegate: HabitCellViewCameraDelegate!
     private var expandDelegate: HabitCellViewExpansionDelegate!
     private var habitWithRecord: HabitWithRecord!
+    private var categoryIDToName: Dictionary<String, String>!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        categoryTagCollectionView.delegate = self
+        categoryTagCollectionView.dataSource = self
         setupUI()
     }
     
@@ -57,6 +68,7 @@ class HabitCellMainView: UIView {
         expandDelegate: HabitCellViewExpansionDelegate,
         withHabitWithRecord habitWithRecord: HabitWithRecord,
         withRejectVotes rejectVotes: [VoteModel],
+        categoryIDToName: Dictionary<String, String>,
         isExpanded: Bool
     ) {
         self.cameraDelegate = cameraDelegate
@@ -77,6 +89,8 @@ class HabitCellMainView: UIView {
         pendingCountLabel.text = "\(record.pendingCount) Pending"
         rejectCountLabel.text = "\(rejectVotes.count) Rejects"
         
+        self.categoryIDToName = categoryIDToName
+        
         if (isExpanded) {
             expansionButton.tintColor = colorMainPrimary
         } else {
@@ -85,6 +99,10 @@ class HabitCellMainView: UIView {
         
         cameraButton.addTarget(self, action: #selector(handleCameraButtonTapped), for: .touchUpInside)
         expansionButton.addTarget(self, action: #selector(handleToggleCellExpansionButtonTapped), for: .touchUpInside)
+
+        categoryTagCollectionView.reloadData()
+        categoryTagCollectionView.layoutIfNeeded()
+        invalidateIntrinsicContentSize()
     }
     
     @objc func handleCameraButtonTapped() {
@@ -100,45 +118,59 @@ class HabitCellMainView: UIView {
 // MARK: - UI Setup
 extension HabitCellMainView {
     private func setupUI() {
-        let spacer = UIView()
-        spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        let fixedWidthSpacer1 = UIView()
-        fixedWidthSpacer1.translatesAutoresizingMaskIntoConstraints = false
-        fixedWidthSpacer1.widthAnchor.constraint(equalToConstant: 8).isActive = true
-        let fixedWidthSpacer2 = UIView()
-        fixedWidthSpacer2.translatesAutoresizingMaskIntoConstraints = false
-        fixedWidthSpacer2.widthAnchor.constraint(equalToConstant: 4).isActive = true
+        setupSummaryContainerView()
+        addSubview(categoryTagCollectionView)
         
+        categoryTagCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            summaryContainerView.topAnchor.constraint(equalTo: topAnchor),
+            summaryContainerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            summaryContainerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            summaryContainerView.bottomAnchor.constraint(equalTo: categoryTagCollectionView.topAnchor, constant: -8),
+            
+            categoryTagCollectionView.heightAnchor.constraint(equalToConstant: 50),
+            categoryTagCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            categoryTagCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            categoryTagCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+    
+    private func setupSummaryContainerView() {
         setupHabitHeaderStackView()
         setupProgressStackView()
         setupPhotoStatStackView()
         setupButtonStackView()
         
-        addSubview(habitHeaderStackView)
-        addSubview(photoStatStackView)
-        addSubview(progressStackView)
-        addSubview(buttonStackView)
+        summaryContainerView.addSubview(habitHeaderStackView)
+        summaryContainerView.addSubview(photoStatStackView)
+        summaryContainerView.addSubview(progressStackView)
+        summaryContainerView.addSubview(buttonStackView)
+        addSubview(summaryContainerView)
         
         habitHeaderStackView.translatesAutoresizingMaskIntoConstraints = false
         progressStackView.translatesAutoresizingMaskIntoConstraints = false
         photoStatStackView.translatesAutoresizingMaskIntoConstraints = false
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
+        summaryContainerView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
-            habitHeaderStackView.topAnchor.constraint(equalTo: topAnchor),
-            habitHeaderStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            habitHeaderStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            habitHeaderStackView.topAnchor.constraint(equalTo: summaryContainerView.topAnchor),
+            habitHeaderStackView.leadingAnchor.constraint(equalTo: summaryContainerView.leadingAnchor),
+            habitHeaderStackView.bottomAnchor.constraint(equalTo: summaryContainerView.bottomAnchor),
             
-            photoStatStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 140), // Column
-            photoStatStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            photoStatStackView.topAnchor.constraint(equalTo: summaryContainerView.topAnchor),
+            photoStatStackView.leadingAnchor.constraint(equalTo: summaryContainerView.leadingAnchor, constant: 140),
             photoStatStackView.widthAnchor.constraint(equalToConstant: 76),
+            photoStatStackView.bottomAnchor.constraint(equalTo: summaryContainerView.bottomAnchor),
             
+            progressStackView.topAnchor.constraint(equalTo: summaryContainerView.topAnchor),
             progressStackView.leadingAnchor.constraint(equalTo: photoStatStackView.trailingAnchor, constant: 8),
-            progressStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            progressStackView.bottomAnchor.constraint(equalTo: summaryContainerView.bottomAnchor),
 
+            buttonStackView.topAnchor.constraint(equalTo: summaryContainerView.topAnchor),
             buttonStackView.leadingAnchor.constraint(equalTo: progressStackView.trailingAnchor, constant: 12),
-            buttonStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             buttonStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            buttonStackView.bottomAnchor.constraint(equalTo: summaryContainerView.bottomAnchor),
         ])
     }
     
@@ -234,5 +266,36 @@ extension HabitCellMainView {
         buttonStackView.spacing = 8
         buttonStackView.addArrangedSubview(expansionButton)
         buttonStackView.addArrangedSubview(cameraButton)
+    }
+}
+
+extension HabitCellMainView: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return habitWithRecord.habit.categoryIDs.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryBadgeCell.reuseIdentifier, for: indexPath) as! CategoryBadgeCell
+        let categories = habitWithRecord.habit.categoryIDs.map { categoryIDToName[$0]! }
+        cell.configure(with: categories[indexPath.item])
+        
+        return cell
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        return categoryTagCollectionView.collectionViewLayout.collectionViewContentSize
+    }
+    
+    private func makeCollectionView() -> UICollectionView {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumInteritemSpacing = 100  // TODO: Find a better fix for preventing line wrap
+        layout.minimumLineSpacing = 12
+
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.showsHorizontalScrollIndicator = true
+        cv.register(CategoryBadgeCell.self, forCellWithReuseIdentifier: CategoryBadgeCell.reuseIdentifier)
+        return cv
     }
 }

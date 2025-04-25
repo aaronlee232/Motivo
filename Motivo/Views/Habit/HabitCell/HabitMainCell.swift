@@ -35,6 +35,7 @@ class HabitMainCell: UITableViewCell {
         expandDelegate: HabitCellViewExpansionDelegate,
         withHabitWithRecord habitWithRecord: HabitWithRecord,
         withRejectVotes rejectVotes: [VoteModel],
+        categoryIDToName: Dictionary<String, String>,
         isExpanded: Bool
     ) {
         self.isExpanded = isExpanded
@@ -43,6 +44,7 @@ class HabitMainCell: UITableViewCell {
             expandDelegate: expandDelegate,
             withHabitWithRecord: habitWithRecord,
             withRejectVotes: rejectVotes,
+            categoryIDToName: categoryIDToName,
             isExpanded: isExpanded
         )
     }
