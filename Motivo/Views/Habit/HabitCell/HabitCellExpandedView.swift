@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HabitExpandedView: UIView {
     private let pendingPhotoLabel = UILabel()
     private var pendingPhotoCollectionView = PendingPhotoCollectionView()
+    private var chartHostingController: UIHostingController<HeatMapChartView>?
     private let historicalLabel = UILabel()
     
     private var habitWithRecord: HabitWithRecord!
@@ -36,9 +38,15 @@ class HabitExpandedView: UIView {
         addSubview(historicalLabel)
         addSubview(pendingPhotoCollectionView)
         
+        // Adding SwiftUI chart for habit "contribution-style chart"
+        chartHostingController?.view.removeFromSuperview()
+        let chartHostingController = UIHostingController(rootView: HeatMapChartView())
+        addSubview(chartHostingController.view)
+        
         pendingPhotoLabel.translatesAutoresizingMaskIntoConstraints = false
         historicalLabel.translatesAutoresizingMaskIntoConstraints = false
         pendingPhotoCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        chartHostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             pendingPhotoLabel.topAnchor.constraint(equalTo: topAnchor),
             pendingPhotoLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -51,9 +59,13 @@ class HabitExpandedView: UIView {
             historicalLabel.topAnchor.constraint(equalTo: pendingPhotoCollectionView.bottomAnchor, constant: 16),
             historicalLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             historicalLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            historicalLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            // TODO: Historical heatmap
+            // Contribution Chart
+            chartHostingController.view.topAnchor.constraint(equalTo: historicalLabel.bottomAnchor, constant: 8),
+            chartHostingController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
+            chartHostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor),
+            chartHostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+            chartHostingController.view.heightAnchor.constraint(equalTo: pendingPhotoCollectionView.heightAnchor)
         ])
     }
 

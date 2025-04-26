@@ -40,7 +40,7 @@ class HabitCellMainView: UIView {
     // Aggregation of all above views
     private let summaryContainerView: UIView = UIView()
 
-    // Cateogry tag collection
+    // Category tag collection
     private var categoryTagCollectionView = CategoryTagHorizontalCollectionView()
 
     // MARK: - Properties
