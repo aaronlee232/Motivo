@@ -29,11 +29,8 @@ class HabitExpandableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(
-        withHabitWithRecord habitWithRecord: HabitWithRecord,
-        withRejectVotes rejectVotes: [VoteModel]
-    ) {
-        habitExpandedView.configure()
+    func configure(withHabitWithRecord habitWithRecord: HabitWithRecord) {
+        habitExpandedView.configure(withHabitWithRecord: habitWithRecord)
     }
     
     override func layoutSubviews() {
@@ -55,7 +52,8 @@ extension HabitExpandableCell {
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         habitExpandedView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            separatorView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            // Used to be 16, adjusted to compensate for extra spacing under category tag collection
+            separatorView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
             separatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             

@@ -37,7 +37,8 @@ class HabitManager {
         return try await StorageService.shared.uploadPhoto(image)
     }
     
-    // Fetches the active habit record for each habit of the user. If a habit does not have an active record, one will be created for it.
+    // Fetches the active habit record for each habit of the user. Also fetches associated reject votes for record
+    // If a habit does not have an active record, one will be created for it.
     func fetchActiveHabitWithRecords(forUserUID userUID: String) async throws -> [HabitWithRecord] {
         var activeHabitEntries: [HabitWithRecord] = []
         
@@ -57,9 +58,11 @@ class HabitManager {
                 fatalError("This should not have happened. There should only be one active record per habit")
             }
             
-            // If there is an active record, add it to the list of active habit records
+            // If there is an active record, add it to the list of active habit records after fetching it's reject votes
             if !filteredHabitEntries.isEmpty {
-                let activeHabitEntry = filteredHabitEntries.first!
+                var activeHabitEntry = filteredHabitEntries.first!
+                let rejectVotes = try await fetchRejectVotes(forRecordID: activeHabitEntry.record.id)
+                activeHabitEntry.rejectVotes = rejectVotes
                 activeHabitEntries.append(activeHabitEntry)
             } else {
                 // if there are no active habit records, create a new record in firestore and add it to list
@@ -74,6 +77,10 @@ class HabitManager {
             }
         }
         return activeHabitEntries
+    }
+    
+    func fetchRejectVotes(forRecordID recordID: String) async throws -> [VoteModel] {
+        return try await FirestoreService.shared.fetchRejectVotes(forRecordID: recordID)
     }
     
     func getStoredSelectedCategoryIDs(fromCategories categories: [CategoryModel]) -> [String] {

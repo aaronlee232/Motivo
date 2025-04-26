@@ -93,7 +93,6 @@ extension HabitView: UITableViewDataSource, UITableViewDelegate {
                 cameraDelegate: delegate,
                 expandDelegate: self,
                 withHabitWithRecord: habitWithRecord,
-                withRejectVotes: [],
                 categoryIDToName: categoryIDToName,
                 isExpanded: openedSections.contains(indexPath.section)
             )
@@ -106,10 +105,7 @@ extension HabitView: UITableViewDataSource, UITableViewDelegate {
             }
             
             let habitWithRecord = habitWithRecordList[indexPath.section]
-            cell.configure(
-                withHabitWithRecord: habitWithRecord,
-                withRejectVotes: []
-            )
+            cell.configure(withHabitWithRecord: habitWithRecord)
 
             return cell
         }

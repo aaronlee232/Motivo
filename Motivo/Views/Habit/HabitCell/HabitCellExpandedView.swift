@@ -9,7 +9,10 @@ import UIKit
 
 class HabitExpandedView: UIView {
     private let pendingPhotoLabel = UILabel()
+    private var pendingPhotoCollectionView = PendingPhotoCollectionView()
     private let historicalLabel = UILabel()
+    
+    private var habitWithRecord: HabitWithRecord!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,23 +34,52 @@ class HabitExpandedView: UIView {
         
         addSubview(pendingPhotoLabel)
         addSubview(historicalLabel)
+        addSubview(pendingPhotoCollectionView)
         
         pendingPhotoLabel.translatesAutoresizingMaskIntoConstraints = false
         historicalLabel.translatesAutoresizingMaskIntoConstraints = false
+        pendingPhotoCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             pendingPhotoLabel.topAnchor.constraint(equalTo: topAnchor),
-            pendingPhotoLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             pendingPhotoLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             pendingPhotoLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            historicalLabel.topAnchor.constraint(equalTo: topAnchor),
+            pendingPhotoCollectionView.topAnchor.constraint(equalTo: pendingPhotoLabel.bottomAnchor, constant: 8),
+            pendingPhotoCollectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            pendingPhotoCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            historicalLabel.topAnchor.constraint(equalTo: pendingPhotoCollectionView.bottomAnchor, constant: 16),
+            historicalLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            historicalLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             historicalLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            historicalLabel.leadingAnchor.constraint(equalTo: centerXAnchor),
-            historicalLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
+            
+            // TODO: Historical heatmap
         ])
     }
-    
-    func configure() {
-        // TODO: Populate image and vote data
+
+    func configure(withHabitWithRecord habitWithRecord: HabitWithRecord) {
+        self.habitWithRecord = habitWithRecord
+        
+        let imageURLs = habitWithRecord.record.unverifiedPhotoURLs
+        var imageURLToRejectCount = Dictionary<String, Int>()
+        for imageURL in imageURLs {
+            imageURLToRejectCount[imageURL] = 0
+        }
+        
+        // For quick lookup
+        let imageURLSet = Set(imageURLs)
+        for vote in habitWithRecord.rejectVotes {
+            // Safety check to ensure votes are for displayed images
+            if (!imageURLSet.contains(vote.photoURL)) {
+                continue
+            }
+            
+            imageURLToRejectCount[vote.photoURL]! += 1
+        }
+        
+        pendingPhotoCollectionView.configure(
+            withImageURLs: imageURLs,
+            withImageURLtoRejectCount: imageURLToRejectCount
+        )
     }
 }

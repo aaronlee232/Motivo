@@ -44,7 +44,7 @@ extension HabitViewController {
                 return
             }
             
-            // Concurrently fetch independent data
+            // Concurrently fetch data
             async let categoriesTask = try await habitManager.fetchCategories()
             async let activeHabitWithRecordsTask = try await habitManager.fetchActiveHabitWithRecords(forUserUID: user.uid)
             
@@ -60,7 +60,7 @@ extension HabitViewController {
             // Retrieve stored selections userDefaults
             let selectedCategoryIDs = habitManager.getStoredSelectedCategoryIDs(fromCategories: categories)
             let selectedFrequency = habitManager.getStoredSelectedFrequency()
-
+            
             // Filter habits to only be selected habits
             habitWithRecordList = filter(
                 habitWithRecordList,
@@ -89,7 +89,10 @@ extension HabitViewController {
             }
             
             // Check if there is a frequency selection, and filter by frequency if present
-            let isSelectedFrequency = frequency == FrequencyConstants.noFrequencyFilter || $0.habit.frequency == frequency
+            let isSelectedFrequency = (
+                frequency == FrequencyConstants.noFrequencyFilter
+                || $0.habit.frequency == frequency
+            )
             
             // Add habitWithRecord if it contains one of the category ids and is correct frequency
             return containsAnySelectedCategory && isSelectedFrequency

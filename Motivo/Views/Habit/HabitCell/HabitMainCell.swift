@@ -34,7 +34,6 @@ class HabitMainCell: UITableViewCell {
         cameraDelegate: HabitCellViewCameraDelegate,
         expandDelegate: HabitCellViewExpansionDelegate,
         withHabitWithRecord habitWithRecord: HabitWithRecord,
-        withRejectVotes rejectVotes: [VoteModel],
         categoryIDToName: Dictionary<String, String>,
         isExpanded: Bool
     ) {
@@ -43,7 +42,6 @@ class HabitMainCell: UITableViewCell {
             cameraDelegate: cameraDelegate,
             expandDelegate: expandDelegate,
             withHabitWithRecord: habitWithRecord,
-            withRejectVotes: rejectVotes,
             categoryIDToName: categoryIDToName,
             isExpanded: isExpanded
         )
