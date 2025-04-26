@@ -127,8 +127,8 @@ extension GroupViewController {
             UIAction(title: "Edit Group Name", image: UIImage(systemName: "pencil"), handler: { _ in
                 self.didTapEditGroupNameButton()
             }),
-            UIAction(title: "Invite User", image: UIImage(systemName: "person.fill.badge.plus"), handler: { _ in
-                self.didTapInviteUserButton()
+            UIAction(title: "Invite Connection", image: UIImage(systemName: "person.fill.badge.plus"), handler: { _ in
+                self.didTapInviteConnectionButton()
             }),
             UIAction(title: "Leave Group", image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), attributes: .destructive, handler: { _ in
                 self.didTapLeaveGroupButton()
@@ -208,8 +208,10 @@ extension GroupViewController {
         navigationController?.pushViewController(renameGroupVC, animated: true)
     }
     
-    @objc private func didTapInviteUserButton() {
+    @objc private func didTapInviteConnectionButton() {
         // TODO: Implement invite user segue/view
+        let inviteConnectionVC = InviteConnectionViewController()
+        navigationController?.pushViewController(inviteConnectionVC, animated: true)
     }
     
     @objc private func didTapLeaveGroupButton() {
