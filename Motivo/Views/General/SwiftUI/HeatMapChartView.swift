@@ -11,19 +11,31 @@ import Charts
 
 struct HeatMapChartView: View {
     let pastMonths = 3
-    
+
     @State var contributions: [Completion]
-    let endDate = Date()
-    var startDate: Date {
+    var endDate: Date
+    var startDate: Date
+
+    init() {
+        let now = Date()
+        let endOfWeek = DateUtils.shared.calendar.dateInterval(of: .weekOfYear, for: now)!.end
+        let lastMomentOfSaturday = DateUtils.shared.calendar.date(byAdding: .second, value: -1, to: endOfWeek)!
+        endDate = lastMomentOfSaturday
+        
         let date = Calendar.current.date(byAdding: .month, value: -pastMonths, to: endDate)!
         let startOfWeek = DateUtils.shared.calendar.dateInterval(of: .weekOfYear, for: date)!.start
-        return startOfWeek
-    }
-    
-    // pass in some kind of contributions: [Contribution]
-    init() {
-        let sparseContributions = Completion.generate(forPastMonths: pastMonths)
-        self.contributions = Completion.fillGenerate(sparseContributions: sparseContributions, forPastMonths: pastMonths)
+        startDate = startOfWeek
+
+        let sparseContributions = Completion.generate(forPastMonths: pastMonths, fromDate: endDate)
+        
+        self._contributions = State(initialValue: Completion.fillGenerate(
+            sparseContributions: sparseContributions,
+            fromDate: startDate,
+            toDate: Date()
+        ))
+        
+        print(contributions.last)
+        print(weekday(for: contributions.last!.date))
     }
     
     var body: some View {
@@ -60,11 +72,10 @@ struct HeatMapChartView: View {
         
         // For the y-axis we'll display day of the week
         .chartYAxis {
-            AxisMarks(position: .leading, values: [1, 3, 5]) { value in
+            AxisMarks(position: .leading, values: [1, 2, 3, 4, 5, 6, 7]) { value in
                 if let value = value.as(Int.self) {
                     AxisValueLabel {
-                        // Symbols from Calendar.current starting with Sunday
-                        Text(shortWeekdaySymbols(for: value))
+                        Text(shortWeekdaySymbols(for: value - 1)) // -1 because array is 0-based
                     }
                     .foregroundStyle(Color(.label))
                 }
