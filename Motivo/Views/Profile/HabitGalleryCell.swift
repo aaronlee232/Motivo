@@ -83,7 +83,7 @@ extension HabitGalleryCell: UICollectionViewDataSource {
         ) as! HabitImageCell
         
         let urlString = imageURLs[indexPath.item]
-        cell.setImage(with: urlString)
+        cell.configure(withImageURL: urlString)
         return cell
     }
 }
