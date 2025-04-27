@@ -10,6 +10,13 @@ import Foundation
 struct HabitWithRecord {
     var habit: HabitModel
     var record: HabitRecord
+    var rejectVotes: [VoteModel]  // No use for accept votes yet
+    
+    init(habit: HabitModel, record: HabitRecord, votes: [VoteModel]=[]) {
+        self.habit = habit
+        self.record = record
+        self.rejectVotes = votes
+    }
     
     var isCompleted: Bool {
         let completedCount = record.completedCount

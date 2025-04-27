@@ -7,4 +7,5 @@
 
 class UserDefaultKeys {
     static let selectedCategoryIDs = "selectedCategoryIDs"
+    static let selectedFrequency = "selectedFrequency"
 }

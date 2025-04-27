@@ -350,6 +350,17 @@ extension FirestoreService {
         }
     }
     
+    func fetchRejectVotes(forRecordID recordID: String) async throws -> [VoteModel] {
+        let snapshot = try await voteCollectionRef
+            .whereField("habitRecordID", isEqualTo: recordID)
+            .whereField("voteType", isEqualTo: VoteType.reject.rawValue)
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: VoteModel.self)
+        }
+    }
+    
     func addVote(vote: VoteModel) throws {
         let voteDocument = voteCollectionRef.document()
         try voteDocument.setData(from: vote)

@@ -11,7 +11,7 @@ class CategoryBadgeCell: UICollectionViewCell {
     static let reuseIdentifier = "CategoryBadgeCell"
     
     private let paddingView = UIView()
-    private let badgeLabel = UILabel()
+    let badgeLabel = UILabel()
 
     
     override init(frame: CGRect) {
@@ -23,14 +23,14 @@ class CategoryBadgeCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             // paddingView fills cell with outer margin
-            paddingView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            paddingView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
-            paddingView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            paddingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            paddingView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            paddingView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            paddingView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            paddingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
             // badgeLabel has inner padding from the paddingView
-            badgeLabel.topAnchor.constraint(equalTo: paddingView.topAnchor, constant: 4),
-            badgeLabel.bottomAnchor.constraint(equalTo: paddingView.bottomAnchor, constant: -4),
+            badgeLabel.topAnchor.constraint(equalTo: paddingView.topAnchor, constant: 2),
+            badgeLabel.bottomAnchor.constraint(equalTo: paddingView.bottomAnchor, constant: -2),
             badgeLabel.leadingAnchor.constraint(equalTo: paddingView.leadingAnchor, constant: 12),
             badgeLabel.trailingAnchor.constraint(equalTo: paddingView.trailingAnchor, constant: -12)
         ])
