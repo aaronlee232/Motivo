@@ -12,7 +12,7 @@ import Charts
 struct HeatMapChartView: View {
     let pastMonths = 3
     
-    @State var contributions: [Contribution]
+    @State var contributions: [Completion]
     let endDate = Date()
     var startDate: Date {
         let date = Calendar.current.date(byAdding: .month, value: -pastMonths, to: endDate)!
@@ -22,8 +22,8 @@ struct HeatMapChartView: View {
     
     // pass in some kind of contributions: [Contribution]
     init() {
-        let sparseContributions = Contribution.generate(forPastMonths: pastMonths)
-        self.contributions = Contribution.fillGenerate(sparseContributions: sparseContributions, forPastMonths: pastMonths)
+        let sparseContributions = Completion.generate(forPastMonths: pastMonths)
+        self.contributions = Completion.fillGenerate(sparseContributions: sparseContributions, forPastMonths: pastMonths)
     }
     
     var body: some View {

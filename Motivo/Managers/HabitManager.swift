@@ -62,7 +62,19 @@ class HabitManager {
             if !filteredHabitEntries.isEmpty {
                 var activeHabitEntry = filteredHabitEntries.first!
                 let rejectVotes = try await fetchRejectVotes(forRecordID: activeHabitEntry.record.id)
-                activeHabitEntry.rejectVotes = rejectVotes
+                
+                var pendingRejectVotes: [VoteModel] = []
+                let imageURLSet = Set(activeHabitEntry.record.unverifiedPhotoURLs)
+                for vote in rejectVotes {
+                    // Safety check to ensure votes are for displayed images
+                    if (!imageURLSet.contains(vote.photoURL)) {
+                        continue
+                    }
+                    
+                    pendingRejectVotes.append(vote)
+                }
+                
+                activeHabitEntry.rejectVotes = pendingRejectVotes
                 activeHabitEntries.append(activeHabitEntry)
             } else {
                 // if there are no active habit records, create a new record in firestore and add it to list

@@ -10,9 +10,9 @@
 
 import Foundation
 
-struct Contribution: Identifiable {
+struct Completion: Identifiable {
     let date: Date
-    let count: Int
+    let count: Float
 
     var id: Date {
         date
@@ -20,16 +20,16 @@ struct Contribution: Identifiable {
 }
 
 
-extension Contribution {
+extension Completion {
     // TODO: Remove this or replace with dummy data generation in firestore
-    static func generate(forPastMonths pastMonths: Int) -> [Contribution] {
-        var contributions: [Contribution] = []
+    static func generate(forPastMonths pastMonths: Int) -> [Completion] {
+        var contributions: [Completion] = []
         let toDate = DateUtils.shared.calendar.startOfDay(for: Date.now)
         let fromDate = Calendar.current.date(byAdding: .month, value: -pastMonths, to: toDate)!
 
         var currentDate = fromDate
         while currentDate <= toDate {
-            let contribution = Contribution(date: currentDate, count: .random(in: 0...10))
+            let contribution = Completion(date: currentDate, count: Float.random(in: 0...1))
             contributions.append(contribution)
             currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
         }
@@ -37,7 +37,7 @@ extension Contribution {
         return contributions
     }
     
-    static func fillGenerate(sparseContributions: [Contribution], forPastMonths pastMonths: Int) -> [Contribution] {
+    static func fillGenerate(sparseContributions: [Completion], forPastMonths pastMonths: Int) -> [Completion] {
         var contributions = Dictionary(
             uniqueKeysWithValues: sparseContributions.map { ($0.date, $0) }
         )
@@ -54,13 +54,13 @@ extension Contribution {
                 continue
             }
             
-            let contribution = Contribution(date: currentDate, count: .random(in: 0...10))
+            let contribution = Completion(date: currentDate, count: Float.random(in: 0...1))
             contributions[currentDate] = contribution
             currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
         }
         
         currentDate = fromDate
-        var completeContributions: [Contribution] = []
+        var completeContributions: [Completion] = []
         while currentDate <= toDate {
             completeContributions.append(contributions[currentDate]!)
             currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
