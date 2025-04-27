@@ -79,9 +79,9 @@ class HabitExpandedView: UIView {
             // Contribution Chart
             chartHostingController.view.topAnchor.constraint(equalTo: historicalLabel.bottomAnchor, constant: 8),
             chartHostingController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
-            chartHostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor),
+            chartHostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4),
             chartHostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor),
-            chartHostingController.view.heightAnchor.constraint(equalToConstant: 120)
+            chartHostingController.view.heightAnchor.constraint(equalToConstant: 180)
         ])
         
         
