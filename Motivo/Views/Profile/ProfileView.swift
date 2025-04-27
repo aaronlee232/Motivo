@@ -122,6 +122,7 @@ class ProfileView: UIView {
 
 class ProfileHeaderView: UIView {
     let profileImageViewHeight:CGFloat = 50
+    let myCompletedCountButtonImageViewHeight:CGFloat = 20
     
     // bar button
     let settingsButton = IconButton(image: UIImage(systemName: "gear")!, barType: true)
@@ -135,12 +136,14 @@ class ProfileHeaderView: UIView {
     private let myGroupsLabel = SubtitleLabel(textLabel: "Groups")
     var myCompletedCountButton = UIButton(type: .system)
     private var myCompletedCountButtonLabel = NormalLabel(textLabel: "0") // completed count number
+    private let myCompletedCountButtonImageView = UIImageView(image: UIImage(systemName: "info.square"))
     private let myCompletedLabel = SubtitleLabel(textLabel: "Completed")
     
     private var userInfoStackView: UIStackView!
     private var habitsStackView: UIStackView!
     private var groupsStackView: UIStackView!
     private var completedStackView: UIStackView!
+    private var completedSubStackView: UIStackView!
     private var statsStackView: UIStackView!
     
     var delegate:ProfileViewDelegate?
@@ -157,6 +160,7 @@ class ProfileHeaderView: UIView {
     func configure(withUsername username: String, withUserStats userStats: UserStats, isOtherProfile: Bool) {
         if isOtherProfile {
             titleLabel.text = "\(username)'s Profile"
+            settingsButton.isHidden = true
         }
         usernameLabel.text = username
         myHabitsCountLabel.text = String(userStats.habitCount)
@@ -170,10 +174,21 @@ class ProfileHeaderView: UIView {
 
         myCompletedCountButtonLabel.text = String(userStats.completed.total)
         myCompletedCountButtonLabel.setBoldText(status: true)
+        
+        myCompletedCountButtonImageView.tintColor = colorMainText
+        myCompletedCountButtonImageView.contentMode = .scaleAspectFit
+        myCompletedCountButtonImageView.clipsToBounds = true
+        
+        completedSubStackView = UIStackView(arrangedSubviews: [myCompletedCountButtonLabel, myCompletedCountButtonImageView])
+        completedSubStackView.axis = .horizontal
+        completedSubStackView.alignment = .center
+        completedSubStackView.spacing = 4
+        
+        completedSubStackView.translatesAutoresizingMaskIntoConstraints = false
+        myCompletedCountButton.addSubview(completedSubStackView)
 
-        myCompletedCountButton.addSubview(myCompletedCountButtonLabel)
-        myCompletedCountButtonLabel.frame = myCompletedCountButton.bounds
-        myCompletedCountButtonLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//        myCompletedCountButtonLabel.frame = myCompletedCountButton.bounds
+//        myCompletedCountButtonLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         myCompletedCountButton.showsMenuAsPrimaryAction = true
         myCompletedCountButton.menu = menu
         NSLayoutConstraint.activate([
@@ -226,14 +241,24 @@ class ProfileHeaderView: UIView {
         
         // Completed Count Stat
 //        myCompletedCountLabel.setBoldText(status: true)
+        
         myCompletedLabel.changeFontSize(fontSize: 16)
         completedStackView = UIStackView(arrangedSubviews: [myCompletedCountButton, myCompletedLabel])
         completedStackView.axis = .vertical
         completedStackView.alignment = .center
         completedStackView.distribution = .equalSpacing
+//        myCompletedLabel.changeFontSize(fontSize: 16)
+//        completedSubStackView = UIStackView(arrangedSubviews: [myCompletedCountButton, myCompletedLabel])
+//        completedSubStackView.axis = .vertical
+//        completedSubStackView.alignment = .center
+//        completedSubStackView.distribution = .equalSpacing
+//        
+//        completedStackView = UIStackView(arrangedSubviews: [completedSubStackView, myCompletedCountButtonImageView])
+//        completedStackView.axis = .horizontal
+//        completedStackView.alignment = .center
+//        completedStackView.spacing = 4
         
         // User Info
-        // TODO: Change this so profile is next to title. tile is username
         userInfoStackView = UIStackView(arrangedSubviews: [profileImageView, usernameLabel])
         userInfoStackView.axis = .horizontal
         userInfoStackView.alignment = .center

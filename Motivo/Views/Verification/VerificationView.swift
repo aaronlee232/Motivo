@@ -49,6 +49,7 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     
     private let noCardsMessage = NormalLabel(textLabel: "No habits to verify")
     private let noCardsLeftMessage = NormalLabel()
+    private var currentUserToVerify = ""
     
     var delegate:VerificationViewDelegate?
     
@@ -68,6 +69,8 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
         
         noCardsMessage.textAlignment = .center
         noCardsMessage.changeFontSize(fontSize: 40)
+        
+        noCardsLeftMessage.text = "No habits left to verify"
         
 //        previousNextButtonsStackView = UIStackView(arrangedSubviews: [previousButton, nextButton])
 //        previousNextButtonsStackView.axis = .horizontal
@@ -242,16 +245,14 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     }
     
     func cardStack(_ cardStack: SwipeCardStack, cardForIndexAt index: Int) -> SwipeCard {
-        // TODO: create a view that makes the card with description of the user and habit, maybe date
-        // Create a footer with arrow keys and x and check mark to do the same things that swiping does
-        // Another footer if want to skip someone and go to next connection
         let verificationCard = VerificationCard()
+        currentUserToVerify = verificationViewCardData[index].user.username
+        print("cardStack cardForIndexAt currentUserToVerify: \(currentUserToVerify)")
         return verificationCard.card(fromUser: verificationViewCardData[index].user.username, fromHabit: verificationViewCardData[index].habit.name, fromImage: verificationViewCardData[index].image, fromDateCompleted: verificationViewCardData[index].record.timestamp)
-//        return card(fromImage: cardData[index].image)
     }
     
     func numberOfCards(in cardStack: SwipeCardStack) -> Int {
-        print("verificationViewCardData: \(verificationViewCardData.count)")
+//        print("verificationViewCardData: \(verificationViewCardData.count)")
         return verificationViewCardData.count
     }
     
@@ -264,8 +265,7 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     }
     
     func didSwipeAllCards(_ cardStack: SwipeCardStack) {
-        // TODO: Let user know all photos for the current user have been reviewed
-        print("inside of didSwipeAllCards")
+        noCardsLeftMessage.text = "No habits left to verify for \(currentUserToVerify)"
         noCardsLeftMessage.isHidden = false
     }
 }

@@ -130,8 +130,8 @@ extension GroupViewController {
             UIAction(title: "Copy Group Code", image: UIImage(systemName: "document.on.document"), handler: { _ in
                 self.didTapCopyGroupCode()
             }),
-            UIAction(title: "Invite User", image: UIImage(systemName: "person.fill.badge.plus"), handler: { _ in
-                self.didTapInviteUserButton()
+            UIAction(title: "Invite Connection", image: UIImage(systemName: "person.fill.badge.plus"), handler: { _ in
+                self.didTapInviteConnectionButton()
             }),
             UIAction(title: "Leave Group", image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), attributes: .destructive, handler: { _ in
                 self.didTapLeaveGroupButton()
@@ -210,14 +210,15 @@ extension GroupViewController {
         renameGroupVC.groupID = groupID
         navigationController?.pushViewController(renameGroupVC, animated: true)
     }
-    
     @objc private func didTapCopyGroupCode() {
         UIPasteboard.general.string = groupID
         AlertUtils.shared.showAlert(self, title: "Group ID Copied", message: "\(groupID!) copied to clipboard")
     }
     
-    @objc private func didTapInviteUserButton() {
+    @objc private func didTapInviteConnectionButton() {
         // TODO: Implement invite user segue/view
+        let inviteConnectionVC = InviteConnectionViewController()
+        navigationController?.pushViewController(inviteConnectionVC, animated: true)
     }
     
     @objc private func didTapLeaveGroupButton() {

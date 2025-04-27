@@ -24,14 +24,8 @@ class VerificationCard: SwipeCard {
     // Modified from Shuffle Example
     func card(fromUser user: String, fromHabit habit: String, fromImage image: UIImage, fromDateCompleted date: String) -> SwipeCard {
         let card = SwipeCard()
-//        card.backgroundColor = .systemBlue
         card.swipeDirections = [.left, .right]
         imageView = UIImageView(image: image)
-//        let imageHeight = imageView.image?.size.height ?? 0
-//        print("imageHeight: \(imageHeight)")
-//        print("imageView.bounds.height: \(imageView.bounds.height)")
-//        let bottomAnchorAdjustment = (imageView.bounds.height - imageHeight) / 2
-//        print("bottomAnchorAdjustment: \(bottomAnchorAdjustment)")
         
         // Date formatting
         guard let date = ISO8601DateFormatter().date(from: date) else {
