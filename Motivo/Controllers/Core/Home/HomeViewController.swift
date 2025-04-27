@@ -68,19 +68,7 @@ class HomeViewController: UIViewController, HomeViewDelegate, GroupTableViewDele
                     AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "User session lost")
                     return
                 }
-//                let habits = try await statsManager.fetchCurrentNumberOfHabits(forUserUID: user.uid)
-//                groupMetadataList = try await groupManager.fetchGroupMetadataList(forUserUID: user.uid)
-//                homeView.groupList = groupMetadataList
-//                if groupMetadataList.count > 0 && habits > 0 {
-//                    currentHomeViewStatus = .showData
-//                } else if groupMetadataList.count > 0 {
-//                    currentHomeViewStatus = .noHabits
-//                } else if habits > 0 {
-//                    currentHomeViewStatus = .noGroups
-//                } else {
-//                    currentHomeViewStatus = .showDefault
-//                }
-//                print("homeViewStatus: \(currentHomeViewStatus)")
+                
                 groupMetadataList = try await homeManger.fetchGroupMetadataList(forUserUID: user.uid)
                 homeView.configure(withGroupMetadataList: groupMetadataList)
             } catch {
