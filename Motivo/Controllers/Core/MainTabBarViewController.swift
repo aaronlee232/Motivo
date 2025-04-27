@@ -37,6 +37,7 @@ class MainTabBarViewController: UITabBarController {
         profileVC.title = "My Profile"
         
         setViewControllers([habitVC, chatVC, homeVC, peopleVC, profileVC], animated: true)
+        selectedIndex = 2
     }
 
 
