@@ -127,6 +127,9 @@ extension GroupViewController {
             UIAction(title: "Edit Group Name", image: UIImage(systemName: "pencil"), handler: { _ in
                 self.didTapEditGroupNameButton()
             }),
+            UIAction(title: "Copy Group Code", image: UIImage(systemName: "document.on.document"), handler: { _ in
+                self.didTapCopyGroupCode()
+            }),
             UIAction(title: "Invite User", image: UIImage(systemName: "person.fill.badge.plus"), handler: { _ in
                 self.didTapInviteUserButton()
             }),
@@ -206,6 +209,11 @@ extension GroupViewController {
         let renameGroupVC = RenameGroupViewController()
         renameGroupVC.groupID = groupID
         navigationController?.pushViewController(renameGroupVC, animated: true)
+    }
+    
+    @objc private func didTapCopyGroupCode() {
+        UIPasteboard.general.string = groupID
+        AlertUtils.shared.showAlert(self, title: "Group ID Copied", message: "\(groupID!) copied to clipboard")
     }
     
     @objc private func didTapInviteUserButton() {
