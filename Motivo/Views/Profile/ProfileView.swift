@@ -122,7 +122,6 @@ class ProfileView: UIView {
 
 class ProfileHeaderView: UIView {
     let profileImageViewHeight:CGFloat = 50
-    let myCompletedCountButtonImageViewHeight:CGFloat = 20
     
     // bar button
     let settingsButton = IconButton(image: UIImage(systemName: "gear")!, barType: true)
