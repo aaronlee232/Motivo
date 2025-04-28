@@ -1,7 +1,8 @@
 # Motivo
-## Group number: 4 <br> Names: Aaron Lee, Cooper Wilk, Arisyia Wong
+## Group number: 4 <br> Names: Aaron Lee, Arisyia Wong
 ### Final Documentation
-#### Updated on 2025/04/13
+#### Updated on 2025/04/28
+#### GitHub: `https://github.com/aaronlee232/Motivo/tree/main`
 #### Dependencies:
 - Xcode 16.2
 - Swift 5
@@ -17,12 +18,29 @@
     - FirebaseStorageCombine-Community
     - [Kingfisher](https://github.com/onevcat/Kingfisher)
     - [MockImagePicker](https://github.com/yonat/MockImagePicker?source=post_page-----e9e5b2acb0c1---------------------------------------)
+    - [Shuffle](https://github.com/mac-gallagher/Shuffle)
 
 #### Special Instructions:
-- Placeholder
+- Please make sure all the packages above are installed before running the app
+- Demo Accounts:
+  - Jack Smith (**Main Account** / Email: jack.smith@gmail.com / Password: 123456)
+  - Alice Sun (Email: alice.sun@gmail.com / Password: 123456)
+  - Bob Tran (Email: bob.tran@gmail.com / Password: 123456)
+  - Carol Lee (Email: carol.lee@gmail.com / Password: 123456)
 
 #### Disclaimer:
-- Placeholder
+- Most of the screens / features that are stubbed have an alert that would pop up indicating that it is unavailable
+- For testing purposes, use the following email and password to show a populated connections list  
+Email: jack.smith@gmail.com  
+Password: 123456
+
+#### Features removed from initial design:
+- Social / Chat
+- Chat Search
+- Accountability Nudges
+- Notifications (Group Invitations)
+- Additional Social Features of Habits (Daily Check-Ins, Challenges)
+- Gamification Features (Streaks, Leaderboards, Rewards)
 
 | Feature | Description | Release <br> Planned | Release Actual | Deviations | Who / Percentage worked on |
 | :- | :- | :-: | :-: | :-: | :-: |
@@ -36,61 +54,11 @@
 | Connections | Shows a list of other users that the current user is connected to | Alpha | Beta | Missing option to add a friend to the connection list that isn't in a common group | Aaron |
 | Habit Verification | A user can progress their habits by taking photos and getting them verified by others | Not Specified | Final | N/A | Aaron (70%), Arisyia (30%) |
 | Accountability Nudges | User's can remind other user's in the same group to work on their habits | Beta | N/A | Stubbed feature due to time constraints | N/A |
-| Notifications | Group Invitations | Final | N/A | Dropped feature due to time constraints | N/A |
+| Notifications | Serves as an inbox for Group Invitations | Final | N/A | Dropped feature due to time constraints | N/A |
 | Profile | Displays a user's stats, groups, and approved photo gallery | Final | Final | Missing a heatmap tab for viewing habit progress overtime | Aaron (50%), Arisyia (50%) |
-| Settings | Displays app-wide options like theme, help/about, and log out | Final | Beta | Missing implementation for theme switching and stubbed about and help options | Arisyia |
+| Settings | Displays app-wide options like theme, help/about, and log out | Final | Beta | Missing implementation for: themes, about, and help options | Arisyia |
 | Additional Social Features of Habits | Daily Check-Ins, Group-Proposed Daily/Weekly Challenge | Alpha | N/A | Dropped feature due to time constraints | N/A |
 | Gamification Features | Streaks, Leaderboards, Reward System | Beta | N/A | Dropped feature due to time constraints | N/A |
-- - -
-### Final Documentation
-#### Updated on 2025/04/28
-#### Disclaimers:  
-For testing purposes, use the following email and password to show a populated connections list  
-Email: jack.smith@gmail.com  
-Password: 123456
-
-Features removed from initial design:
-- Social / Chat
-- Chat Search
-- Accountability Nudges
-- Notifications (Group Invitations)
-- Additional Social Features of Habits (Daily Check-Ins, Challenges)
-- Gamification Features (Streaks, Leaderboards, Rewards)
-
-
-**Contributions**  
-Aaron Lee & Arisyia Wong (%)
-- .
-
-Aaron Lee (%)
-- Resolved and refactored a major portion of habit-related files
-- Remade habit cells to look more consistent with mockup UI
-- Added habit cell expansion to display additional information 
-- Added photo gallery to habit cells
-- Added photo gallery to profile
-- Added historical heat map to habit cells
-- Created intial verification screen and implemented the remaining verification logic
-- Refactored and made minor adjustments to profile screen to allow for dynamic user stats (Completed stat)
-- Implemented some missing group screen menu options (rename, copy group code, leave group)
-- Added display of group member habits to group overview
-
-Arisyia Wong (%)
-- .
-
-- - -
-**Deviations**  
-- Group Invite
-- Notification
-    - Show group invite notifications
-- Home
-    - Favorite Habit List Display
-- Group View
-    - Invite user implementations
-- Group View (Overview Tab)
-    - Aggregate member progress heat map
-- Group View (Progress Tab)
-    - Nudge
-
 
 - - -
 ### Beta Documentation
