@@ -74,8 +74,8 @@ Aaron Lee (%)
 - Implemented some missing group screen menu options (rename, copy group code, leave group)
 - Added display of group member habits to group overview
 
-Arisyia Wong (25%)
-
+Arisyia Wong (%)
+-
 
 - - -
 **Deviations**  
