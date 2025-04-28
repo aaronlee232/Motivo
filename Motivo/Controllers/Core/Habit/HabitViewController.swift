@@ -9,7 +9,8 @@ typealias UIImagePickerController = MockImagePicker
 typealias UIImagePickerControllerDelegate = MockImagePickerDelegate
 #endif
 
-class HabitViewController: UIViewController {
+class HabitViewController: UIViewController, HabitViewDelegate {
+    
     // MARK: UI Elements
     private let habitView = HabitView()
     
@@ -32,6 +33,23 @@ class HabitViewController: UIViewController {
         Task {
             await loadHabitData()
         }
+    }
+    
+    func didLongPress() {
+        print("in did long press")
+        // TODO: replace habit name with actual habit name
+        let controller = UIAlertController(title: "Deleting your [habit name] habit",
+                                           message: "Are you sure you want to delete this habit?",
+                                           preferredStyle: .alert)
+        controller.addAction(UIAlertAction(title: "DELETE", style: .destructive) { _ in
+            do {
+                // TODO: delete the habit
+            } catch {
+                print("Deleting habit error")
+            }
+        })
+        controller.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(controller, animated: true)
     }
 }
 

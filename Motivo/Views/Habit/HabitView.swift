@@ -1,5 +1,9 @@
 import FirebaseFirestore
 
+protocol HabitViewDelegate:HabitViewController {
+    func didLongPress()
+}
+
 class HabitView: UIView {
     
     // MARK: UI Elements
@@ -13,6 +17,7 @@ class HabitView: UIView {
     private var openedSections: Set<Int> = Set()
     
     var delegate: HabitCellViewCameraDelegate!
+    var habitViewDelegate: HabitViewDelegate?
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -81,6 +86,15 @@ extension HabitView {
 
 // MARK: - Table delegate methods
 extension HabitView: UITableViewDataSource, UITableViewDelegate {
+    @objc func handleLongPress(cell: UITableViewCell) {
+//        UIView.animate(withDuration: 0.2) {
+//            cell.backgroundColor = colorMainText.withAlphaComponent(0.4)
+//            cell.backgroundColor = .systemBackground
+//        }
+        print("Habit deletion")
+        habitViewDelegate?.didLongPress()
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             // Main View Cells
@@ -96,7 +110,8 @@ extension HabitView: UITableViewDataSource, UITableViewDelegate {
                 categoryIDToName: categoryIDToName,
                 isExpanded: openedSections.contains(indexPath.section)
             )
-
+            let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+            cell.addGestureRecognizer(longPressGestureRecognizer)
             return cell
         } else {
             // Expanded habit cells
