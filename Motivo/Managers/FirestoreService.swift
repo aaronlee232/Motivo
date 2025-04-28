@@ -289,8 +289,18 @@ extension FirestoreService {
         try habitDocument.setData(from: habit, merge: true)
     }
     
-    func deleteHabit(habitID: String) async throws {
+    func deleteHabitAndRecords(forHabitID habitID: String) async throws {
+        // Delete Habit
         try await habitCollectionRef.document(habitID).delete()
+        
+        // Delete Records
+        let querySnapshot = try await habitRecordCollectionRef
+            .whereField("habitID", isEqualTo: habitID)
+            .getDocuments()
+        
+        for document in querySnapshot.documents {
+            try await document.reference.delete()
+        }
     }
 }
 
