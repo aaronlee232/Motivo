@@ -217,8 +217,10 @@ extension GroupViewController {
     
     @objc private func didTapInviteConnectionButton() {
         // TODO: Implement invite user segue/view
-        let inviteConnectionVC = InviteConnectionViewController()
-        navigationController?.pushViewController(inviteConnectionVC, animated: true)
+        AlertUtils.shared.showAlert(self, title: "Sorry", message: "Inviting connections is not an available feature")
+//        let inviteConnectionVC = InviteConnectionViewController()
+//        inviteConnectionVC.groupID = groupID
+//        navigationController?.pushViewController(inviteConnectionVC, animated: true)
     }
     
     @objc private func didTapLeaveGroupButton() {

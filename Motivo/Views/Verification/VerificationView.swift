@@ -194,6 +194,9 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
             switchConnectionsStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10)
         ])
         
+        nextConnectionStackView.isHidden = true
+        prevConnectionStackView.isHidden = true
+        
         noCardsMessage.isHidden = true
         noCardsLeftMessage.isHidden = true
     }
@@ -267,5 +270,6 @@ class VerificationView: UIView, SwipeCardStackDelegate, SwipeCardStackDataSource
     func didSwipeAllCards(_ cardStack: SwipeCardStack) {
         noCardsLeftMessage.text = "No habits left to verify for \(currentUserToVerify)"
         noCardsLeftMessage.isHidden = false
+        rejectAcceptButtonsStackView.isHidden = true
     }
 }
