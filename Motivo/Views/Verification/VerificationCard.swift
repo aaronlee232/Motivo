@@ -39,7 +39,7 @@ class VerificationCard: SwipeCard {
         // Adding user and habit information
         username.text = "Connection: \(user)"
         habitName.text = "Habit: \(habit)"
-        dateName.text = "Completed on: \(formattedDate)"
+        dateName.text = "Taken on: \(formattedDate)"
         
         username.textColor = .white
         habitName.textColor = .white

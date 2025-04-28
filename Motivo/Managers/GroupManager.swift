@@ -25,16 +25,22 @@ class GroupManager {
             return GroupMetadata(groupID: "", groupName: "Unknown Group", categoryNames: [], memberCount: 0, habitsCount: 0)
         }
         let members = try await FirestoreService.shared.fetchGroupMemberships(forGroupID: withGroupID)
-        let category = try await FirestoreService.shared.fetchCategories(withCategoryIDs: group.groupCategoryIDs)
+        let categories = try await FirestoreService.shared.fetchCategories(withCategoryIDs: group.groupCategoryIDs)
+        let categoryIDSet = Set(categories.map { $0.id }) // Get array of category IDs from Category models
+
         let habits = try await FirestoreService.shared.fetchHabits(forUserUIDs: members.map {$0.userUID})
+        let groupHabits = habits.filter { habit in
+            // Check if any categoryID in habit.categoryIDs exists in group categoryIDs
+            !Set(habit.categoryIDs).isDisjoint(with: categoryIDSet)
+        }
         
         let groupMetadata = GroupMetadata(
             groupID: group.id!,
             image: nil,  // TODO: Replace with groupImageURL once added
             groupName: group.groupName,
-            categoryNames: category.map{ $0.name },
+            categoryNames: categories.map{ $0.name },
             memberCount: members.count,
-            habitsCount: habits.count
+            habitsCount: groupHabits.count
         )
         
         return groupMetadata
