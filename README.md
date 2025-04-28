@@ -60,7 +60,7 @@ Features removed from initial design:
 
 **Contributions**  
 Aaron Lee & Arisyia Wong (%)
--
+- .
 
 Aaron Lee (%)
 - Resolved and refactored a major portion of habit-related files
@@ -69,35 +69,27 @@ Aaron Lee (%)
 - Added photo gallery to habit cells
 - Added photo gallery to profile
 - Added historical heat map to habit cells
-- Created intial verification screen and implemented verification logic
+- Created intial verification screen and implemented the remaining verification logic
 - Refactored and made minor adjustments to profile screen to allow for dynamic user stats (Completed stat)
 - Implemented some missing group screen menu options (rename, copy group code, leave group)
 - Added display of group member habits to group overview
 
 Arisyia Wong (%)
--
+- .
 
 - - -
 **Deviations**  
 - Group Invite
 - Notification
     - Show group invite notifications
-- Profile
-    - Currently using hardcoded user stats. Will replace with firestore data
 - Home
-    - Habit List Display
-- Connections
-    - View pending photos of other users and verify their photos and update HabitRecord accordingly
+    - Favorite Habit List Display
 - Group View
-    - Menu button implementations (Edit Group Name, Invite User, Leave Group)
+    - Invite user implementations
 - Group View (Overview Tab)
-    - Heat map
-    - List of group member habits that fall under group categories
+    - Aggregate member progress heat map
 - Group View (Progress Tab)
     - Nudge
-- Other user profile
-    - Add segues to other user profiles
-    - (multiple places)
 
 
 - - -
