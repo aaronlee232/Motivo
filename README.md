@@ -26,9 +26,9 @@
 
 | Feature | Description | Release <br> Planned | Release Actual | Deviations | Who / Percentage worked on |
 | :- | :- | :-: | :-: | :-: | :-: |
-| Authentication <br> (log in / out, account creation) | User can log in, log out, and reset password | Alpha | Alpha | N/A | Aaron |
+| Authentication <br> (log in / out, account creation) | User can log in, log out, and reset password | Alpha | Alpha | N/A | Aaron (50%), Arisyia (50%) |
 | UI | Various refinements to UI to match mockup | Final | Final | Style differences on some screens | Aaron (15%), Arisyia (85%) |
-| Homepage / Overview | Home screen that shows a user's groups and favorite habits | Not Specified | Final | Missing favorite habits | e |
+| Homepage / Overview | Home screen that shows a user's groups and favorite habits | Not Specified | Final | Missing favorite habits | Arisyia |
 | Habits | Primary habit screen where user manages their habit list | Alpha | Final | N/A | Cooper (10%), Aaron (90%) |
 | Group Matching | Creating a group, joining a group by invite, joining a random group | Alpha <br> (previously called pairing system) | Beta | Missing option to invite a user directly through the app | Aaron (50%), Arisyia(50%) |
 | Social / Chat | Social engagement features including group chats, challenges, and leaderboards | Beta | N/A | Stubbed feature due to time constraints | N/A |
