@@ -42,6 +42,65 @@
 | Additional Social Features of Habits | Daily Check-Ins, Group-Proposed Daily/Weekly Challenge | Alpha | N/A | Dropped feature due to time constraints | N/A |
 | Gamification Features | Streaks, Leaderboards, Reward System | Beta | N/A | Dropped feature due to time constraints | N/A |
 - - -
+### Final Documentation
+#### Updated on 2025/04/28
+#### Disclaimers:  
+For testing purposes, use the following email and password to show a populated connections list  
+Email: jack.smith@gmail.com  
+Password: 123456
+
+Features removed from initial design:
+- Social / Chat
+- Chat Search
+- Accountability Nudges
+- Notifications (Group Invitations)
+- Additional Social Features of Habits (Daily Check-Ins, Challenges)
+- Gamification Features (Streaks, Leaderboards, Rewards)
+
+
+**Contributions**  
+Aaron Lee & Arisyia Wong (%)
+-
+
+Aaron Lee (%)
+- Resolved and refactored a major portion of habit-related files
+- Remade habit cells to look more consistent with mockup UI
+- Added habit cell expansion to display additional information 
+- Added photo gallery to habit cells
+- Added photo gallery to profile
+- Added historical heat map to habit cells
+- Created intial verification screen and implemented verification logic
+- Refactored and made minor adjustments to profile screen to allow for dynamic user stats (Completed stat)
+- Implemented some missing group screen menu options (rename, copy group code, leave group)
+- Added display of group member habits to group overview
+
+Arisyia Wong (25%)
+
+
+- - -
+**Deviations**  
+- Group Invite
+- Notification
+    - Show group invite notifications
+- Profile
+    - Currently using hardcoded user stats. Will replace with firestore data
+- Home
+    - Habit List Display
+- Connections
+    - View pending photos of other users and verify their photos and update HabitRecord accordingly
+- Group View
+    - Menu button implementations (Edit Group Name, Invite User, Leave Group)
+- Group View (Overview Tab)
+    - Heat map
+    - List of group member habits that fall under group categories
+- Group View (Progress Tab)
+    - Nudge
+- Other user profile
+    - Add segues to other user profiles
+    - (multiple places)
+
+
+- - -
 ### Beta Documentation
 #### Updated on 2025/04/09
 #### Disclaimers:  
