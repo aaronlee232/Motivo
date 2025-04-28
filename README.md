@@ -26,21 +26,21 @@
 
 | Feature | Description | Release <br> Planned | Release Actual | Deviations | Who / Percentage worked on |
 | :- | :- | :-: | :-: | :-: | :-: |
-| Authentication <br> (log in / out, account creation) | a | Alpha | Alpha | d | e |
-| UI | a | Final | c | d | e |
-| Homepage / Overview | a | Not Specified | c | d | e |
-| Habits | a | Alpha | c | d | e |
-| Group Matching | Creating a group, joining a group by invite, joining a random group | Alpha <br> (called pairing system before) | c | d | e |
-| Social / Chat | a | Beta | c | d | e |
-| Chat Search | a | Beta | c | d | e |
-| Connections | a | Alpha | c | d | e |
-| Habit Verification | a | Not Specified | c | d | e |
-| Accountability Nudges | a | Beta | c | d | e |
+| Authentication <br> (log in / out, account creation) | User can log in, log out, and reset password | Alpha | Alpha | N/A | Aaron |
+| UI | Various refinements to UI to match mockup | Final | Final | Style differences on some screens | Aaron (15%), Arisyia (85%) |
+| Homepage / Overview | Home screen that shows a user's groups and favorite habits | Not Specified | Final | Missing favorite habits | e |
+| Habits | Primary habit screen where user manages their habit list | Alpha | Final | N/A | Cooper (10%), Aaron (90%) |
+| Group Matching | Creating a group, joining a group by invite, joining a random group | Alpha <br> (previously called pairing system) | Beta | Missing option to invite a user directly through the app | Aaron (50%), Arisyia(50%) |
+| Social / Chat | Social engagement features including group chats, challenges, and leaderboards | Beta | N/A | Stubbed feature due to time constraints | N/A |
+| Chat Search | Search for a specific set of keywords across all chats | Beta | N/A | Dropped feature due to time constraints | N/A |
+| Connections | Shows a list of other users that the current user is connected to | Alpha | Beta | Missing option to add a friend to the connection list that isn't in a common group | Aaron |
+| Habit Verification | A user can progress their habits by taking photos and getting them verified by others | Not Specified | Final | N/A | Aaron (70%), Arisyia (30%) |
+| Accountability Nudges | User's can remind other user's in the same group to work on their habits | Beta | N/A | Stubbed feature due to time constraints | N/A |
 | Notifications | Group Invitations | Final | c | d | e |
-| Profile | a | Final | c | d | e |
-| Settings | a | Final | c | d | e |
-| Additional Social Features of Habits | Daily Check-Ins, Group-Proposed Daily/Weekly Challenge | Alpha | c | d | e |
-| Gamification Features | Streaks, Leaderboards, Reward System | Beta | c | d | e |
+| Profile | Displays a user's stats, groups, and approved photo gallery | Final | Final | Missing a heatmap tab for viewing habit progress overtime | Aaron (50%), Arisyia (50%) |
+| Settings | Displays app-wide options like theme, help/about, and log out | Final | Beta | Missing implementation for theme switching and stubbed about and help options | Arisyia |
+| Additional Social Features of Habits | Daily Check-Ins, Group-Proposed Daily/Weekly Challenge | Alpha | N/A | Dropped feature due to time constraints | N/A |
+| Gamification Features | Streaks, Leaderboards, Reward System | Beta | N/A | Dropped feature due to time constraints | N/A |
 - - -
 ### Beta Documentation
 #### Updated on 2025/04/09
