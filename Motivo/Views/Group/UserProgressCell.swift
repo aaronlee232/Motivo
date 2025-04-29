@@ -107,6 +107,7 @@ extension UserProgressCell {
     private func configureDefaultValues() {
         nudgeLabel.text = "Give em a nudge!"
         nudgeButton.setImage(UIImage(systemName: "megaphone.fill"), for: .normal)
+        nudgeButton.addTarget(self, action: #selector(sendNotification), for: .touchUpInside)
         expandIndicatorImageView.image = UIImage(systemName: "chevron.left")
     }
 }
@@ -119,6 +120,30 @@ extension UserProgressCell {
         
         self.layoutIfNeeded()
     }
+    
+    @objc func sendNotification() {
+        if let topVC = UIApplication.topViewController() {
+            AlertUtils.shared.showAlert(topVC, title: "NUDGE SENT", message: "not really. this is stubbed...")
+        }
+    }
+    
+    // Used for stub only (GPT generated)
+    func topViewController(base: UIViewController? = UIApplication.shared.connectedScenes
+                                        .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+                                        .first?.rootViewController) -> UIViewController? {
+            if let nav = base as? UINavigationController {
+                return topViewController(base: nav.visibleViewController)
+            }
+            if let tab = base as? UITabBarController {
+                if let selected = tab.selectedViewController {
+                    return topViewController(base: selected)
+                }
+            }
+            if let presented = base?.presentedViewController {
+                return topViewController(base: presented)
+            }
+            return base
+        }
 }
 
 
