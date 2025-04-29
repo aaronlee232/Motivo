@@ -56,7 +56,7 @@ Password: 123456
 | Habit Verification | A user can progress their habits by taking photos and getting them verified by others | Not Specified | Final | N/A | Aaron (70%), Arisyia (30%) |
 | Accountability Nudges | User's can remind other user's in the same group to work on their habits | Beta | N/A | Stubbed feature due to time constraints | N/A |
 | Notifications | Serves as an inbox for Group Invitations | Final | N/A | Dropped feature due to time constraints | N/A |
-| Profile | Displays a user's stats, groups, and approved photo gallery | Final | Final | Missing a heatmap tab for viewing habit progress overtime | Aaron (50%), Arisyia (50%) |
+| Profile | Displays a user's stats, groups, and approved photo gallery | Final | Final | Missing a heatmap tab for viewing habit progress overtime | Aaron (40%), Arisyia (60%) |
 | Settings | Displays app-wide options like theme, help/about, and log out | Final | Beta | Missing implementation for: themes, about, and help options | Arisyia |
 | Additional Social Features of Habits | Daily Check-Ins, Group-Proposed Daily/Weekly Challenge | Alpha | N/A | Dropped feature due to time constraints | N/A |
 | Gamification Features | Streaks, Leaderboards, Reward System | Beta | N/A | Dropped feature due to time constraints | N/A |
