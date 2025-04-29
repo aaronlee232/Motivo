@@ -143,4 +143,8 @@ class HabitManager {
         let frequency = FrequencyConstants.frequencyFilterOptions[storedSelectedFrequencyIndex]
         return frequency
     }
+    
+    func deleteHabitAndRecords(forHabitID habitID: String) async throws {
+        try await FirestoreService.shared.deleteHabitAndRecords(forHabitID: habitID)
+    }
 }

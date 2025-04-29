@@ -10,6 +10,7 @@ typealias UIImagePickerControllerDelegate = MockImagePickerDelegate
 #endif
 
 class HabitViewController: UIViewController {
+    
     // MARK: UI Elements
     private let habitView = HabitView()
     
@@ -23,7 +24,6 @@ class HabitViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        habitView.delegate = self
         setupUI()
     }
 
@@ -69,7 +69,12 @@ extension HabitViewController {
             )
 
             // Configure habit view
-            habitView.configure(withCategories: categories, withHabitWithRecordList: habitWithRecordList)
+            habitView.configure(
+                withHabitViewDelegate: self,
+                withCameraDelegate: self,
+                withCategories: categories,
+                withHabitWithRecordList: habitWithRecordList
+            )
             
         } catch {
             AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "Unable to load habit data")
@@ -140,7 +145,7 @@ extension HabitViewController {
     }
 }
 
-// MARK: - HabitCellRevisedDelegate
+// MARK: - HabitCell Delegate
 extension HabitViewController: HabitCellViewCameraDelegate {
     // Handler for opening camera and uploading photo as proof of task completion. Will start as "unverified"
     func onCellCameraButtonTapped(habitWithRecord: HabitWithRecord) {
@@ -148,6 +153,35 @@ extension HabitViewController: HabitCellViewCameraDelegate {
             
         // Show camera and upload photo
         showMockCamera()
+    }
+}
+
+// MARK: - HabitView Delegate
+extension HabitViewController: HabitViewDelegate {
+    func didSwipeToDeleteHabitCell(withHabitWithRecord habitWithRecord: HabitWithRecord, atSection section: Int) {
+        let controller = UIAlertController(
+            title: "Delete \(habitWithRecord.habit.name)?",
+            message: "Are you sure you want to delete this habit?",
+            preferredStyle: .alert
+        )
+        
+        controller.addAction(UIAlertAction(title: "DELETE", style: .destructive) { _ in
+            Task {
+                do {
+                    try await self.habitManager.deleteHabitAndRecords(forHabitID: habitWithRecord.habit.id)
+                    self.habitView.removeItem(atIndexPathSection: section)
+                } catch {
+                    AlertUtils.shared.showAlert(
+                        self,
+                        title: "Something went wrong",
+                        message: "Unable to delete habit"
+                    )
+                }
+            }
+        })
+
+        controller.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(controller, animated: true)
     }
 }
 

@@ -61,4 +61,8 @@ class ConnectionsManager {
     func fetchVotes(forUserUID userUID: String) async throws -> [VoteModel] {
         return try await FirestoreService.shared.fetchVotes(forUserUID: userUID)
     }
+    
+    func updateUser(user: UserModel) throws {
+        try FirestoreService.shared.updateUser(user: user)
+    }
 }

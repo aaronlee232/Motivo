@@ -55,5 +55,7 @@ class CategoryBadgeCell: UICollectionViewCell {
     
     func configure(with category: String) {
         badgeLabel.text = category
+        
+        
     }
 }

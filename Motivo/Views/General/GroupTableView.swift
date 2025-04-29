@@ -32,7 +32,7 @@ class GroupTableView: UIView {
     }
     
     private func setupUI() {
-        tableView.separatorStyle = .singleLine
+        tableView.separatorStyle = .none
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(tableView)

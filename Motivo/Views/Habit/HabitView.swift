@@ -1,5 +1,9 @@
 import FirebaseFirestore
 
+protocol HabitViewDelegate:HabitViewController {
+    func didSwipeToDeleteHabitCell(withHabitWithRecord: HabitWithRecord, atSection section: Int)
+}
+
 class HabitView: UIView {
     
     // MARK: UI Elements
@@ -12,7 +16,8 @@ class HabitView: UIView {
     private var habitWithRecordList: [HabitWithRecord] = []
     private var openedSections: Set<Int> = Set()
     
-    var delegate: HabitCellViewCameraDelegate!
+    private var cameraDelegate: HabitCellViewCameraDelegate!
+    private var habitViewDelegate: HabitViewDelegate!
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -25,10 +30,14 @@ class HabitView: UIView {
      }
     
     func configure(
+        withHabitViewDelegate habitViewDelegate: HabitViewDelegate,
+        withCameraDelegate cameraDelegate: HabitCellViewCameraDelegate,
         withCategories categories: [CategoryModel],
         withHabitWithRecordList habitWithRecordList: [HabitWithRecord]
     ) {
         // Set delegates
+        self.habitViewDelegate = habitViewDelegate
+        self.cameraDelegate = cameraDelegate
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -42,6 +51,11 @@ class HabitView: UIView {
         }
 
         // Reload table with new data
+        tableView.reloadData()
+    }
+    
+    func removeItem(atIndexPathSection section: Int) {
+        self.habitWithRecordList.remove(at: section)
         tableView.reloadData()
     }
 }
@@ -81,6 +95,29 @@ extension HabitView {
 
 // MARK: - Table delegate methods
 extension HabitView: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        // Collapse expanded sections when starting to swipe
+        if openedSections.contains(indexPath.section) {
+            openedSections.remove(indexPath.section)
+            tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
+        }
+        
+        let habitWithRecord = habitWithRecordList[indexPath.section]
+        let deleteAction = UIContextualAction(style: .normal, title:  "Delete") { (action, view, success) in
+            // Open alert
+            self.habitViewDelegate.didSwipeToDeleteHabitCell(
+            withHabitWithRecord: habitWithRecord,
+            atSection: indexPath.section
+            )   
+        }
+        deleteAction.backgroundColor = .white.withAlphaComponent(0)
+        deleteAction.image = UIImage(systemName: "trash")?.withTintColor(.systemRed, renderingMode: .alwaysOriginal)
+
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             // Main View Cells
@@ -90,13 +127,12 @@ extension HabitView: UITableViewDataSource, UITableViewDelegate {
             
             let habitWithRecord = habitWithRecordList[indexPath.section]
             cell.configure(
-                cameraDelegate: delegate,
+                cameraDelegate: cameraDelegate,
                 expandDelegate: self,
                 withHabitWithRecord: habitWithRecord,
                 categoryIDToName: categoryIDToName,
                 isExpanded: openedSections.contains(indexPath.section)
             )
-
             return cell
         } else {
             // Expanded habit cells
@@ -137,14 +173,9 @@ extension HabitView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
-    
-    
-//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 30
-//    }
 }
 
-// MARK: -
+// MARK: - Expand Habit Cell
 extension HabitView: HabitCellViewExpansionDelegate {
     func onCellExpandButtonTapped(selectedHabitID: String) {
         // Find clicked index based on habit id
