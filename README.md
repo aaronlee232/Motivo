@@ -51,7 +51,7 @@ Password: 123456
 | Group Matching | Creating a group, joining a group by invite, joining a random group | Alpha <br> (previously called pairing system) | Beta | Missing option to invite a user directly through the app | Aaron (50%), Arisyia(50%) |
 | Social / Chat | Social engagement features including group chats, challenges, and leaderboards | Beta | N/A | Stubbed feature due to time constraints | N/A |
 | Chat Search | Search for a specific set of keywords across all chats | Beta | N/A | Dropped feature due to time constraints | N/A |
-| Connections | Shows a list of other users that the current user is connected to | Alpha | Beta | Missing option to add a friend to the connection list that isn't in a common group | Aaron |
+| Connections | Shows a list of other users that the current user is connected to, and favoriting users | Alpha | Beta | Missing option to add a friend to the connection list that isn't in a common group | Aaron |
 | Habit Verification | A user can progress their habits by taking photos and getting them verified by others | Not Specified | Final | N/A | Aaron (70%), Arisyia (30%) |
 | Accountability Nudges | User's can remind other user's in the same group to work on their habits | Beta | N/A | Stubbed feature due to time constraints | N/A |
 | Notifications | Serves as an inbox for Group Invitations | Final | N/A | Dropped feature due to time constraints | N/A |
