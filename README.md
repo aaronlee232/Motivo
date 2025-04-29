@@ -48,7 +48,8 @@ Password: 123456
 | UI | Various refinements to UI to match mockup | Final | Final | Style differences on some screens | Aaron (15%), Arisyia (85%) |
 | Homepage / Overview | Home screen that shows a user's groups and favorite habits | Not Specified | Final | Missing favorite habits | Arisyia |
 | Habits | Primary habit screen where user manages their habit list | Alpha | Final | N/A | Cooper (10%), Aaron (90%) |
-| Group Matching | Creating a group, joining a group by invite, joining a random group | Alpha <br> (previously called pairing system) | Beta | Missing option to invite a user directly through the app | Aaron (50%), Arisyia(50%) |
+| Group Matching | Creating a group, joining a group by invite, joining a random group | Alpha <br> (previously called pairing system) | Beta | N/A | Aaron (50%), Arisyia(50%) |
+| Group Screen | A screen where users can look at an overview of their group and the breakdown of the other members progress. Also includes group controls. | Not Specified | Final | Missing option to invite a user to group directly through the app | Aaron |
 | Social / Chat | Social engagement features including group chats, challenges, and leaderboards | Beta | N/A | Stubbed feature due to time constraints | N/A |
 | Chat Search | Search for a specific set of keywords across all chats | Beta | N/A | Dropped feature due to time constraints | N/A |
 | Connections | Shows a list of other users that the current user is connected to, and favoriting users | Alpha | Beta | Missing option to add a friend to the connection list that isn't in a common group | Aaron |
