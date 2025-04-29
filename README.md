@@ -43,7 +43,7 @@ Password: 123456
 - Gamification Features (Streaks, Leaderboards, Rewards)
 
 | Feature | Description | Release <br> Planned | Release Actual | Deviations | Who / Percentage worked on |
-| :- | :- | :-: | :-: | :-: | :-: |
+| :- | :- | :-: | :-: | :- | :-: |
 | Authentication <br> (log in / out, account creation) | User can log in, log out, and reset password | Alpha | Alpha | N/A | Aaron (50%), Arisyia (50%) |
 | UI | Various refinements to UI to match mockup | Final | Final | Style differences on some screens | Aaron (15%), Arisyia (85%) |
 | Homepage / Overview | Home screen that shows a user's groups and favorite habits | Not Specified | Final | Missing favorite habits | Arisyia |
