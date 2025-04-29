@@ -25,6 +25,8 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
     private let connectionsManager = ConnectionsManager()
     private var activeHabitWithRecordsByUserUID = Dictionary<String, [HabitWithRecord]>()
     private var votedPhotoSet: Set<VotedPhoto> = Set()
+    private var currentUser: UserModel!
+    private var connections: [UserModel]!
     
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -106,8 +108,10 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
                     return
                 }
                 
+                currentUser = user
+                
                 // Fetch the list of connected UserModels that are connected to the user through a group
-                let connections: [UserModel] = try await connectionsManager.fetchConnections(for: user.id)
+                connections = try await connectionsManager.fetchConnections(for: currentUser.id)
                 
                 // Fetch active habit records for each user
                 for user in connections {
@@ -115,7 +119,7 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
                     activeHabitWithRecordsByUserUID[user.id] = activeHabitWithRecords
                 }
                 
-                self.sections = organizeUsers(connections, favoriteUIDs: user.favoriteUsers)
+                self.sections = organizeUsers(connections, favoriteUIDs: currentUser.favoriteUsers)
                 self.tableView.reloadData()
             } catch {
                 AlertUtils.shared.showAlert(self, title: "Something went wrong", message: "We couldn't retrieve your connections.")
@@ -156,23 +160,6 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
 
         return sections
     }
-
-    
-    // MARK: - Actions
-    @objc func counterTapped(_ sender: UIButton) {
-        guard let indexPath = buttonIndexMapping[sender] else { return }
-        let user = sections[indexPath.section].users[indexPath.row]
-
-        // Navigate to Settings page
-        let verificationVC = VerificationViewController()
-        verificationVC.configureWith(
-            user: user,
-            habitWithRecordsByUserUID: activeHabitWithRecordsByUserUID,
-            votedPhotoSet: votedPhotoSet
-        )
-        
-        navigationController?.pushViewController(verificationVC, animated: true)
-    }
     
     // MARK: - UITableViewDelegate & UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -193,13 +180,17 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
         }
         let user = sections[indexPath.section].users[indexPath.row]
 
+        let favoriteUserSet = Set(currentUser.favoriteUsers)
+        let isFavorite = favoriteUserSet.contains(user.id)
+        
         cell.configure(
+            withDelegate: self,
             withUser: user,
+            isFavorite: isFavorite,
             withHabitWithRecords: activeHabitWithRecordsByUserUID[user.id] ?? [],
             withVotedPhotoSet: votedPhotoSet
         )
         buttonIndexMapping[cell.counterButton] = indexPath
-        cell.counterButton.addTarget(self, action: #selector(counterTapped(_:)), for: .touchUpInside)
 
         return cell
     }
@@ -213,3 +204,46 @@ class ConnectionsViewController: UIViewController, UITableViewDelegate, UITableV
 }
 
 
+// MARK: - UserCell Delegate
+extension ConnectionsViewController: UserCellDelegate {
+    func toggleFavorite(forUserID userID: String) {
+        let tempRollBackUser = currentUser
+        
+        if let removeFavoriteIdx = currentUser.favoriteUsers.firstIndex(of: userID) {
+            // Remove userID from favorite list in current user model
+            currentUser.favoriteUsers.remove(at: removeFavoriteIdx)
+        } else {
+            // Add userID to favorite list in current user model
+            currentUser.favoriteUsers.append(userID)
+        }
+
+        // Update firebase with new user model
+        do {
+            try connectionsManager.updateUser(user: currentUser)
+        } catch {
+            AlertUtils.shared.showAlert(
+                self,
+                title: "Something went wrong",
+                message: "We couldn't update your favorites list."
+            )
+            currentUser = tempRollBackUser
+            return
+        }
+        
+        // call organizeUsers pass in the same original user list, and the updated favorite list from current user
+        self.sections = organizeUsers(connections, favoriteUIDs: currentUser.favoriteUsers)
+        self.tableView.reloadData()
+    }
+    
+    func counterTapped(forUser user: UserModel) {
+        // Navigate to Settings page
+        let verificationVC = VerificationViewController()
+        verificationVC.configureWith(
+            user: user,
+            habitWithRecordsByUserUID: activeHabitWithRecordsByUserUID,
+            votedPhotoSet: votedPhotoSet
+        )
+        
+        navigationController?.pushViewController(verificationVC, animated: true)
+    }
+}

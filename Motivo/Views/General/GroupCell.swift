@@ -125,7 +125,7 @@ class GroupCell: UITableViewCell {
         mainStackView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4) // padding
         mainStackView.isLayoutMarginsRelativeArrangement = true
         
-        mainStackView.layer.borderColor = colorMainPrimary.cgColor
+        mainStackView.layer.borderColor = colorMainAccent.cgColor
         mainStackView.layer.borderWidth = 2
         mainStackView.layer.cornerRadius = 0.1875 * GroupCell.groupViewHeight
         

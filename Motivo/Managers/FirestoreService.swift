@@ -62,6 +62,11 @@ extension FirestoreService {
         let userDocument = userCollectionRef.document(user.id)
         try userDocument.setData(from: user)
     }
+    
+    func updateUser(user: UserModel) throws {
+        let userDocument = userCollectionRef.document(user.id)
+        try userDocument.setData(from: user, merge: true)
+    }
 }
 
 // MARK: - group collection

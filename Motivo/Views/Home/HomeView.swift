@@ -118,7 +118,7 @@ class HomeView: UIView {
             groupsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             groupsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            habitsStackView.topAnchor.constraint(equalTo: defaultMessageGroups.bottomAnchor, constant: 200),
+            habitsStackView.topAnchor.constraint(equalTo: defaultMessageGroups.bottomAnchor, constant: 300),
             habitsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             habitsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             

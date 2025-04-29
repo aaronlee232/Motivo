@@ -36,10 +36,6 @@ class GreyTextField: UITextField {
     private func setupGreyTextFieldButtonUI() {
         backgroundColor = colorMainSecondary
         
-        let padding = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.height))
-        self.leftView = padding
-        self.leftViewMode = .always
-        
         attributedPlaceholder = NSAttributedString(
             string: placeholder ?? "",
             attributes: [.foregroundColor: colorExtraPlaceholderText])
@@ -49,5 +45,17 @@ class GreyTextField: UITextField {
     private func setupSecureText() {
         isSecureTextEntry = true
         text = text // reload to make sure that text is hidden
+    }
+    
+    override func textRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.inset(by: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+    }
+
+    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.inset(by: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+    }
+
+    override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+        return bounds.inset(by: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
     }
 }

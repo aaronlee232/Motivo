@@ -40,7 +40,7 @@ class AuthView: UIView {
     // Sets common and unchanging attributes for subViews
     private func setupUI() {
         // Logo Image
-        logoImageView.image = UIImage(systemName: "person.circle.fill") // SF Symbol as a placeholder
+        logoImageView.image = UIImage(named: "Logo") // SF Symbol as a placeholder
         logoImageView.tintColor = .gray
         logoImageView.contentMode = .scaleAspectFill
         logoImageView.clipsToBounds = true
